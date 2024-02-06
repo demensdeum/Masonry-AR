@@ -1,53 +1,26 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
+import { Context } from "./context.js";
+import { InGameState } from "./inGameState.js"
 
-const application = Elm.Main.init({
-  node: document.getElementById("application")
-});
+function main(options: {[key: string]: string} = {}) {
+  const debugEnabled = options["debugEnabled"] === "true";
 
-document.websocketsHandlerLoaded = (websocketsHandler) => {
-  document.websocketsHandler = websocketsHandler;         
-  websocketsHandler.application = application;
-  tryConnectWebsockets()
-};
+  const context = new Context(
+      debugEnabled
+  );
+  
+  const initialState = new InGameState();
 
-document.websocketsClientLoaded = (websocketsClient) => {
-  document.websocketsClient = websocketsClient
-  application.ports.sendCanvas.subscribe((message) => {
-    websocketsClient.send(message);
-  });
-  tryConnectWebsockets()
-};
+  context.start(initialState)
 
-function tryConnectWebsockets() {
-  if (document.websocketsClient == null) {
-    return;
-  }
-  if (document.websocketsHandler == null) {
-    return;
-  }
-  document.websocketsClient.delegate = document.websocketsHandler;
-  document.websocketsClient.connect();
-};
-
-document.threeCanvasHandlerLoaded = (threeCanvasHandler) => {
-  threeCanvasHandler.application = application;
-  document.threeCanvasHandler = threeCanvasHandler;
-  tryWireThreeCanvasWithHandler();
-};
-
-document.threeCanvasDidLoad = (threeCanvas) => {
-  document.threeCanvas = threeCanvas;
-  tryWireThreeCanvasWithHandler();
-};
-
-function tryWireThreeCanvasWithHandler() {
-  if (document.threeCanvas == null) {
-    return;
-  }
-  if (document.threeCanvasHandler == null) {
-    return;
+  function step() {
+      if (!context.isRunning) {
+          return
+      }
+      context.step()
+      requestAnimationFrame(step)
   }
 
-  document.threeCanvas.delegate = document.threeCanvasHandler;
-};
+  requestAnimationFrame(step)
+}
+
+main()

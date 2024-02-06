@@ -23,7 +23,7 @@ export class SimplePhysicsController implements PhysicsController {
     public simplePhysicsControllerDelegate?: SimplePhysicsControllerDelegate;
 
     constructor(
-        rayDebugEnabled: boolean
+        rayDebugEnabled: boolean = false
     ) {
         this.rayDebugEnabled = rayDebugEnabled;
         this.raycaster = new THREE.Raycaster();

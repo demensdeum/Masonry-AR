@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import shutil
 import subprocess
 import cleanterminus
 
@@ -20,6 +21,7 @@ def run_commands():
         exit(e.returncode)
 
     os.system('tsc')
+    shutil.copytree('external-libs', 'build', dirs_exist_ok=True)
 
 if __name__ == "__main__":
     run_commands()
