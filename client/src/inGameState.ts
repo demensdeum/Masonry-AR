@@ -2,11 +2,13 @@ import { Context } from "./context.js";
 import { State } from "./state.js";
 import { debugPrint } from "./runtime.js";
 
-export class InGameState implements State {
+export class InGameState extends State {
     name = "InGameState"
     
-    initialize(context: Context): void {
-        debugPrint("initialize")
+    setup(context: Context): void {
+    }
+
+    initialize(): void {
     }
 
     step(): void {

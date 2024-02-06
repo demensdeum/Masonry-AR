@@ -2,13 +2,16 @@ import { Context } from "./context.js";
 import { InGameState } from "./inGameState.js"
 
 function main(options: {[key: string]: string} = {}) {
-  const debugEnabled = options["debugEnabled"] === "true";
+  const debugEnabled = options["debugEnabled"] === "true"
 
   const context = new Context(
       debugEnabled
-  );
+  )
   
-  const initialState = new InGameState();
+  const initialState = new InGameState(
+    "Idle",
+    context
+  )
 
   context.start(initialState)
 

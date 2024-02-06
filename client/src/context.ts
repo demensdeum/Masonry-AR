@@ -25,7 +25,10 @@ export class Context {
       this.debugEnabled = debugEnabled; 
       this.gameData = new GameData();
       this.translator = new Translator("ru");
-      this.state = new IdleState(this);
+      this.state = new IdleState(
+        "Idle State",
+        this
+      );
 
       if (!this.canvas || this.canvas == undefined) {
         this.raiseCriticalError("1Canvas in NULL!!!!");
@@ -67,7 +70,7 @@ export class Context {
   public transitionTo(state: State): void {
     debugPrint(`Transitioning to ${state.name}`);
     this.state = state;
-    this.state.initialize(this);
+    this.state.initialize();
   }
 
   public step() {
