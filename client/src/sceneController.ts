@@ -22,7 +22,6 @@ import { float } from "./types.js";
 import { Vector3 } from "./vector3.js";
 import { Controls } from "./controls.js";
 import { Paths } from "./paths.js";
-import { SnowflakesController } from "./snowflakesController.js";
 import { WeatherControllerDelegate } from "./weatherControllerDelegate.js";
 import { WeatherController } from "./weatherController.js";
 import { int } from "./types.js";
@@ -33,6 +32,9 @@ import { DecorControls } from "./decorControls.js";
 import { SceneObjectCommand } from "./sceneObjectCommand.js";
 import { SceneObjectCommandTranslate } from "./sceneObjectCommandTranslate.js";
 import { GameSettings } from "./gameSettings.js";
+import { ObjectsPickerController } from "./objectsPickerController.js"
+import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js";
+import { SceneControllerDelegate } from "./sceneControllerDelegate.js";
 
 const gui = new dat.GUI();
 
@@ -42,7 +44,8 @@ export class SceneController implements
                                         PhysicsControllerDelegate,
                                         SimplePhysicsControllerDelegate,
                                         WeatherControllerDelegate,
-                                        DecorControlsDataSource {
+                                        DecorControlsDataSource,
+                                        ObjectsPickerControllerDelegate {
 
     private readonly collisionsDebugEnabled: boolean = false;
 
@@ -76,6 +79,7 @@ export class SceneController implements
     private loadingTexture: any;
 
     private physicsController: PhysicsController;
+    private objectsPickerController: ObjectsPickerController
 
     private canMoveForward: boolean = false;
     private canMoveBackward: boolean = false;
@@ -89,7 +93,8 @@ export class SceneController implements
     private weatherController?: WeatherController;
 
     public physicsEnabled: boolean;
-    
+    public delegate: SceneControllerDelegate | null = null
+
     constructor(
         canvas: HTMLCanvasElement,
         physicsController: PhysicsController,
@@ -137,10 +142,7 @@ export class SceneController implements
         window.innerWidth / window.innerHeight,
         0.1,
         1000
-    );
-
-    // @ts-ignore
-    const colliderBox = new THREE.Box3().setFromObject(this.camera);
+    )
 
     const cameraSceneObject = new SceneObject(
         Names.Camera,
@@ -158,13 +160,19 @@ export class SceneController implements
       this.renderer = new THREE.WebGLRenderer({ 
         canvas: canvas, 
         antialias: true
-    });
+    })
     
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.renderer.setPixelRatio(window.devicePixelRatio);
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
       this.renderer.toneMappingExposure = 0.8;
       this.renderer.outputEncoding = THREE.sRGBEncoding;
+
+      this.objectsPickerController = new ObjectsPickerController(
+        this.renderer,
+        this.camera,
+        this
+      )
 
       this.pmremGenerator = new THREE.PMREMGenerator(this.renderer);
       this.pmremGenerator.compileEquirectangularShader();
@@ -460,6 +468,7 @@ export class SceneController implements
         object: any,
         userInteractionsEnabled: boolean = false
     ) {
+        // @ts-ignore
         const field = gui.add(
             object,
             name            
@@ -478,6 +487,7 @@ export class SceneController implements
         onChange: (value: float)=>{}
     )
     {
+        // @ts-ignore
         gui.add(
             object,
             name,
@@ -599,17 +609,18 @@ export class SceneController implements
 
     private addSceneObject(sceneObject: SceneObject): void {
         // @ts-ignore
-        const alreadyAddedObject = sceneObject.name in this.objects;
+        const alreadyAddedObject = sceneObject.name in this.objects
 
         if (alreadyAddedObject) {
-            raiseCriticalError("Duplicate name for object!!!:" + sceneObject.name);
+            raiseCriticalError("Duplicate name for object!!!:" + sceneObject.name)
             return;
         }
 
-        this.objects[sceneObject.name] = sceneObject;
-        this.scene.add(sceneObject.threeObject);
+        this.objects[sceneObject.name] = sceneObject
+        this.scene.add(sceneObject.threeObject)
 
-        this.physicsController.addSceneObject(sceneObject);
+        this.physicsController.addSceneObject(sceneObject)
+        this.objectsPickerController.addSceneObject(sceneObject)
     }
 
     public serializedSceneObjects(): any {
@@ -629,6 +640,7 @@ export class SceneController implements
         name: string, 
         object: any
     ) {
+        // @ts-ignore
         gui.add(
             object,
             name
@@ -685,6 +697,7 @@ export class SceneController implements
         this.currentSkyboxName = null
 
         for (const i in gui.__controllers) {
+            // @ts-ignore
             gui.remove(gui.__controllers[i]);
         }
         Object.keys(this.objects).map(k => {
@@ -953,9 +966,9 @@ export class SceneController implements
             model.traverse((entity) => {
                 if (entity.isMesh) {
                     const mesh = entity;
-                    sceneObject.meshes.push(mesh);
+                    sceneObject.meshes.push(mesh)
                 }
-            }); 
+            })
             
             debugPrint(`Model load success: ${modelPath}`)
             successCallback();
@@ -968,7 +981,7 @@ export class SceneController implements
         x: number,
         y: number,
         z: number,
-        textureName: string = "com.demensdeum.failback.texture.png",    
+        textureName: string = "com.demensdeum.failback",    
         size: number = 1.0,            
         color: number = 0x00FFFF,
         opacity: number = 1.0
@@ -1024,7 +1037,8 @@ export class SceneController implements
             null,
             new Date().getTime()
         );
-        this.addSceneObject(sceneObject);
+        sceneObject.meshes.push(box)
+        this.addSceneObject(sceneObject)
     }
 
     public addPlaneAt(
@@ -1103,6 +1117,19 @@ export class SceneController implements
         );
         this.addSceneObject(sceneObject);
     }    
+
+    objectsPickerControllerDidPickObject(
+        controller: ObjectsPickerController,
+        object: SceneObject
+    ) {
+        debugPrint(`pick: ${object.name}`)
+        if (this.delegate != null) {
+            this.delegate.sceneControllerDidPickSceneObjectWithName(
+                this,
+                object.name
+            )
+        }
+    }
 
     public sceneObjectPosition(
         name: string
