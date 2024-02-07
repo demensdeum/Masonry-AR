@@ -2,7 +2,7 @@ import { Context } from './context';
 
 export abstract class State {
     public name: string
-    private context: Context
+    context: Context
 
     constructor(
         name: string,

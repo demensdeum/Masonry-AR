@@ -16,8 +16,8 @@ export class PlayerControls implements Controls {
     private rightButtonPressed: boolean = false;
     private readonly moveDiff = 0.01;
     private objectName: string;
-    private dataSource: ControlsDataSource;
-    private delegate: ControlsDelegate;
+    dataSource: ControlsDataSource;
+    delegate: ControlsDelegate;
     private isFocused: boolean = false;
     private targetElement?: HTMLElement;
     private pointerDiffX: float = 0;

@@ -14,7 +14,7 @@ export class Context {
   public translator: Translator;
   public gameData: GameData;
 
-  private readonly canvas?: HTMLCanvasElement | null = document.querySelector("canvas");
+  readonly canvas?: HTMLCanvasElement | null = document.querySelector("canvas");
   private state: State;
   private debugEnabled: boolean;
   public soundPlayer: SoundPlayer = new SoundPlayer(0.7);

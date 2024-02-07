@@ -957,6 +957,7 @@ export class SceneController implements
                 }
             }); 
             
+            debugPrint(`Model load success: ${modelPath}`)
             successCallback();
           }
         );
