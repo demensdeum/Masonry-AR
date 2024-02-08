@@ -8,4 +8,14 @@ export interface EntitiesControllerDelegate {
         entities: Entity[]
     ): void
 
+    entitiesControllerDidCatchEntity(
+        controller: EntitiesController,
+        entity: Entity
+    ): void
+
+    entitiesControllerDidNotCatchEntity(
+        controller: EntitiesController,
+        entity: Entity,
+        message: string
+    ): void
 }

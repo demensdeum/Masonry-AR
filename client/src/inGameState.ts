@@ -12,6 +12,8 @@ import { Names } from "./names.js"
 import { Utils } from "./utils.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 import { SceneController } from "./sceneController.js"
+import { SceneObject } from "./sceneObject.js"
+import { GameData } from "./gameData.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     EntitiesControllerDelegate,
@@ -22,7 +24,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private geolocationController = new GeolocationController(this)
     private entitiesController = new EntitiesController(this)    
     private entitiesCalled = false
-    private sceneObjectNameToEntity: { [key: string]: Entity } = {};
+    private sceneObjectNameToEntity: { [key: string]: Entity } = {}
+    private entityUuidToSceneObjectName: { [key: string]: string} = {}
+    private gameData = new GameData()
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -80,6 +84,22 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 0,
                 0
             )
+            this.context.sceneController.addText(
+                "balance",
+                this.gameData
+            )
+
+            const self = this;
+            let action = () => {
+                debugPrint("Button build pressed!!!")
+            }
+            var button = {
+                ["Build"] : action
+            }
+            this.context.sceneController.addButton(
+                "Build",
+                button
+            )            
         }
     }
 
@@ -153,7 +173,27 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             i += 0.5
 
             self.sceneObjectNameToEntity[name] = entity
+            self.entityUuidToSceneObjectName[entity.uuid] = name
         })
+    }
+
+    entitiesControllerDidCatchEntity(
+        controller: EntitiesController, 
+        entity: Entity
+    ): void {
+        const sceneObjectName = this.entityUuidToSceneObjectName[entity.uuid]
+        this.context.sceneController.removeSceneObjectWithName(sceneObjectName)
+        this.context.sceneController.removeSceneObjectWithName(`collider-box-${sceneObjectName}`)
+        // @ts-ignore
+        this.gameData.balance = parseInt(this.gameData.balance) + parseInt(entity.balance)
+    }
+
+    entitiesControllerDidNotCatchEntity(
+        controller: EntitiesController, 
+        entity: Entity, 
+        message: string
+    ): void {
+        alert(message)    
     }
 
     sceneControllerDidPickSceneObjectWithName(
@@ -162,12 +202,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     ): void {        
         if (name.startsWith("collider-box-")) {
             name = name.substring("collider-box-".length)
-            debugger
         }
         if (name in this.sceneObjectNameToEntity == false) {
             return
         }
         const entity = this.sceneObjectNameToEntity[name]
-        debugPrint(`UUID: ${entity.uuid}`)        
+
+        this.entitiesController.catch(entity)      
     }
 }

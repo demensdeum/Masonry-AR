@@ -6,17 +6,20 @@ export class Entity {
     id: int
     uuid: string
     type: string
+    balance: int
     position: GeolocationPosition
 
     constructor(
         id: int,
         uuid: string,
         type: string,
+        balance: int,
         position: GeolocationPosition
     ) {
         this.id = id
         this.uuid = uuid
         this.type = type
+        this.balance = balance
         this.position = position
     }
 
@@ -24,6 +27,7 @@ export class Entity {
         const id: int = json.id
         const uuid: string = json.uuid
         const type: string = json.type
+        const balance: int = json.balance
         const position = new GeolocationPosition(
             json.latitude,
             json.longitude
@@ -33,6 +37,7 @@ export class Entity {
             id,
             uuid,
             type,
+            balance,
             position
         )
     }

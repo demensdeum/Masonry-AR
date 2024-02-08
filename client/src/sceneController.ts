@@ -1131,6 +1131,15 @@ export class SceneController implements
         }
     }
 
+    public removeSceneObjectWithName(
+        name: string
+    ): void
+    {
+        this.removeObjectWithName(
+            name
+        )
+    }
+
     public sceneObjectPosition(
         name: string
     ): any
