@@ -1,5 +1,6 @@
 import { int } from "./types.js";
 
 export class GameData {
-    public balance: int = 0;
+    public heroUuid = ""
+    public balance = 0
 }

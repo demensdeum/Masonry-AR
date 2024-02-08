@@ -1,13 +1,35 @@
 <?php
+ini_set('display_errors', 1); 
+
 $servername = "localhost";
 $username = "root";
 $password = "new_password";
-$database = "masonry_ar"; // Replace with your database name
+$database = "masonry_ar";
 
 $conn = new mysqli($servername, $username, $password, $database);
+$heroUuid = "";
 
 if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
+}
+
+if (!isset($_COOKIE["heroUuid"])) {
+    $response = array(
+        'code' => 3,
+        'message' => "Not authorized: no heroUuid"
+    );    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    exit(0);    
+} else {
+    $heroUuid = $_COOKIE["heroUuid"];
+    if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $heroUuid)) {
+        $response = array(
+            'code' => 2,
+            'message' => "Invalid UUID format for $uuid"
+        );
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit(0);
+    }
 }
 
 if (isset($_GET['uuid'])) {
@@ -19,6 +41,12 @@ if (isset($_GET['uuid'])) {
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
+
+            $row = $result->fetch_assoc();
+            $entityBalance = $row['balance'];
+
+            $balanceUpdateSql = "UPDATE entities SET balance = balance + $entityBalance WHERE uuid = '$heroUuid'";
+            $conn->query($balanceUpdateSql);
 
             $deleteSql = "DELETE FROM entities WHERE uuid = '$uuid'";
             $conn->query($deleteSql);

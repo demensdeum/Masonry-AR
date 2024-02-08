@@ -12,10 +12,12 @@ import { Names } from "./names.js"
 import { Utils } from "./utils.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 import { SceneController } from "./sceneController.js"
-import { SceneObject } from "./sceneObject.js"
 import { GameData } from "./gameData.js"
+import { AuthorizeController } from "./authorizeController.js"
+import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
+                                                    AuthorizeControllerDelegate,
                                                     EntitiesControllerDelegate,
                                                     SceneControllerDelegate {
     name = "InGameState"
@@ -23,7 +25,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private position: GeolocationPosition | null = null
     private geolocationController = new GeolocationController(this)
     private entitiesController = new EntitiesController(this)    
-    private entitiesCalled = false
+    private authorizeController = new AuthorizeController(this)
     private sceneObjectNameToEntity: { [key: string]: Entity } = {}
     private entityUuidToSceneObjectName: { [key: string]: string} = {}
     private gameData = new GameData()
@@ -104,11 +106,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     step(): void {
-        if (this.position != null && this.entitiesCalled != true) {
-            this.entitiesController.getEntities(this.position)
-            this.entitiesCalled = true
-        }
-
         const cameraPosition = this.context.sceneController.sceneObjectPosition("hero").clone()
         cameraPosition.y += 1.7
         cameraPosition.z += 1.2
@@ -127,6 +124,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     ) {
         this.position = position
         debugPrint(`Position: ${position.latitude}, ${position.longitude}`)
+
+        this.authorizeController.authorize()
     }
 
     entitiesControllerDidFetchEntities(
@@ -136,6 +135,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         const self = this
         var i = 0.5
         entities.forEach((entity)=>{
+
+            if (entity.uuid == self.gameData.heroUuid) {
+                self.gameData.balance = entity.balance
+                return
+            }
+
             const name = `${entity.type}-${entity.id}`
             const modelName = "com.demensdeum.hero"
             const controls = new DecorControls(
@@ -209,5 +214,27 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         const entity = this.sceneObjectNameToEntity[name]
 
         this.entitiesController.catch(entity)      
+    }
+
+    authorizeControllerDidAuthorize(
+        controller: AuthorizeController
+    ) {
+        if (this.position) {
+            const heroUuid = Utils.getCookieValue("heroUuid")
+            if (heroUuid) {
+                this.gameData.heroUuid = heroUuid 
+                this.entitiesController.getEntities(this.position)
+            }
+            else {
+                debugPrint("No heroUuid in cookie!")
+            }
+        }
+    }
+
+    authorizeControllerDidReceiveError(
+        controller: AuthorizeController,
+        message: string
+    ) {
+        alert(`AuthorizeController error: ${message}`)
     }
 }
