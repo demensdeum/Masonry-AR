@@ -92,7 +92,29 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             )
 
             const self = this;
+            const controls = new DecorControls(
+                "building",
+                new SceneObjectCommandIdle(
+                    "idle",
+                    0
+                ),
+                self.context.sceneController,
+                self.context.sceneController,
+                self.context.sceneController
+            )            
             let action = () => {
+                self.context.sceneController.addModelAt(
+                    "building",
+                    "com.demensdeum.hitech.building",
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    false,
+                    controls
+                )                
                 debugPrint("Button build pressed!!!")
             }
             var button = {
