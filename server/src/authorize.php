@@ -19,7 +19,8 @@ function createHero() {
         'message' => "Authorization success: new data created",
         'entities' => []
     );    
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+    exit(0); 
 } 
 
 if (!isset($_COOKIE["heroUuid"])) {
@@ -40,6 +41,7 @@ if (!isset($_COOKIE["heroUuid"])) {
                 'entities' => []
             );
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            exit(0);
         }
     }
     else {
@@ -49,6 +51,7 @@ if (!isset($_COOKIE["heroUuid"])) {
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit(0);
     }
 }
 ?>

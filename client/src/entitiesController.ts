@@ -27,7 +27,9 @@ export class EntitiesController {
 
             const jsonData: [any] = await response.json()
 
-            const entities = jsonData.map((data: any) => Entity.fromJson(data))
+            const result = RequestResult.fromJson(jsonData)
+
+            const entities = result.entities
 
             this.delegate.entitiesControllerDidFetchEntities(
                 this,

@@ -6,6 +6,53 @@ $username = "root";
 $password = "new_password";
 $database = "masonry_ar";
 
+$latitude = 0.0;
+$longitude = 0.0;
+
+if (!isset($_GET['latitude']) || !isset($_GET['longitude'])) {
+    $response = array(
+        'code' => 1,
+        'message' => "Latitude or longitude must be provided",
+        'entities' => []
+    );
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    exit(0);
+}
+
+$latitude_input = filter_input(INPUT_GET, 'latitude', FILTER_VALIDATE_FLOAT);
+if ($latitude_input === false) {
+    $response = array(
+        'code' => 2,
+        'message' => "Latitude format is invalid",
+        'entities' => []
+    );
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    exit(0);
+}
+$latitude = $latitude_input;
+
+$longitude_input = filter_input(INPUT_GET, 'longitude', FILTER_VALIDATE_FLOAT);
+if ($longitude_input === false) {
+    $response = array(
+        'code' => 3,
+        'message' => "Longitude format is invalid",
+        'entities' => []
+    );
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    exit(0);
+}
+$longitude = $longitude_input;
+
+if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
+    $response = array(
+        'code' => 4,
+        'message' => "Latitude or langitude out of range",
+        'entities' => []
+    );
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    exit(0);
+}
+
 $conn = new mysqli($servername, $username, $password, $database);
 
 if ($conn->connect_error) {
@@ -44,9 +91,19 @@ if ($result->num_rows > 0) {
         );
     }
 
-    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    $response = array(
+        'code' => 0,
+        'message' => "Got entities",
+        'entities' => $data
+    );
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);  
 } else {
-    echo "[]";
+    $response = array(
+        'code' => 0,
+        'message' => "No entities",
+        'entities' => []
+    );
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);  
 }
 
 $conn->close();

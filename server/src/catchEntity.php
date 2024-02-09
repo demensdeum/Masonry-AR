@@ -73,8 +73,10 @@ if (isset($_GET['uuid'])) {
         );
     }
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    exit(0);
 } else {
     echo json_encode(array('code' => 3, 'message' => 'UUID parameter is missing'), JSON_UNESCAPED_UNICODE);
+    exit(0);
 }
 
 $conn->close();
