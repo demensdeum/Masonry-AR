@@ -16,7 +16,8 @@ if ($conn->connect_error) {
 if (!isset($_COOKIE["heroUuid"])) {
     $response = array(
         'code' => 3,
-        'message' => "Not authorized: no heroUuid"
+        'message' => "Not authorized: no heroUuid",
+        'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit(0);    
@@ -25,7 +26,8 @@ if (!isset($_COOKIE["heroUuid"])) {
     if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $heroUuid)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $uuid"
+            'message' => "Invalid UUID format for $heroUuid",
+            'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
         exit(0);
@@ -53,18 +55,21 @@ if (isset($_GET['uuid'])) {
 
             $response = array(
                 'code' => 0,
-                'message' => "Entity $uuid caught!"
+                'message' => "Entity $uuid caught!",
+                'entities' => []
             );
         } else {
             $response = array(
                 'code' => 1,
-                'message' => "Entity $uuid not found!"
+                'message' => "Entity $uuid not found!",
+                'entities' => []
             );
         }
     } else {
         $response = array(
-            'code' => 2,
-            'message' => "Invalid UUID format for $uuid"
+            'code' => 4,
+            'message' => "Invalid UUID format for $uuid",
+            'entities' => []
         );
     }
     echo json_encode($response, JSON_UNESCAPED_UNICODE);

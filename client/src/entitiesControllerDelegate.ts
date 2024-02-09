@@ -18,4 +18,15 @@ export interface EntitiesControllerDelegate {
         entity: Entity,
         message: string
     ): void
+
+    entitiesControllerDidBuildEntity(
+        controller: EntitiesController,
+        entity: Entity
+    ): void
+
+    entitiesControllerDidNotBuildEntity(
+        controller: EntitiesController,
+        entity: Entity,
+        message: string
+    ): void    
 }

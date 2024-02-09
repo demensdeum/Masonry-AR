@@ -103,19 +103,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 self.context.sceneController
             )            
             let action = () => {
-                self.context.sceneController.addModelAt(
-                    "building",
-                    "com.demensdeum.hitech.building",
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    false,
-                    controls
-                )                
-                debugPrint("Button build pressed!!!")
+                this.entitiesController.build()
             }
             var button = {
                 ["Build"] : action
@@ -150,6 +138,18 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.authorizeController.authorize()
     }
 
+    private modelNameFromType(type: string) {
+        if (type == "hero") {
+            return "com.demensdeum.hero"
+        }
+        else if (type == "building") {
+            return "com.demensdeum.hitech.building"
+        }
+        else {
+            return "com.demensdeum.hero"
+        }
+    }
+
     entitiesControllerDidFetchEntities(
         controller: EntitiesController,
         entities: Entity[]
@@ -164,7 +164,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             }
 
             const name = `${entity.type}-${entity.id}`
-            const modelName = "com.demensdeum.hero"
+            const modelName = this.modelNameFromType(entity.type)
             const controls = new DecorControls(
                 name,
                 new SceneObjectCommandIdle(
@@ -258,5 +258,41 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         message: string
     ) {
         alert(`AuthorizeController error: ${message}`)
+    }
+
+    entitiesControllerDidBuildEntity(
+        controller: EntitiesController,
+        entity: Entity
+    ): void {
+        const controls = new DecorControls(
+            "building",
+            new SceneObjectCommandIdle(
+                "idle",
+                0
+            ),
+            this.context.sceneController,
+            this.context.sceneController,
+            this.context.sceneController
+        )        
+        this.context.sceneController.addModelAt(
+            `${entity.type}-${entity.id}`,
+            this.modelNameFromType(entity.type),
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            false,
+            controls
+        )        
+    }
+
+    entitiesControllerDidNotBuildEntity(
+        controller: EntitiesController,
+        entity: Entity,
+        message: string
+    ): void {
+        alert(message)
     }
 }

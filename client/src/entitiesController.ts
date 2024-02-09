@@ -39,6 +39,40 @@ export class EntitiesController {
         }
     }
 
+    public async build() {
+        const url = `http://localhost/Masonry-AR/server/build.php`;
+
+        try {
+            const response = await fetch(url)
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} - ${response.statusText}`)
+            }
+
+            const jsonData: any = await response.json()
+
+            const result = RequestResult.fromJson(jsonData)
+            const entity =result.entities[0]
+
+            if (result.code == RequestResultCodes.Success) {
+                this.delegate.entitiesControllerDidBuildEntity(
+                    this,
+                    entity
+                )    
+            }
+            else {
+                this.delegate.entitiesControllerDidNotBuildEntity(
+                    this,
+                    entity,
+                    result.message
+                )
+            }
+
+        } catch (error) {
+            console.error("Error fetching entities:", error);
+        }
+    }
+
     public async catch(entity: Entity) {
         const url = `http://localhost/Masonry-AR/server/catchEntity.php?uuid=${entity.uuid}`;
 
@@ -60,9 +94,10 @@ export class EntitiesController {
                 )    
             }
             else {
-                this.delegate.entitiesControllerDidCatchEntity(
+                this.delegate.entitiesControllerDidNotCatchEntity(
                     this,
-                    entity
+                    entity,
+                    result.message
                 )
             }
 

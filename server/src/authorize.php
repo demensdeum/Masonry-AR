@@ -16,7 +16,8 @@ function createHero() {
     $conn->query($sqlInsert);
     $response = array(
         'code' => 0,
-        'message' => "Authorization success: new data created"
+        'message' => "Authorization success: new data created",
+        'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE);    
 } 
@@ -35,7 +36,8 @@ if (!isset($_COOKIE["heroUuid"])) {
         else {
             $response = array(
                 'code' => 0,
-                'message' => "Authorization success: using saved data"
+                'message' => "Authorization success: using saved data",
+                'entities' => []
             );
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
         }
@@ -43,7 +45,8 @@ if (!isset($_COOKIE["heroUuid"])) {
     else {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $uuid"
+            'message' => "Invalid UUID format for $heroUuid",
+            'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
