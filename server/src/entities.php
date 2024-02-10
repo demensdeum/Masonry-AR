@@ -6,8 +6,10 @@ $username = "root";
 $password = "new_password";
 $database = "masonry_ar";
 
-$insertEnabled = true;
 $heroUuid = "";
+
+$insertEnabled = true;
+$minEntitesPerSector = 3;
 
 if (!isset($_COOKIE["heroUuid"])) {
     $response = array(
@@ -84,21 +86,28 @@ if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
+
+
 $sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude WHERE uuid = '$heroUuid'";
 $conn->query($sqlUpdate);
 
 if ($insertEnabled) {
+
+    $borderDistance = 7;
+    $minimalEntityLatitude = $latitude - $borderDistance / 10000;
+    $minimalEntityLongitude = $longitude - $borderDistance / 10000;
+
     $sqlCheck = "SELECT COUNT(*) as count FROM entities";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
     $count = $rowCheck['count'];
-    $randomRecords = mt_rand(1, 3);
+    $randomRecords = mt_rand(1, $minEntitesPerSector);
 
     if ($count < $randomRecords) {
         for ($i = 0; $i < $randomRecords; $i++) {
             $balance = mt_rand(1, 3) * 100;
-            $entityLatitude = $latitude - 0.0005 + (mt_rand(1, 10) / 10000);
-            $entityLongitude = $longitude - 0.0005 + (mt_rand(1, 10) / 10000);
+            $entityLatitude = $minimalEntityLatitude + mt_rand(0, $borderDistance * 2) / 10000;
+            $entityLongitude = $minimalEntityLongitude + mt_rand(0, $borderDistance * 2) / 10000;
             $sqlInsert = "INSERT INTO entities (type, balance, latitude, longitude) VALUES ('eye', $balance, $entityLatitude, $entityLongitude)";
             $conn->query($sqlInsert);
         }

@@ -205,7 +205,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 this.context.sceneController.moveObjectTo(
                     colliderBoxName,
                     adaptedX,
-                    0,
+                    0.22,
                     adaptedZ
                 )
             }
