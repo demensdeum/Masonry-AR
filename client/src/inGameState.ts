@@ -1,5 +1,5 @@
 import { State } from "./state.js"
-import { debugPrint } from "./runtime.js"
+import { debugPrint, raiseCriticalError } from "./runtime.js"
 import { GeolocationController } from "./geolocationController.js"
 import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js"
 import { GeolocationPosition } from "./geolocationPosition.js"
@@ -22,7 +22,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                                                     SceneControllerDelegate {
     name = "InGameState"
     
-    private position: GeolocationPosition | null = null
     private geolocationController = new GeolocationController(this)
     private entitiesController = new EntitiesController(this)    
     private authorizeController = new AuthorizeController(this)
@@ -94,7 +93,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.context.sceneController.addText(
             "balance",
             this.gameData
-        )
+        )      
         this.context.sceneController.addText(
             "message",
             this.gameData
@@ -151,7 +150,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         controller: GeolocationController,
         position: GeolocationPosition
     ) {
-        this.position = position
+        this.gameData.position = position
         debugPrint(`Position: ${position.latitude}, ${position.longitude}`) 
     }
 
@@ -186,8 +185,21 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             else {
                 const name = `${entity.type}-${entity.id}`
                 const modelName = this.modelNameFromType(entity.type)
-                const adaptedX = 1
-                const adaptedZ = 0
+
+                const position = this.gameData.position
+                if (position == null) {
+                    raiseCriticalError(`Position is null!`)
+                    return
+                }
+
+                const diffX = entity.position.longitude - position.longitude
+                const diffY = entity.position.latitude - position.latitude
+
+                debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
+
+                const scale = 2000
+                const adaptedX = diffX * scale
+                const adaptedZ = diffY * scale
                 const controls = new DecorControls(
                     name,
                     new SceneObjectCommandIdle(
@@ -264,8 +276,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     private entitiesTrackingStep() {
-        this.gameData.message = `Entities Tracking, position is exists: ${this.position != null}`
-        const position = this.position
+        this.gameData.message = `Entities Tracking, position is exists: ${this.gameData.position != null}`
+        const position = this.gameData.position
         if (position != null) {
             const self = this
             setTimeout(()=>{
