@@ -202,6 +202,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             }
 
             if (entity.uuid in this.entityUuidToSceneObjectName) {
+
+                if (entity.isVisible == false) {
+                    this.removeEntity(entity)
+                    return
+                }
+
                 const position = this.gameData.position  
                 if (position == null) {
                     raiseCriticalError(`Position is null!`)
@@ -232,6 +238,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 )
             }
             else {
+                if (entity.isVisible == false) {
+                    return
+                }         
+                       
                 const name = `${entity.type}-${entity.id}`
                 const modelName = this.modelNameFromType(entity.type)
 
@@ -290,13 +300,21 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.entitiesTrackingStep()
     }
 
+    private removeEntity(entity: Entity) {
+        const sceneObjectName = this.entityUuidToSceneObjectName[entity.uuid]
+        this.context.sceneController.removeSceneObjectWithName(sceneObjectName)
+        this.context.sceneController.removeSceneObjectWithName(`collider-box-${sceneObjectName}`)
+
+        const name = `${entity.type}-${entity.id}`
+        delete this.entityUuidToSceneObjectName[entity.uuid]
+        delete this.sceneObjectNameToEntity[name]        
+    }
+
     entitiesControllerDidCatchEntity(
         controller: EntitiesController, 
         entity: Entity
     ): void {
-        const sceneObjectName = this.entityUuidToSceneObjectName[entity.uuid]
-        this.context.sceneController.removeSceneObjectWithName(sceneObjectName)
-        this.context.sceneController.removeSceneObjectWithName(`collider-box-${sceneObjectName}`)
+        this.removeEntity(entity)
         // @ts-ignore
         this.gameData.balance = parseInt(this.gameData.balance) + parseInt(entity.balance)
     }

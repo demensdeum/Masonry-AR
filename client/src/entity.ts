@@ -8,19 +8,22 @@ export class Entity {
     type: string
     balance: int
     position: GeolocationPosition
+    isVisible: boolean
 
     constructor(
         id: int,
         uuid: string,
         type: string,
         balance: int,
-        position: GeolocationPosition
+        position: GeolocationPosition,
+        isVisible: boolean
     ) {
         this.id = id
         this.uuid = uuid
         this.type = type
         this.balance = balance
         this.position = position
+        this.isVisible = isVisible
     }
 
     static fromJson(json: any): Entity {
@@ -32,13 +35,15 @@ export class Entity {
             json.latitude,
             json.longitude
         )
+        const isVisible = json.isVisible
 
         return new Entity(
             id,
             uuid,
             type,
             balance,
-            position
+            position,
+            isVisible
         )
     }
 }

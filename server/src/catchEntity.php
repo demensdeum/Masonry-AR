@@ -50,8 +50,8 @@ if (isset($_GET['uuid'])) {
             $balanceUpdateSql = "UPDATE entities SET balance = balance + $entityBalance WHERE uuid = '$heroUuid'";
             $conn->query($balanceUpdateSql);
 
-            $deleteSql = "DELETE FROM entities WHERE uuid = '$uuid'";
-            $conn->query($deleteSql);
+            $updateSql = "UPDATE entities SET is_visible = false, update_date = CURRENT_TIMESTAMP() WHERE uuid = '$uuid' AND type ='eye'";
+            $conn->query($updateSql);
 
             $response = array(
                 'code' => 0,

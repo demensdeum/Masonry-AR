@@ -99,7 +99,7 @@ if ($insertEnabled) {
     $maximalEntityLatitude = $latitude + $borderDistance / 10000;
     $maximalEntityLongitude = $longitude + $borderDistance / 10000;
 
-    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
+    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE is_visible = true AND latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
     $count = $rowCheck['count'];
@@ -130,7 +130,8 @@ if ($result->num_rows > 0) {
             'type' => $row["type"],
             'balance' => $row["balance"],
             'latitude' => $row["latitude"],            
-            'longitude' => $row["longitude"]
+            'longitude' => $row["longitude"],
+            'isVisible' => $row["is_visible"]
         );
     }
 
