@@ -301,8 +301,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             this.context.sceneController,
             this.context.sceneController
         )        
+        const sceneObjectName = `${entity.type}-${entity.id}`
         this.context.sceneController.addModelAt(
-            `${entity.type}-${entity.id}`,
+            sceneObjectName,
             this.modelNameFromType(entity.type),
             0,
             0,
@@ -312,7 +313,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             0,
             false,
             controls
-        )        
+        )
+        this.entityUuidToSceneObjectName[entity.uuid] = sceneObjectName
+        this.sceneObjectNameToEntity[sceneObjectName] = entity   
     }
 
     entitiesControllerDidNotBuildEntity(

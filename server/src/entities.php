@@ -6,6 +6,27 @@ $username = "root";
 $password = "new_password";
 $database = "masonry_ar";
 
+if (!isset($_COOKIE["heroUuid"])) {
+    $response = array(
+        'code' => 3,
+        'message' => "Not authorized: no heroUuid",
+        'entities' => []
+    );    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    exit(0);    
+} else {
+    $heroUuid = $_COOKIE["heroUuid"];
+    if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $heroUuid)) {
+        $response = array(
+            'code' => 2,
+            'message' => "Invalid UUID format for $heroUuid",
+            'entities' => []
+        );
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit(0);
+    }
+}
+
 $latitude = 0.0;
 $longitude = 0.0;
 
