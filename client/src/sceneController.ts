@@ -61,8 +61,7 @@ export class SceneController implements
 
     private stepCounter: int = 0
 
-    private debugControls: any 
-    public debugControlsEnabled = false
+    private debugControls: any
     
     // @ts-ignore
     private scene: any;
@@ -535,10 +534,6 @@ export class SceneController implements
         this.updateSkyboxPosition();
         this.render();
         this.updateUI();
-
-        if (this.debugControlsEnabled) {
-            this.debugControls.update()
-        }
     }
 
     private controlsStep(

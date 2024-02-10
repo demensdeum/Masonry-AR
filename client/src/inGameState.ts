@@ -29,7 +29,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private entityUuidToSceneObjectName: { [key: string]: string} = {}
     private gameData = new GameData()
     private entitiesPoller: any
-    private cameraLock = false
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -82,14 +81,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 this.context.sceneController
             )                
         )
-        if (this.cameraLock) {
-            this.context.sceneController.rotateObjectTo(
-                Names.Camera,
-                Utils.angleToRadians(-55),
-                0,
-                0
-            )
-        }
+        this.context.sceneController.rotateObjectTo(
+            Names.Camera,
+            Utils.angleToRadians(-55),
+            0,
+            0
+        )
         this.context.sceneController.addText(
             "balance",
             this.gameData
@@ -120,7 +117,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             "Build",
             button
         )
-        this.gameData.cameraLock = true
+        this.gameData.cameraLock = false
         this.gameData.message = "Authorization"
         this.authorizeController.authorizeIfNeeded()
 
@@ -128,6 +125,17 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             "cameraLock",
             this.gameData
         )
+
+        const cameraPosition = this.context.sceneController.sceneObjectPosition("hero").clone()
+        cameraPosition.y += 1.7
+        cameraPosition.z += 1.2
+
+        this.context.sceneController.moveObjectTo(
+            Names.Camera,
+            cameraPosition.x,
+            cameraPosition.y,
+            cameraPosition.z
+        )        
     }
 
     step(): void {
@@ -143,7 +151,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 cameraPosition.z
             )
         }
-        this.context.sceneController.debugControlsEnabled = this.gameData.cameraLock == false
     }
 
     geolocationControllerDidGetPosition(

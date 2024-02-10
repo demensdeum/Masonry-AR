@@ -96,14 +96,16 @@ if ($insertEnabled) {
     $borderDistance = 7;
     $minimalEntityLatitude = $latitude - $borderDistance / 10000;
     $minimalEntityLongitude = $longitude - $borderDistance / 10000;
+    $maximalEntityLatitude = $latitude + $borderDistance / 10000;
+    $maximalEntityLongitude = $longitude + $borderDistance / 10000;
 
-    $sqlCheck = "SELECT COUNT(*) as count FROM entities";
+    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
     $count = $rowCheck['count'];
-    $randomRecords = mt_rand(1, $minEntitesPerSector);
 
-    if ($count < $randomRecords) {
+    if ($count < $minEntitesPerSector) {
+        $randomRecords = mt_rand(0, 10) == 0 ? mt_rand(1, $minEntitesPerSector) : 0;        
         for ($i = 0; $i < $randomRecords; $i++) {
             $balance = mt_rand(1, 3) * 100;
             $entityLatitude = $minimalEntityLatitude + mt_rand(0, $borderDistance * 2) / 10000;
