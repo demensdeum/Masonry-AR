@@ -612,6 +612,7 @@ export class SceneController implements
         const alreadyAddedObject = sceneObject.name in this.objects
 
         if (alreadyAddedObject) {
+            debugger
             raiseCriticalError("Duplicate name for object!!!:" + sceneObject.name)
             return;
         }

@@ -29,90 +29,97 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private sceneObjectNameToEntity: { [key: string]: Entity } = {}
     private entityUuidToSceneObjectName: { [key: string]: string} = {}
     private gameData = new GameData()
+    private entitiesPoller: any
 
     initialize(): void {
         const canvas = this.context.canvas
-        if (canvas != null) {
-            this.context.sceneController.delegate = this
-            this.geolocationController.trackPosition()
-            this.context.sceneController.switchSkyboxIfNeeded(
-                "com.demensdeum.blue.field"
-            )
-            this.context.sceneController.addModelAt(
+        if (canvas == null) {
+            return
+        }
+        this.context.sceneController.delegate = this
+        this.context.sceneController.switchSkyboxIfNeeded(
+            "com.demensdeum.blue.field"
+        )
+        this.context.sceneController.addModelAt(
+            "hero",
+            "com.demensdeum.hero",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            true,
+            new DecorControls(
                 "hero",
-                "com.demensdeum.hero",
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                true,
-                new DecorControls(
-                    "hero",
-                    new SceneObjectCommandIdle(
-                        "idle",
-                        0
-                    ),
-                    this.context.sceneController,
-                    this.context.sceneController,
-                    this.context.sceneController
-                )
-            )
-            this.context.sceneController.addModelAt(
-                "floor",
-                "com.demensdeum.floor",
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                false,
-                new DecorControls(
-                    "floor",
-                    new SceneObjectCommandIdle(
-                        "idle",
-                        0
-                    ),
-                    this.context.sceneController,
-                    this.context.sceneController,
-                    this.context.sceneController
-                )                
-            )
-            this.context.sceneController.rotateObjectTo(
-                Names.Camera,
-                Utils.angleToRadians(-55),
-                0,
-                0
-            )
-            this.context.sceneController.addText(
-                "balance",
-                this.gameData
-            )
-
-            const self = this;
-            const controls = new DecorControls(
-                "building",
                 new SceneObjectCommandIdle(
                     "idle",
                     0
                 ),
-                self.context.sceneController,
-                self.context.sceneController,
-                self.context.sceneController
-            )            
-            let action = () => {
-                this.entitiesController.build()
-            }
-            var button = {
-                ["Build"] : action
-            }
-            this.context.sceneController.addButton(
-                "Build",
-                button
-            )            
+                this.context.sceneController,
+                this.context.sceneController,
+                this.context.sceneController
+            )
+        )
+        this.context.sceneController.addModelAt(
+            "floor",
+            "com.demensdeum.floor",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            false,
+            new DecorControls(
+                "floor",
+                new SceneObjectCommandIdle(
+                    "idle",
+                    0
+                ),
+                this.context.sceneController,
+                this.context.sceneController,
+                this.context.sceneController
+            )                
+        )
+        this.context.sceneController.rotateObjectTo(
+            Names.Camera,
+            Utils.angleToRadians(-55),
+            0,
+            0
+        )
+        this.context.sceneController.addText(
+            "balance",
+            this.gameData
+        )
+        this.context.sceneController.addText(
+            "message",
+            this.gameData
+        )
+
+        const self = this;
+        const controls = new DecorControls(
+            "building",
+            new SceneObjectCommandIdle(
+                "idle",
+                0
+            ),
+            self.context.sceneController,
+            self.context.sceneController,
+            self.context.sceneController
+        )            
+        let action = () => {
+            this.entitiesController.build()
         }
+        var button = {
+            ["Build"] : action
+        }
+        this.context.sceneController.addButton(
+            "Build",
+            button
+        )            
+        this.gameData.message = "Authorization"
+        this.authorizeController.authorizeIfNeeded()
     }
 
     step(): void {
@@ -133,9 +140,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         position: GeolocationPosition
     ) {
         this.position = position
-        debugPrint(`Position: ${position.latitude}, ${position.longitude}`)
-
-        this.authorizeController.authorize()
+        debugPrint(`Position: ${position.latitude}, ${position.longitude}`) 
     }
 
     private modelNameFromType(type: string) {
@@ -156,52 +161,58 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     ) {
         const self = this
         var i = 0.5
-        entities.forEach((entity)=>{
+        entities.forEach((entity) => {
 
             if (entity.uuid == self.gameData.heroUuid) {
                 self.gameData.balance = entity.balance
                 return
             }
 
-            const name = `${entity.type}-${entity.id}`
-            const modelName = this.modelNameFromType(entity.type)
-            const controls = new DecorControls(
-                name,
-                new SceneObjectCommandIdle(
-                    "idle",
-                    0
-                ),
-                self.context.sceneController,
-                self.context.sceneController,
-                self.context.sceneController
-            )
-            self.context.sceneController.addBoxAt(
-                `collider-box-${name}`,
-                i - 0.2,
-                0.8,
-                -i + 0.65,
-                "com.demensdeum.loading",
-                0.3,
-                0xFF00FF,
-                0.1
-            )
-            self.context.sceneController.addModelAt(
-                name,
-                modelName,
-                i,
-                0,
-                -i,
-                0,
-                0,
-                0,
-                false,
-                controls
-            )
-            i += 0.5
+            if (entity.uuid in this.entityUuidToSceneObjectName) {
+                return
+            }
+            else {
+                const name = `${entity.type}-${entity.id}`
+                const modelName = this.modelNameFromType(entity.type)
+                const controls = new DecorControls(
+                    name,
+                    new SceneObjectCommandIdle(
+                        "idle",
+                        0
+                    ),
+                    self.context.sceneController,
+                    self.context.sceneController,
+                    self.context.sceneController
+                )
+                self.context.sceneController.addBoxAt(
+                    `collider-box-${name}`,
+                    i - 0.2,
+                    0.8,
+                    -i + 0.65,
+                    "com.demensdeum.loading",
+                    0.3,
+                    0xFF00FF,
+                    0.1
+                )
+                self.context.sceneController.addModelAt(
+                    name,
+                    modelName,
+                    i,
+                    0,
+                    -i,
+                    0,
+                    0,
+                    0,
+                    false,
+                    controls
+                )
+                i += 0.5
 
-            self.sceneObjectNameToEntity[name] = entity
-            self.entityUuidToSceneObjectName[entity.uuid] = name
+                self.sceneObjectNameToEntity[name] = entity
+                self.entityUuidToSceneObjectName[entity.uuid] = name
+            }
         })
+        this.entitiesTrackingStep()
     }
 
     entitiesControllerDidCatchEntity(
@@ -220,7 +231,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         entity: Entity, 
         message: string
     ): void {
-        alert(message)    
+        debugPrint(message)    
     }
 
     sceneControllerDidPickSceneObjectWithName(
@@ -238,18 +249,34 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.entitiesController.catch(entity)      
     }
 
+    private entitiesTrackingStep() {
+        this.gameData.message = `Entities Tracking, position is exists: ${this.position != null}`
+        const position = this.position
+        if (position != null) {
+            const self = this
+            setTimeout(()=>{
+                self.entitiesController.getEntities(position)
+            }, 1000)
+        }
+        else {
+            const self = this
+            setTimeout(()=>{
+                self.entitiesTrackingStep()
+            }, 1000)
+        }
+    }
+
     authorizeControllerDidAuthorize(
         controller: AuthorizeController
     ) {
-        if (this.position) {
-            const heroUuid = Utils.getCookieValue("heroUuid")
-            if (heroUuid) {
-                this.gameData.heroUuid = heroUuid 
-                this.entitiesController.getEntities(this.position)
-            }
-            else {
-                debugPrint("No heroUuid in cookie!")
-            }
+        const heroUuid = Utils.getCookieValue("heroUuid")
+        if (heroUuid) {
+            this.gameData.heroUuid = heroUuid
+            this.geolocationController.trackPosition()
+            this.entitiesTrackingStep()            
+        }
+        else {
+            alert("No heroUuid in cookie!")
         }
     }
 

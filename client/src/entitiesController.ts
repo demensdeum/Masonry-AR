@@ -1,8 +1,9 @@
-import { GeolocationPosition } from "./geolocationPosition.js";
-import { Entity } from "./entity.js";
-import { RequestResultCodes } from "./requestResultCodes.js";
-import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js";
-import { RequestResult } from "./requestResult.js";
+import { GeolocationPosition } from "./geolocationPosition.js"
+import { Entity } from "./entity.js"
+import { RequestResultCodes } from "./requestResultCodes.js"
+import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"
+import { RequestResult } from "./requestResult.js"
+import { debugPrint } from "./runtime.js"
 
 export class EntitiesController {
 
@@ -77,6 +78,8 @@ export class EntitiesController {
 
     public async catch(entity: Entity) {
         const url = `http://localhost/Masonry-AR/server/catchEntity.php?uuid=${entity.uuid}`;
+
+        debugPrint(`catch: ${entity.uuid}`)
 
         try {
             const response = await fetch(url)
