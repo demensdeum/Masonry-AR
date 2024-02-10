@@ -6,7 +6,7 @@ $username = "root";
 $password = "new_password";
 $database = "masonry_ar";
 
-$mustInsert = false;
+$insertEnabled = true;
 $heroUuid = "";
 
 if (!isset($_COOKIE["heroUuid"])) {
@@ -87,7 +87,7 @@ if ($conn->connect_error) {
 $sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude WHERE uuid = '$heroUuid'";
 $conn->query($sqlUpdate);
 
-if ($mustInsert) {
+if ($insertEnabled) {
     $sqlCheck = "SELECT COUNT(*) as count FROM entities";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
@@ -96,8 +96,10 @@ if ($mustInsert) {
 
     if ($count < $randomRecords) {
         for ($i = 0; $i < $randomRecords; $i++) {
-            $balance = mt_rand(100, 300);
-            $sqlInsert = "INSERT INTO entities (type, balance, latitude, longitude) VALUES ('eye', $balance, 0.0, 0.0)";
+            $balance = mt_rand(1, 3) * 100;
+            $entityLatitude = $latitude - 0.0005 + (mt_rand(1, 10) / 10000);
+            $entityLongitude = $longitude - 0.0005 + (mt_rand(1, 10) / 10000);
+            $sqlInsert = "INSERT INTO entities (type, balance, latitude, longitude) VALUES ('eye', $balance, $entityLatitude, $entityLongitude)";
             $conn->query($sqlInsert);
         }
     }

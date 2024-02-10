@@ -180,7 +180,34 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             }
 
             if (entity.uuid in this.entityUuidToSceneObjectName) {
-                return
+                const position = this.gameData.position  
+                if (position == null) {
+                    raiseCriticalError(`Position is null!`)
+                    return
+                }                              
+                const diffX = entity.position.longitude - position.longitude
+                const diffY = entity.position.latitude - position.latitude
+
+                debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
+
+                const scale = 2000
+                const adaptedX = diffX * scale
+                const adaptedZ = -(diffY * scale)    
+                
+                const name = `${entity.type}-${entity.id}`
+                const colliderBoxName = `collider-box-${name}`
+                this.context.sceneController.moveObjectTo(
+                    name,
+                    adaptedX,
+                    0,
+                    adaptedZ
+                )
+                this.context.sceneController.moveObjectTo(
+                    colliderBoxName,
+                    adaptedX,
+                    0,
+                    adaptedZ
+                )
             }
             else {
                 const name = `${entity.type}-${entity.id}`
@@ -199,7 +226,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
                 const scale = 2000
                 const adaptedX = diffX * scale
-                const adaptedZ = diffY * scale
+                const adaptedZ = -(diffY * scale)
                 const controls = new DecorControls(
                     name,
                     new SceneObjectCommandIdle(
