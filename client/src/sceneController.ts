@@ -1,6 +1,8 @@
 // @ts-ignore
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.114/build/three.module.js";
 // @ts-ignore
+import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js';
+// @ts-ignore
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.114/examples/jsm/loaders/GLTFLoader.js";
 // @ts-ignore
 import { RGBELoader } from "https://cdn.jsdelivr.net/npm/three@0.114/examples/jsm/loaders/RGBELoader.js";
@@ -58,6 +60,9 @@ export class SceneController implements
     private currentSkyboxName?: String | null
 
     private stepCounter: int = 0
+
+    private debugControls: any 
+    public debugControlsEnabled = false
     
     // @ts-ignore
     private scene: any;
@@ -194,7 +199,13 @@ export class SceneController implements
       window.addEventListener("resize", onWindowResize, false);
 
       // this.weatherController = new SnowflakesController(this);
-      this.weatherController?.initialize();      
+      this.weatherController?.initialize();    
+
+      // @ts-ignore
+      this.debugControls = new OrbitControls(
+        camera, 
+        renderer.domElement
+      )      
     }
 
     physicControllerRequireApplyPosition(
@@ -524,6 +535,10 @@ export class SceneController implements
         this.updateSkyboxPosition();
         this.render();
         this.updateUI();
+
+        if (this.debugControlsEnabled) {
+            this.debugControls.update()
+        }
     }
 
     private controlsStep(

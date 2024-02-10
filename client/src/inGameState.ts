@@ -30,6 +30,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private entityUuidToSceneObjectName: { [key: string]: string} = {}
     private gameData = new GameData()
     private entitiesPoller: any
+    private cameraLock = false
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -82,12 +83,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 this.context.sceneController
             )                
         )
-        this.context.sceneController.rotateObjectTo(
-            Names.Camera,
-            Utils.angleToRadians(-55),
-            0,
-            0
-        )
+        if (this.cameraLock) {
+            this.context.sceneController.rotateObjectTo(
+                Names.Camera,
+                Utils.angleToRadians(-55),
+                0,
+                0
+            )
+        }
         this.context.sceneController.addText(
             "balance",
             this.gameData
@@ -117,22 +120,31 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.context.sceneController.addButton(
             "Build",
             button
-        )            
+        )
+        this.gameData.cameraLock = true
         this.gameData.message = "Authorization"
         this.authorizeController.authorizeIfNeeded()
+
+        this.context.sceneController.addText(
+            "cameraLock",
+            this.gameData
+        )
     }
 
     step(): void {
-        const cameraPosition = this.context.sceneController.sceneObjectPosition("hero").clone()
-        cameraPosition.y += 1.7
-        cameraPosition.z += 1.2
+        if (this.gameData.cameraLock) {
+            const cameraPosition = this.context.sceneController.sceneObjectPosition("hero").clone()
+            cameraPosition.y += 1.7
+            cameraPosition.z += 1.2
 
-        this.context.sceneController.moveObjectTo(
-            Names.Camera,
-            cameraPosition.x,
-            cameraPosition.y,
-            cameraPosition.z
-        )
+            this.context.sceneController.moveObjectTo(
+                Names.Camera,
+                cameraPosition.x,
+                cameraPosition.y,
+                cameraPosition.z
+            )
+        }
+        this.context.sceneController.debugControlsEnabled = this.gameData.cameraLock == false
     }
 
     geolocationControllerDidGetPosition(
@@ -174,6 +186,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             else {
                 const name = `${entity.type}-${entity.id}`
                 const modelName = this.modelNameFromType(entity.type)
+                const adaptedX = 1
+                const adaptedZ = 0
                 const controls = new DecorControls(
                     name,
                     new SceneObjectCommandIdle(
@@ -186,20 +200,20 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 )
                 self.context.sceneController.addBoxAt(
                     `collider-box-${name}`,
-                    i - 0.2,
-                    0.8,
-                    -i + 0.65,
+                    adaptedX,
+                    0.22,
+                    adaptedZ,
                     "com.demensdeum.loading",
-                    0.3,
+                    0.4,
                     0xFF00FF,
-                    0.1
+                    0.6
                 )
                 self.context.sceneController.addModelAt(
                     name,
                     modelName,
-                    i,
+                    adaptedX,
                     0,
-                    -i,
+                    adaptedZ,
                     0,
                     0,
                     0,

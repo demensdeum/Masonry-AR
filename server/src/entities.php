@@ -6,6 +6,9 @@ $username = "root";
 $password = "new_password";
 $database = "masonry_ar";
 
+$mustInsert = false;
+$heroUuid = "";
+
 if (!isset($_COOKIE["heroUuid"])) {
     $response = array(
         'code' => 3,
@@ -27,6 +30,7 @@ if (!isset($_COOKIE["heroUuid"])) {
     }
 }
 
+$heroUuid = $_COOKIE["heroUuid"];
 $latitude = 0.0;
 $longitude = 0.0;
 
@@ -80,17 +84,22 @@ if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
-$sqlCheck = "SELECT COUNT(*) as count FROM entities";
-$resultCheck = $conn->query($sqlCheck);
-$rowCheck = $resultCheck->fetch_assoc();
-$count = $rowCheck['count'];
-$randomRecords = mt_rand(1, 3);
+$sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude WHERE uuid = '$heroUuid'";
+$conn->query($sqlUpdate);
 
-if ($count < $randomRecords) {
-    for ($i = 0; $i < $randomRecords; $i++) {
-        $balance = mt_rand(100, 300);
-        $sqlInsert = "INSERT INTO entities (type, balance, latitude, longitude) VALUES ('eye', $balance, 0.0, 0.0)";
-        $conn->query($sqlInsert);
+if ($mustInsert) {
+    $sqlCheck = "SELECT COUNT(*) as count FROM entities";
+    $resultCheck = $conn->query($sqlCheck);
+    $rowCheck = $resultCheck->fetch_assoc();
+    $count = $rowCheck['count'];
+    $randomRecords = mt_rand(1, 3);
+
+    if ($count < $randomRecords) {
+        for ($i = 0; $i < $randomRecords; $i++) {
+            $balance = mt_rand(100, 300);
+            $sqlInsert = "INSERT INTO entities (type, balance, latitude, longitude) VALUES ('eye', $balance, 0.0, 0.0)";
+            $conn->query($sqlInsert);
+        }
     }
 }
 

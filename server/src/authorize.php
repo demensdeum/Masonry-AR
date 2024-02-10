@@ -10,10 +10,17 @@ $conn = new mysqli($servername, $username, $password, $database);
 
 function createHero() {
     global $conn;
-    $heroUuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
-    setcookie("heroUuid", $heroUuid, time() + 10 * 365 * 24 * 60 * 60, "/");
-    $sqlInsert = "INSERT INTO entities (uuid, type, latitude, longitude) VALUES ('$heroUuid', 'hero', 0.0, 0.0)";
+    
+    $sqlInsert = "INSERT INTO entities (type, latitude, longitude) VALUES ('hero', 0.0, 0.0)";
     $conn->query($sqlInsert);
+
+    $lastInsertID = $conn->insert_id;
+    $sqlFetch = "SELECT * FROM entities WHERE id = '$lastInsertID'";
+    $result = $conn->query($sqlFetch);
+    $row = $result->fetch_assoc();
+    $heroUuid = $row["uuid"];
+    setcookie("heroUuid", $heroUuid, time() + 10 * 365 * 24 * 60 * 60, "/");
+
     $response = array(
         'code' => 0,
         'message' => "Authorization success: new data created",
