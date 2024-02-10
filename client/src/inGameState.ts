@@ -173,6 +173,21 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
     }
 
+    geolocationControllerGeolocationAccessGranted(
+        controller: GeolocationController,
+        position: GeolocationPosition
+    ) {
+        this.gameData.position = position
+        this.geolocationController.trackPosition()    
+    }
+
+    geolocationControllerGeolocationDidReceiveError(
+        controller: GeolocationController, 
+        error: string
+    ) {
+        alert(error)
+    }
+
     entitiesControllerDidFetchEntities(
         controller: EntitiesController,
         entities: Entity[]
@@ -332,7 +347,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         const heroUuid = Utils.getCookieValue("heroUuid")
         if (heroUuid) {
             this.gameData.heroUuid = heroUuid
-            this.geolocationController.trackPosition()
+            this.geolocationController.askPermission()
             this.entitiesTrackingStep()            
         }
         else {

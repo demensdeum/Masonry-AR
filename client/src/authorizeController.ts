@@ -12,7 +12,7 @@ export class AuthorizeController {
     }
 
     public async authorizeIfNeeded() {
-        const url = `http://localhost/Masonry-AR/server/authorize.php`;
+        const url = `../server/authorize.php`;
         if (this.isAuthorized) {
             debugPrint(`this.constructor.name: no need to authorize! Already authorized!`)
             return

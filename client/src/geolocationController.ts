@@ -10,6 +10,19 @@ export class GeolocationController {
         this.delegate = delegate
     }
 
+    public askPermission() {
+        const self = this
+        navigator.geolocation.getCurrentPosition((position) => {
+            self.delegate.geolocationControllerGeolocationAccessGranted(
+                this,
+                new GeolocationPosition(
+                    position.coords.latitude, 
+                    position.coords.longitude
+                )
+            )
+        })
+    }
+
     public trackPosition() {
         const self = this
         navigator.geolocation.watchPosition((position) => {

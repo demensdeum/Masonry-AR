@@ -17,7 +17,7 @@ export class EntitiesController {
     }
 
     public async getEntities(position: GeolocationPosition) {
-        const url = `http://localhost/Masonry-AR/server/entities.php?latitude=${position.latitude}&longitude=${position.longitude}`;
+        const url = `../server/entities.php?latitude=${position.latitude}&longitude=${position.longitude}`;
 
         try {
             const response = await fetch(url)
@@ -43,7 +43,7 @@ export class EntitiesController {
     }
 
     public async build() {
-        const url = `http://localhost/Masonry-AR/server/build.php`;
+        const url = `../server/build.php`;
 
         try {
             const response = await fetch(url)
@@ -77,7 +77,7 @@ export class EntitiesController {
     }
 
     public async catch(entity: Entity) {
-        const url = `http://localhost/Masonry-AR/server/catchEntity.php?uuid=${entity.uuid}`;
+        const url = `../server/catchEntity.php?uuid=${entity.uuid}`;
 
         debugPrint(`catch: ${entity.uuid}`)
 
