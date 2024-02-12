@@ -2,6 +2,16 @@
 
 import shutil
 import cleanterminus
+import subprocess
+import os
+
+os.chdir("client")
+subprocess.run('tools/build.py', shell=True, check=True)
+os.chdir("..")
+
+os.chdir("server")
+subprocess.run('tools/build.py', shell=True, check=True)
+os.chdir("..")
 
 cleanterminus.clear()
 

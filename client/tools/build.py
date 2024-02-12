@@ -20,7 +20,7 @@ def run_commands():
         print(f"An error occurred! Exit code: {e.returncode}")
         exit(e.returncode)
 
-    os.system('tsc')
+    subprocess.run('tsc', shell=True, check=True)
     shutil.copytree('external-libs', 'build', dirs_exist_ok=True)
 
 if __name__ == "__main__":
