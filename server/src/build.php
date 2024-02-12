@@ -37,11 +37,33 @@ if (!isset($_COOKIE["heroUuid"])) {
 $sql = "SELECT * FROM entities WHERE uuid = '$heroUuid'";
 $result = $conn->query($sql);
 
+if ($result == false) {
+    $response = array(
+        'code' => 4,
+        'message' => "Build error: heroUuid search error 1",
+        'entities' => []
+    );    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+    exit(0);        
+}    
+
 if ($result->num_rows > 0) {
 
     $row = $result->fetch_assoc();
+    if ($row == null) {
+        $response = array(
+            'code' => 5,
+            'message' => "Build error: heroUuid search error 2",
+            'entities' => []
+        );    
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+        exit(0);  
+    }
+
     $latitude = $row['latitude'];
     $longitude = $row['longitude'];
+
+
 
     $sqlInsert = "INSERT INTO entities (type, balance, latitude, longitude) VALUES ('building', 1000, $latitude, $longitude)";
     $conn->query($sqlInsert);

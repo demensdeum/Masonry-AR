@@ -1,2 +1,3 @@
 /client/build/*.js
 /client/src-preprocessed/*.ts
+/server/vendor/

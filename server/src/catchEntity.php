@@ -45,7 +45,17 @@ if (isset($_GET['uuid'])) {
         if ($result->num_rows > 0) {
 
             $row = $result->fetch_assoc();
-            $entityBalance = $row['balance'];
+            if ($row == null) {
+                $response = array(
+                    'code' => 4,
+                    'message' => "Row is null!",
+                    'entities' => []
+                );    
+                echo json_encode($response, JSON_UNESCAPED_UNICODE);
+                exit(0);
+            }  
+                        
+            $entityBalance = $row['balance'];          
 
             $balanceUpdateSql = "UPDATE entities SET balance = balance + $entityBalance WHERE uuid = '$heroUuid'";
             $conn->query($balanceUpdateSql);

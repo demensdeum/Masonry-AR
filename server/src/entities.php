@@ -102,6 +102,17 @@ if ($insertEnabled) {
     $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE is_visible = true AND latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
+
+    if ($rowCheck == null) {
+        $response = array(
+            'code' => 5,
+            'message' => "RowCheck = null",
+            'entities' => []
+        );    
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit(0);  
+    }
+
     $count = $rowCheck['count'];
 
     if ($count < $minEntitesPerSector) {
@@ -141,13 +152,15 @@ if ($result->num_rows > 0) {
         'entities' => $data
     );
     echo json_encode($response, JSON_UNESCAPED_UNICODE);  
+    exit(0);
 } else {
     $response = array(
         'code' => 0,
         'message' => "No entities",
         'entities' => []
     );
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);  
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    exit(0);  
 }
 
 $conn->close();
