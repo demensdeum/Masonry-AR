@@ -129,6 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-assets/*
+assets
 build/*.js
 src-preprocessed/*.ts
