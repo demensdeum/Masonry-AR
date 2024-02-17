@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/dat.gui": "^0.7.12",
+    "@types/three": "^0.161.2"
+  }
+}

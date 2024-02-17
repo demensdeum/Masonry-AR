@@ -1,5 +1,4 @@
-// @ts-ignore
-import * as THREE from "three";
+import * as THREE from "three"
 
 // @ts-ignore
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
@@ -9,35 +8,35 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { RGBELoader }  from 'three/addons/loaders/RGBELoader.js'
 import { Utils } from "./utils.js"
 import { SceneObject } from "./sceneObject.js"
-// @ts-ignore
-import * as dat from "dat"
+
+import * as dat from "dat.gui"
 import { Names } from "./names.js"
-import { ControlsDataSource } from "./playerControlsDataSource.js";
-import { ControlsDelegate } from "./controlsDelegate.js";
-import { PhysicsController } from "./physicsController.js";
-import { SimplePhysicsController } from "./simplePhysicsController.js";
-import { SimplePhysicsControllerDelegate } from "./simplePhysicsControllerDelegate.js";
-import { PhysicsControllerDelegate } from "./physicsControllerDelegate.js";
-import { PhysicsControllerCollision } from "./physicsControllerCollision.js";
-import { PhysicsControllerCollisionDirection } from "./physicsControllerCollisionDirection.js";
-import { debugPrint, raiseCriticalError } from "./runtime.js";
-import { float } from "./types.js";
-import { Vector3 } from "./vector3.js";
-import { Controls } from "./controls.js";
-import { Paths } from "./paths.js";
-import { WeatherControllerDelegate } from "./weatherControllerDelegate.js";
-import { WeatherController } from "./weatherController.js";
-import { int } from "./types.js";
-import { SceneObjectCommandTeleport } from "./sceneObjectCommandTeleport.js";
-import { SceneObjectCommandIdle } from "./sceneObjectCommandIdle.js";
-import { DecorControlsDataSource } from "./decorControlsDataSource.js";
-import { DecorControls } from "./decorControls.js";
-import { SceneObjectCommand } from "./sceneObjectCommand.js";
-import { SceneObjectCommandTranslate } from "./sceneObjectCommandTranslate.js";
-import { GameSettings } from "./gameSettings.js";
+import { ControlsDataSource } from "./playerControlsDataSource.js"
+import { ControlsDelegate } from "./controlsDelegate.js"
+import { PhysicsController } from "./physicsController.js"
+import { SimplePhysicsController } from "./simplePhysicsController.js"
+import { SimplePhysicsControllerDelegate } from "./simplePhysicsControllerDelegate.js"
+import { PhysicsControllerDelegate } from "./physicsControllerDelegate.js"
+import { PhysicsControllerCollision } from "./physicsControllerCollision.js"
+import { PhysicsControllerCollisionDirection } from "./physicsControllerCollisionDirection.js"
+import { debugPrint, raiseCriticalError } from "./runtime.js"
+import { float } from "./types.js"
+import { Vector3 } from "./vector3.js"
+import { Controls } from "./controls.js"
+import { Paths } from "./paths.js"
+import { WeatherControllerDelegate } from "./weatherControllerDelegate.js"
+import { WeatherController } from "./weatherController.js"
+import { int } from "./types.js"
+import { SceneObjectCommandTeleport } from "./sceneObjectCommandTeleport.js"
+import { SceneObjectCommandIdle } from "./sceneObjectCommandIdle.js"
+import { DecorControlsDataSource } from "./decorControlsDataSource.js"
+import { DecorControls } from "./decorControls.js"
+import { SceneObjectCommand } from "./sceneObjectCommand.js"
+import { SceneObjectCommandTranslate } from "./sceneObjectCommandTranslate.js"
+import { GameSettings } from "./gameSettings.js"
 import { ObjectsPickerController } from "./objectsPickerController.js"
-import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js";
-import { SceneControllerDelegate } from "./sceneControllerDelegate.js";
+import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
+import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 
 const gui = new dat.GUI();
 
@@ -1102,8 +1101,9 @@ export class SceneController implements
             side: THREE.DoubleSide,
             transparent: transparent
         });
-        newMaterial.map.encoding = THREE.sRGBEncoding;
-        this.texturesToLoad.push(newMaterial);        
+        if (newMaterial.map != null) {
+            this.texturesToLoad.push(newMaterial);
+        }        
 
         // @ts-ignore
         const plane = new THREE.Mesh(planeGeometry, material);
