@@ -20,6 +20,7 @@ if (!isset($_COOKIE["heroUuid"])) {
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    $conn->close();    
     exit(0);    
 } else {
     $heroUuid = $_COOKIE["heroUuid"];
@@ -30,6 +31,7 @@ if (!isset($_COOKIE["heroUuid"])) {
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        $conn->close();        
         exit(0);
     }
 }
@@ -43,7 +45,8 @@ if ($result == false) {
         'message' => "Build error: heroUuid search error 1",
         'entities' => []
     );    
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+    echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+    $conn->close();      
     exit(0);        
 }    
 
@@ -56,7 +59,8 @@ if ($result->num_rows > 0) {
             'message' => "Build error: heroUuid search error 2",
             'entities' => []
         );    
-        echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+        echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+        $conn->close();          
         exit(0);  
     }
 
@@ -92,8 +96,7 @@ if ($result->num_rows > 0) {
         'entities' => $data
     );
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    $conn->close();    
     exit(0);    
 }
 
-$conn->close();
-?>

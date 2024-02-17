@@ -42,7 +42,7 @@ if (!isset($_GET['latitude']) || !isset($_GET['longitude'])) {
         'message' => "Latitude or longitude must be provided",
         'entities' => []
     );
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);   
     exit(0);
 }
 
@@ -53,7 +53,7 @@ if ($latitude_input === false) {
         'message' => "Latitude format is invalid",
         'entities' => []
     );
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);  
     exit(0);
 }
 $latitude = $latitude_input;
@@ -65,7 +65,7 @@ if ($longitude_input === false) {
         'message' => "Longitude format is invalid",
         'entities' => []
     );
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);   
     exit(0);
 }
 $longitude = $longitude_input;
@@ -76,7 +76,7 @@ if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) 
         'message' => "Latitude or langitude out of range",
         'entities' => []
     );
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);   
     exit(0);
 }
 
@@ -99,7 +99,7 @@ if ($insertEnabled) {
     $maximalEntityLatitude = $latitude + $borderDistance / 10000;
     $maximalEntityLongitude = $longitude + $borderDistance / 10000;
 
-    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE is_visible = true AND latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
+    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
 
@@ -110,6 +110,7 @@ if ($insertEnabled) {
             'entities' => []
         );    
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        $conn->close();
         exit(0);  
     }
 
@@ -141,8 +142,7 @@ if ($result->num_rows > 0) {
             'type' => $row["type"],
             'balance' => $row["balance"],
             'latitude' => $row["latitude"],            
-            'longitude' => $row["longitude"],
-            'isVisible' => $row["is_visible"]
+            'longitude' => $row["longitude"]
         );
     }
 
@@ -152,6 +152,7 @@ if ($result->num_rows > 0) {
         'entities' => $data
     );
     echo json_encode($response, JSON_UNESCAPED_UNICODE);  
+    $conn->close();
     exit(0);
 } else {
     $response = array(
@@ -160,8 +161,6 @@ if ($result->num_rows > 0) {
         'entities' => []
     );
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    $conn->close();
     exit(0);  
 }
-
-$conn->close();
-?>

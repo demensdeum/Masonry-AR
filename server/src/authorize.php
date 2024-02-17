@@ -29,6 +29,7 @@ function createHero() {
                 'entities' => []
             );    
             echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+            $conn->close();            
             exit(0);
         }
         else {
@@ -38,6 +39,7 @@ function createHero() {
                 'entities' => []
             );    
             echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+            $conn->close();            
             exit(0);
         }
     }
@@ -48,6 +50,7 @@ function createHero() {
             'entities' => []
         );    
         echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+        $conn->close();        
         exit(0);
     } 
 } 
@@ -70,6 +73,7 @@ if (!isset($_COOKIE["heroUuid"])) {
                 'entities' => []
             );
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            $conn->close();            
             exit(0);
         }
     }
@@ -80,7 +84,8 @@ if (!isset($_COOKIE["heroUuid"])) {
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        $conn->close();        
         exit(0);
     }
 }
-?>
+

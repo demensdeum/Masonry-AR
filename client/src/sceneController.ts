@@ -676,7 +676,8 @@ export class SceneController implements
         const sceneObject = this.objects[name]
         if (sceneObject == null) {
             debugPrint(`removeObjectWithName: ${name} is null! WTF1!!`)
-            debugger
+            //debugger
+            return
         }
         this.scene.remove(sceneObject.threeObject)
         delete this.objects[name]

@@ -25,10 +25,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private geolocationController = new GeolocationController(this)
     private entitiesController = new EntitiesController(this)    
     private authorizeController = new AuthorizeController(this)
-    private sceneObjectNameToEntity: { [key: string]: Entity } = {}
-    private entityUuidToSceneObjectName: { [key: string]: string} = {}
+    private sceneObjectUuidToEntity: { [key: string]: Entity } = {}
+    private entityUuidToSceneObjectUuid: { [key: string]: string} = {}
     private gameData = new GameData()
-    private entitiesPoller: any
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -197,6 +196,20 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     ) {
         const self = this
         var i = 0.5
+
+        const entityServerUuids = new Set<string>(entities.map((entity) => {return entity.uuid}))
+        //debugger
+        Object.keys(this.sceneObjectUuidToEntity).forEach((uuid) => {
+            if (!entityServerUuids.has(uuid)) {
+                const entity = this.sceneObjectUuidToEntity[uuid]
+                if (entity == null) {
+                    debugPrint(`Can't remove - no entity with UUID: ${uuid}`)
+                    return
+                }
+                this.removeEntity(entity)
+            }
+        })
+
         entities.forEach((entity) => {
 
             if (entity.uuid == self.gameData.heroUuid) {
@@ -204,13 +217,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 return
             }
 
-            if (entity.uuid in this.entityUuidToSceneObjectName) {
-
-                if (entity.isVisible == false) {
-                    this.removeEntity(entity)
-                    return
-                }
-
+            if (entity.uuid in this.entityUuidToSceneObjectUuid) {
                 const position = this.gameData.position  
                 if (position == null) {
                     raiseCriticalError(`Position is null!`)
@@ -225,15 +232,15 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 const adaptedX = diffX * scale
                 const adaptedZ = -(diffY * scale)    
                 
-                const name = `${entity.type}-${entity.id}`
+                const uuid = entity.uuid
                 this.context.sceneController.moveObjectTo(
-                    name,
+                    uuid,
                     adaptedX,
                     0,
                     adaptedZ
                 )
                 if (entity.type == "eye") {
-                    const colliderBoxName = `collider-box-${name}`
+                    const colliderBoxName = `collider-box-${uuid}`
                     this.context.sceneController.moveObjectTo(
                         colliderBoxName,
                         adaptedX,
@@ -242,12 +249,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                     )
                 }
             }
-            else {
-                if (entity.isVisible == false) {
-                    return
-                }         
-                       
-                const name = `${entity.type}-${entity.id}`
+            else {   
+                const uuid = entity.uuid
                 const modelName = this.modelNameFromType(entity.type)
 
                 const position = this.gameData.position
@@ -265,7 +268,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 const adaptedX = diffX * scale
                 const adaptedZ = -(diffY * scale)
                 const controls = new DecorControls(
-                    name,
+                    uuid,
                     new SceneObjectCommandIdle(
                         "idle",
                         0
@@ -276,7 +279,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 )
                 if (entity.type == "eye") {
                     self.context.sceneController.addBoxAt(
-                        `collider-box-${name}`,
+                        `collider-box-${uuid}`,
                         adaptedX,
                         0.22,
                         adaptedZ,
@@ -287,7 +290,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                     )
                 }
                 self.context.sceneController.addModelAt(
-                    name,
+                    uuid,
                     modelName,
                     adaptedX,
                     0,
@@ -300,21 +303,21 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 )
                 i += 0.5
 
-                self.sceneObjectNameToEntity[name] = entity
-                self.entityUuidToSceneObjectName[entity.uuid] = name
+                self.sceneObjectUuidToEntity[uuid] = entity
+                self.entityUuidToSceneObjectUuid[entity.uuid] = uuid
             }
         })
         this.entitiesTrackingStep()
     }
 
     private removeEntity(entity: Entity) {
-        const sceneObjectName = this.entityUuidToSceneObjectName[entity.uuid]
-        this.context.sceneController.removeSceneObjectWithName(sceneObjectName)
-        this.context.sceneController.removeSceneObjectWithName(`collider-box-${sceneObjectName}`)
+        const sceneObjectUuid = this.entityUuidToSceneObjectUuid[entity.uuid]
+        this.context.sceneController.removeSceneObjectWithName(sceneObjectUuid)
+        this.context.sceneController.removeSceneObjectWithName(`collider-box-${sceneObjectUuid}`)
 
         const name = `${entity.type}-${entity.id}`
-        delete this.entityUuidToSceneObjectName[entity.uuid]
-        delete this.sceneObjectNameToEntity[name]        
+        delete this.entityUuidToSceneObjectUuid[entity.uuid]
+        delete this.sceneObjectUuidToEntity[name]        
     }
 
     entitiesControllerDidCatchEntity(
@@ -345,10 +348,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             debugPrint(`Skip touch outside of collider-box: ${name}`)
             return
         }
-        if (name in this.sceneObjectNameToEntity == false) {
+        if (name in this.sceneObjectUuidToEntity == false) {
             return
         }
-        const entity = this.sceneObjectNameToEntity[name]
+        const entity = this.sceneObjectUuidToEntity[name]
 
         this.entitiesController.catch(entity)      
     }
@@ -418,8 +421,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             false,
             controls
         )
-        this.entityUuidToSceneObjectName[entity.uuid] = sceneObjectName
-        this.sceneObjectNameToEntity[sceneObjectName] = entity   
+        this.entityUuidToSceneObjectUuid[entity.uuid] = sceneObjectName
+        this.sceneObjectUuidToEntity[sceneObjectName] = entity   
     }
 
     entitiesControllerDidNotBuildEntity(

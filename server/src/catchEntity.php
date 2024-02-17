@@ -60,8 +60,8 @@ if (isset($_GET['uuid'])) {
             $balanceUpdateSql = "UPDATE entities SET balance = balance + $entityBalance WHERE uuid = '$heroUuid'";
             $conn->query($balanceUpdateSql);
 
-            $updateSql = "UPDATE entities SET is_visible = false, update_date = CURRENT_TIMESTAMP() WHERE uuid = '$uuid' AND type ='eye'";
-            $conn->query($updateSql);
+            $deleteSql = "DELETE FROM entities WHERE uuid = '$uuid'";
+            $conn->query($deleteSql);
 
             $response = array(
                 'code' => 0,
@@ -88,6 +88,3 @@ if (isset($_GET['uuid'])) {
     echo json_encode(array('code' => 3, 'message' => 'UUID parameter is missing'), JSON_UNESCAPED_UNICODE);
     exit(0);
 }
-
-$conn->close();
-?>
