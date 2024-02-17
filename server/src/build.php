@@ -1,4 +1,5 @@
 <?php
+include("utils.php");
 ini_set('display_errors', 1); 
 
 $servername = "localhost";
@@ -80,9 +81,9 @@ if ($result->num_rows > 0) {
     $latitude = $row['latitude'];
     $longitude = $row['longitude'];
 
+    $uuid = generateUUID();
 
-
-    $sqlInsert = "INSERT INTO entities (type, balance, latitude, longitude) VALUES ('building', 1000, $latitude, $longitude)";
+    $sqlInsert = "INSERT INTO entities (uuid, type, balance, latitude, longitude) VALUES ('$uuid', 'building', 1000, $latitude, $longitude)";
     $conn->query($sqlInsert);
 
     $lastInsertID = $conn->insert_id;

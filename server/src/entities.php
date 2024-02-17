@@ -1,4 +1,5 @@
 <?php
+include("utils.php");
 ini_set('display_errors', 1); 
 
 $servername = "localhost";
@@ -119,10 +120,11 @@ if ($insertEnabled) {
     if ($count < $minEntitesPerSector) {
         $randomRecords = mt_rand(0, 10) == 0 ? mt_rand(1, $minEntitesPerSector) : 0;        
         for ($i = 0; $i < $randomRecords; $i++) {
+            $uuid = generateUUID();
             $balance = mt_rand(1, 3) * 100;
             $entityLatitude = $minimalEntityLatitude + mt_rand(0, $borderDistance * 2) / 10000;
             $entityLongitude = $minimalEntityLongitude + mt_rand(0, $borderDistance * 2) / 10000;
-            $sqlInsert = "INSERT INTO entities (type, balance, latitude, longitude) VALUES ('eye', $balance, $entityLatitude, $entityLongitude)";
+            $sqlInsert = "INSERT INTO entities (uuid, type, balance, latitude, longitude) VALUES ('$uuid', 'eye', $balance, $entityLatitude, $entityLongitude)";
             $conn->query($sqlInsert);
         }
     }

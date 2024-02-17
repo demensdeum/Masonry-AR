@@ -1,4 +1,5 @@
 <?php
+include("utils.php");
 ini_set('display_errors', 1);
 
 $servername = "localhost";
@@ -11,7 +12,9 @@ $conn = new mysqli($servername, $username, $password, $database);
 function createHero() {
     global $conn;
     
-    $sqlInsert = "INSERT INTO entities (type, latitude, longitude) VALUES ('hero', 0.0, 0.0)";
+    $uuid = generateUUID();
+
+    $sqlInsert = "INSERT INTO entities (uuid, type, latitude, longitude) VALUES ('$uuid', 'hero', 0.0, 0.0)";
     $conn->query($sqlInsert);
 
     $lastInsertID = $conn->insert_id;
