@@ -1,8 +1,5 @@
-// @ts-ignore
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.114/build/three.module.js";
-
-// @ts-ignore
-import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.114/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from "three"
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 import { Paths } from "./paths.js";
 import { WeatherController } from "./weatherController.js";
@@ -41,13 +38,11 @@ export class SnowflakesController implements WeatherController {
         const self = this;
         this.modelLoader.load(
             Paths.modelPath(this.snowflakeModelPath),
-            // @ts-ignore
             (container) => {
-                const model = container.scene;
-                // @ts-ignore                
+                const model = container.scene;            
                 model.traverse((entity) => {
-                    if (entity.isMesh) {
-                        const mesh = entity;
+                    if ((<THREE.Mesh> entity).isMesh) {
+                        const mesh = (<THREE.Mesh> entity);
                         self.instancedSnowflakeMesh = new THREE.InstancedMesh(
                             mesh.geometry,
                             this.material, 

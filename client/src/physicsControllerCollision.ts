@@ -1,17 +1,16 @@
-import { SceneObject } from "./sceneObject";
-import { PhysicsControllerCollisionDirection } from "./physicsControllerCollisionDirection";
+import { float } from "./types.js";
+import { SceneObject } from "./sceneObject.js";
+import { PhysicsControllerCollisionDirection } from "./physicsControllerCollisionDirection.js";
 
 export class PhysicsControllerCollision {
     alice: SceneObject;
     bob: SceneObject;
-    // @ts-ignore
     distance: float;
     direction: PhysicsControllerCollisionDirection;
 
     constructor(
         alice: SceneObject,
         bob: SceneObject,
-        // @ts-ignore
         distance: float,
         direction: PhysicsControllerCollisionDirection
     )

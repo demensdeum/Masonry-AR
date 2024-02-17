@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import { int } from "./types.js"
 import { PhysicsController } from "./physicsController.js";
 import { SceneObject } from "./sceneObject.js";
 import { PhysicsControllerCollision } from "./physicsControllerCollision.js";
@@ -125,11 +126,9 @@ export class SimplePhysicsController implements PhysicsController {
 
     private emitRay(
         alice: SceneObject,
-        // @ts-ignore
         delta: float,
         directionVector: any,
         direction: PhysicsControllerCollisionDirection,
-        // @ts-ignore
         hex: int
     ) {      
         if (this.enabled == false) {
@@ -152,14 +151,12 @@ export class SimplePhysicsController implements PhysicsController {
         }        
         var arrowHelper: any = null;  
         
-        // @ts-ignore
-        const origin = new Vector3(
+        const origin = new THREE.Vector3(
             alice.threeObject.position.x,
             alice.threeObject.position.y,
             alice.threeObject.position.z
         );
 
-        // @ts-ignore
         if (this.rayDebugEnabled) {
             const length = 10;        
             arrowHelper = new THREE.ArrowHelper(

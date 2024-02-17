@@ -461,7 +461,6 @@ export class SceneController implements
         object: any,
         userInteractionsEnabled: boolean = false
     ) {
-        // @ts-ignore
         const field = gui.add(
             object,
             name            
@@ -480,7 +479,6 @@ export class SceneController implements
         onChange: (value: float)=>{}
     )
     {
-        // @ts-ignore
         gui.add(
             object,
             name,
@@ -580,28 +578,7 @@ export class SceneController implements
         this.renderer.render(this.scene, this.camera);
     }
 
-    public loadTexture(
-        path: string,
-        material: any
-    ): any {
-        this.textureLoader.load(
-            path,
-            // @ts-ignore
-            function (texture) {
-                console.log("aaaa");
-                material.texture = texture;
-                material.needsUpdate = true;
-            },
-            // @ts-ignore
-            function (error) {
-                console.log("error");
-                debugPrint("CANNOT LOAD TEXTURE: " + path);             
-            }
-        )
-    }
-
     private addSceneObject(sceneObject: SceneObject): void {
-        // @ts-ignore
         const alreadyAddedObject = sceneObject.name in this.objects
 
         if (alreadyAddedObject) {
@@ -634,7 +611,6 @@ export class SceneController implements
         name: string, 
         object: any
     ) {
-        // @ts-ignore
         gui.add(
             object,
             name
@@ -642,13 +618,11 @@ export class SceneController implements
 
         const boxSize: number = 1
 
-        // @ts-ignore
         const boxGeometry = new THREE.BoxGeometry(
             boxSize, 
             boxSize, 
             boxSize
-        );
-        // @ts-ignore
+        )
         const material = new THREE.MeshBasicMaterial({
              color: "white",
              map: this.loadingTexture,
@@ -691,7 +665,6 @@ export class SceneController implements
         this.currentSkyboxName = null
 
         for (const i in gui.__controllers) {
-            // @ts-ignore
             gui.remove(gui.__controllers[i]);
         }
         Object.keys(this.objects).map(k => {
@@ -846,11 +819,10 @@ export class SceneController implements
         );
 
         const pmremGenerator = this.pmremGenerator;
-// @ts-ignore
+
       new RGBELoader()
       .setDataType(THREE.HalfFloatType)
-      .setPath("./" + Paths.assetsDirectory + "/")
-// @ts-ignore      
+      .setPath("./" + Paths.assetsDirectory + "/")  
       .load(Paths.environmentPath(name), (texture) => {
         var environmentMap = pmremGenerator.fromEquirectangular(texture).texture;
         this.scene.environment = environmentMap;
@@ -876,13 +848,12 @@ export class SceneController implements
     ): void {
         debugPrint("addModelAt");
 
-        // @ts-ignore
         const boxGeometry = new THREE.BoxGeometry(
             boxSize, 
             boxSize, 
             boxSize
         );
-        // @ts-ignore
+
         const material = new THREE.MeshBasicMaterial({
              color: color,
              map: this.loadingTexture,
@@ -890,7 +861,6 @@ export class SceneController implements
              opacity: this.collisionsDebugEnabled ? 0.5 : 0
         });     
 
-        // @ts-ignore
         const box = new THREE.Mesh(boxGeometry, material);
         box.position.x = x;
         box.position.y = y;
@@ -919,7 +889,6 @@ export class SceneController implements
 
         modelLoader.load(
           modelPath,
-          // @ts-ignore
           function (container) {
             const model = container.scene;
             
@@ -950,13 +919,11 @@ export class SceneController implements
             box.rotation.z = oldRZ;
 
             const animationMixer = new THREE.AnimationMixer(model);
-            // @ts-ignore
             container.animations.forEach((clip) => {
                 animationMixer.clipAction(clip).play();
             });
             sceneController.animationMixers.push(animationMixer);
 
-            // @ts-ignore
             model.traverse((entity) => {
                 if ((<THREE.Mesh> entity).isMesh) {
                     const mesh = entity;
@@ -982,31 +949,29 @@ export class SceneController implements
     ): void {
         debugPrint("addBoxAt: " + x + " " + y + " " + z);
         const texturePath = Paths.texturePath(textureName);
-        // @ts-ignore
+
         const boxGeometry = new THREE.BoxGeometry(
             size, 
             size, 
             size
-        );
-        // @ts-ignore
+        )
+
         const material = new THREE.MeshBasicMaterial({
              color: color,
              map: this.loadingTexture,
              transparent: true,             
              opacity: opacity
-        });
+        })
 
         const newMaterial = new THREE.MeshBasicMaterial({
             color: color,
             map: this.textureLoader.load(
                 texturePath,
-                // @ts-ignore
-                (texture)=>{
+                (texture: THREE.Texture) => {
                     material.map = texture;
                     material.needsUpdate;
                 },
-                // @ts-ignore
-                (error)=>{
+                (error: unknown) => {
                     console.log("WUT!!!!");
                 }
             ),
@@ -1015,7 +980,6 @@ export class SceneController implements
        });        
        this.texturesToLoad.push(newMaterial);        
 
-        // @ts-ignore
         const box = new THREE.Mesh(boxGeometry, material);
         box.position.x = x;
         box.position.y = y;
@@ -1050,37 +1014,28 @@ export class SceneController implements
     ): void {
         debugPrint("addPlaneAt");
         const texturePath = Paths.texturePath(textureName);
-        // @ts-ignore
         const planeGeometry = new THREE.PlaneGeometry(width, height);
 
-        // @ts-ignore
         const material = new THREE.MeshBasicMaterial({
             color: color,
             map: this.loadingTexture,
-            // @ts-ignore
             depthWrite: !resetDepthBuffer,
-            // @ts-ignore
             side: THREE.DoubleSide,
             transparent: transparent
         });
 
-        // @ts-ignore
         const newMaterial = new THREE.MeshBasicMaterial({
             color: color,
             map: this.textureLoader.load(
                 texturePath,
-                // @ts-ignore
-                (texture)=>{
+                (texture: THREE.Texture)=>{
                     material.map = texture;
                     material.needsUpdate = true;
                 },
-                // @ts-ignore
-                (error)=>{
+                (error: unknown)=>{
                     console.log("WUT!");
                 }),
-                // @ts-ignore
             depthWrite: !resetDepthBuffer,
-            // @ts-ignore
             side: THREE.DoubleSide,
             transparent: transparent
         });
@@ -1088,7 +1043,6 @@ export class SceneController implements
             this.texturesToLoad.push(newMaterial);
         }        
 
-        // @ts-ignore
         const plane = new THREE.Mesh(planeGeometry, material);
         plane.position.x = x;
         plane.position.y = y;
@@ -1097,7 +1051,6 @@ export class SceneController implements
             plane.renderOrder = -1;
         }
 
-        // @ts-ignore
         const box = new THREE.Box3().setFromObject(plane);
 
         const sceneObject = new SceneObject(
@@ -1151,12 +1104,9 @@ export class SceneController implements
     {
         const alisa = this.sceneObject(alisaName);
         const bob = this.sceneObject(bobName);
-        // @ts-ignore
         const alisaColliderBox = new THREE.Box3().setFromObject(alisa.threeObject);
-        // @ts-ignore
         const bobCollider = new THREE.Box3().setFromObject(bob.threeObject);
         const output = alisaColliderBox.intersectsBox(bobCollider);
-        //this.context.debugPrint("alisa object:" + alisa.name + "; bob: "+ bob.name +"; collide result: " + output);
         return output;
     }
 
@@ -1168,7 +1118,6 @@ export class SceneController implements
     ): SceneObject
     {
         const sceneController = this;
-        // @ts-ignore
         var object = this.objects[name];
         if (!object || object == undefined) {
             debugPrint("Can't find object with name: {"+ name +"}!!!!!");

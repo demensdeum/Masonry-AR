@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+import * as THREE from "three"
 import { ControlsDataSource } from "./playerControlsDataSource.js";
 import { ControlsDelegate } from "./controlsDelegate.js"
 import { debugPrint } from "./runtime.js";
-import { Euler } from "./euler.js";
 
 //ThreeJS
 
@@ -151,8 +151,7 @@ export class PlayerControls implements Controls {
             z
         );
         
-        // @ts-ignore
-        const euler = new Euler( 0, 0, 0, 'YXZ' );
+        const euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
         const PI_2 = Math.PI / 2;        
         const quaternion = this.dataSource.controlsQuaternionForObject(
             this,

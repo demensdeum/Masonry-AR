@@ -1,5 +1,4 @@
-// @ts-ignore
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.114/build/three.module.js"
+import * as THREE from "three"
 import { debugPrint } from "./runtime.js"
 import { SceneObject } from "./sceneObject.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"

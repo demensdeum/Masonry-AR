@@ -40,11 +40,8 @@ export class SceneObjectCommandPerformer implements Controls {
     }
 
     private performTranslate(command: SceneObjectCommandTranslate) {
-        // @ts-ignore
         const x = command.translate.x;
-        // @ts-ignore
         const y = command.translate.y;
-        // @ts-ignore
         const z = command.translate.z;
         this.delegate.controlsRequireObjectTranslate(
             this,
