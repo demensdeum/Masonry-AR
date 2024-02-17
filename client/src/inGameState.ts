@@ -330,9 +330,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     sceneControllerDidPickSceneObjectWithName(
         controller: SceneController, 
         name: string
-    ): void {        
+    ): void {     
         if (name.startsWith("collider-box-")) {
             name = name.substring("collider-box-".length)
+        }
+        else {
+            debugPrint(`Skip touch outside of collider-box: ${name}`)
+            return
         }
         if (name in this.sceneObjectNameToEntity == false) {
             return
