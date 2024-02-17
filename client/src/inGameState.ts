@@ -168,6 +168,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         else if (type == "building") {
             return "com.demensdeum.hitech.building"
         }
+        else if (type == "eye") {
+            return "com.demensdeum.eye"
+        }
         else {
             return "com.demensdeum.hero"
         }
@@ -223,19 +226,21 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 const adaptedZ = -(diffY * scale)    
                 
                 const name = `${entity.type}-${entity.id}`
-                const colliderBoxName = `collider-box-${name}`
                 this.context.sceneController.moveObjectTo(
                     name,
                     adaptedX,
                     0,
                     adaptedZ
                 )
-                this.context.sceneController.moveObjectTo(
-                    colliderBoxName,
-                    adaptedX,
-                    0.22,
-                    adaptedZ
-                )
+                if (entity.type == "eye") {
+                    const colliderBoxName = `collider-box-${name}`
+                    this.context.sceneController.moveObjectTo(
+                        colliderBoxName,
+                        adaptedX,
+                        0.22,
+                        adaptedZ
+                    )
+                }
             }
             else {
                 if (entity.isVisible == false) {
@@ -269,16 +274,18 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                     self.context.sceneController,
                     self.context.sceneController
                 )
-                self.context.sceneController.addBoxAt(
-                    `collider-box-${name}`,
-                    adaptedX,
-                    0.22,
-                    adaptedZ,
-                    "com.demensdeum.loading",
-                    0.4,
-                    0xFF00FF,
-                    0.6
-                )
+                if (entity.type == "eye") {
+                    self.context.sceneController.addBoxAt(
+                        `collider-box-${name}`,
+                        adaptedX,
+                        0.22,
+                        adaptedZ,
+                        "com.demensdeum.loading",
+                        0.4,
+                        0xFF00FF,
+                        0.6
+                    )
+                }
                 self.context.sceneController.addModelAt(
                     name,
                     modelName,
