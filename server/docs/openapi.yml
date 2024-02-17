@@ -1,0 +1,52 @@
+openapi: 3.0.3
+tags:
+  - name: authorization
+info:
+  title: Gameplay
+  version: '1.0'
+  description: Main gameplay logic
+  contact:
+    name: Ilia Prokhorov
+    url: 'https://demensdeum.com'
+    email: demensdeum@gmail.com
+  termsOfService: 'https://raw.githubusercontent.com/demensdeum/Masonry-AR/main/LICENSE'
+  license:
+    name: MIT License
+    url: 'https://raw.githubusercontent.com/demensdeum/Masonry-AR/main/LICENSE'
+servers:
+  - url: https://demensdeum.com/demos/masonry-ar/server
+    description: Production
+paths:
+  /authorize.php:
+    get:
+      tags: 
+        - authorization        
+      summary: Your GET endpoint
+      responses:
+        '200':
+          description: |
+            Successfully authenticated. The session ID is returned in a cookie named `JSESSIONID`. You need to include this cookie in subsequent requests.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: JSESSIONID=abcde12345; Path=/; HttpOnly
+              description: Set cookie
+            heroUuid:
+              schema:
+                type: string
+              description: UUID for player entity
+      operationId: authorize.php
+      x-stoplight:
+        id: rqc92tvxdpto8
+      description: Set cookie
+      parameters: []
+components:
+  schemas: {}
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+security:
+  - cookieAuth: []

@@ -24,7 +24,8 @@ https://www.phpmyadmin.net
 * Download client "assets" directory from here: https://www.dropbox.com/scl/fo/v4vqvgt5mgdf9l5eigyng/h?rlkey=o93ppvn5jjx54sxh1nbkcsdex&dl=0  
 * Put "assets" directory into the "client" directory  
 * Create database  
-* Apply sql scripts from server/sql directory  
+* Apply sql scripts from server/sql directory
+* Change credentials in server/src/config.php  
 * Run build_and_deploy.py  
 * Fix/install more tools, change configs/source code  
 * Run build_and_deploy.py  
