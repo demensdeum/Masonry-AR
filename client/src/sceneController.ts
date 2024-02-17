@@ -34,7 +34,7 @@ import { ObjectsPickerController } from "./objectsPickerController.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 
-const gui = new dat.GUI();
+const gui = new dat.GUI({width: 340 });
 
 export class SceneController implements 
                                         ControlsDataSource, 

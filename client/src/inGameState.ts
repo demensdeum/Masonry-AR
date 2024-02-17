@@ -28,6 +28,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private sceneObjectUuidToEntity: { [key: string]: Entity } = {}
     private entityUuidToSceneObjectUuid: { [key: string]: string} = {}
     private gameData = new GameData()
+    private readonly buildingEnabled = false
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -95,27 +96,30 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             this.gameData
         )
 
-        const self = this;
-        const controls = new DecorControls(
-            "building",
-            new SceneObjectCommandIdle(
-                "idle",
-                0
-            ),
-            self.context.sceneController,
-            self.context.sceneController,
-            self.context.sceneController
-        )            
-        let action = () => {
-            this.entitiesController.build()
+        if (this.buildingEnabled) {
+            const self = this;
+            const controls = new DecorControls(
+                "building",
+                new SceneObjectCommandIdle(
+                    "idle",
+                    0
+                ),
+                self.context.sceneController,
+                self.context.sceneController,
+                self.context.sceneController
+            )            
+            let action = () => {
+                this.entitiesController.build()
+            }
+            var button = {
+                ["Build"] : action
+            }
+            this.context.sceneController.addButton(
+                "Build",
+                button
+            )
         }
-        var button = {
-            ["Build"] : action
-        }
-        this.context.sceneController.addButton(
-            "Build",
-            button
-        )
+
         this.gameData.cameraLock = false
         this.gameData.message = "Authorization"
         this.authorizeController.authorizeIfNeeded()
@@ -357,7 +361,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     private entitiesTrackingStep() {
-        this.gameData.message = `Entities Tracking, position is exists: ${this.gameData.position != null}`
+        this.gameData.message = `${this.gameData.position?.latitude} - ${this.gameData.position?.longitude}`
         const position = this.gameData.position
         if (position != null) {
             const self = this
