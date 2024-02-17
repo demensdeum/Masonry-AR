@@ -1,4 +1,4 @@
-import { Euler } from "./euler.js";
+import * as THREE from "three"
 import { SceneObjectCommandTranslate } from "./sceneObjectCommandTranslate.js";
 import { SceneObjectCommandRotate } from "./sceneObjectCommandRotate.js";
 import { SceneObjectCommandJump } from "./sceneObjectCommandJump.js";
@@ -56,20 +56,16 @@ export class SceneObjectCommandPerformer implements Controls {
     }
 
     private performRotate(command: SceneObjectCommandRotate) {
-        // @ts-ignore
         const x = command.rotate.x;
-        // @ts-ignore
         const y = command.rotate.y;
-        // @ts-ignore
         const z = command.rotate.z;
 
-        const euler = new Euler(0, 0, 0, 'YXZ' );        
+        const euler = new THREE.Euler(0, 0, 0, 'YXZ' );        
         const quaternion = this.dataSource.controlsQuaternionForObject(
             this,
             this.objectName
         );
 
-        // @ts-ignore
 		euler.setFromQuaternion(quaternion);
 
         euler.x += x;
@@ -88,11 +84,8 @@ export class SceneObjectCommandPerformer implements Controls {
     }
 
     private performTeleport(command: SceneObjectCommandTeleport) {
-        // @ts-ignore
         const x = command.position.x;
-        // @ts-ignore
         const y = command.position.y;
-        // @ts-ignore
         const z = command.position.z;
         
         this.delegate.controlsRequireObjectTeleport(this, this.objectName, x, y, z);

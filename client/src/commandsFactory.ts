@@ -1,6 +1,6 @@
+import * as THREE from "three"
 import { SceneObjectCommand } from "./sceneObjectCommand.js";
 import { int } from "./types.js";
-import { Vector3 } from "./vector3.js";
 import { SceneObjectCommandIdle } from "./sceneObjectCommandIdle.js"
 import { SceneObjectCommandTranslate } from "./sceneObjectCommandTranslate.js"
 import { SceneObjectCommandJump } from "./sceneObjectCommandJump.js"
@@ -25,7 +25,7 @@ export class SceneObjectCommandsFactory {
         return new SceneObjectCommandTranslate(
             name,
             time,
-            new Vector3(0, 0, -0.05)
+            new THREE.Vector3(0, 0, -0.05)
         )
     }
 
@@ -36,7 +36,7 @@ export class SceneObjectCommandsFactory {
         return new SceneObjectCommandTranslate(
             name,
             time,
-            new Vector3(0, 0, 0.05)
+            new THREE.Vector3(0, 0, 0.05)
         )
     }    
 
@@ -47,7 +47,7 @@ export class SceneObjectCommandsFactory {
         return new SceneObjectCommandTranslate(
             name,
             time,
-            new Vector3(-0.1, 0.0, 0)
+            new THREE.Vector3(-0.1, 0.0, 0)
         )
     }
 
@@ -58,7 +58,7 @@ export class SceneObjectCommandsFactory {
         return new SceneObjectCommandTranslate(
             name,
             time,
-            new Vector3(0.1, 0.0, 0)
+            new THREE.Vector3(0.1, 0.0, 0)
         )
     }
 
@@ -79,7 +79,7 @@ export class SceneObjectCommandsFactory {
         return new SceneObjectCommandRotate(
             name,
             time,
-            new Vector3(0.0, 0.01, 0.0)
+            new THREE.Vector3(0.0, 0.01, 0.0)
         )
     }
 
@@ -90,7 +90,7 @@ export class SceneObjectCommandsFactory {
         return new SceneObjectCommandRotate(
             name,
             time,
-            new Vector3(0.0, -0.01, 0.0)
+            new THREE.Vector3(0.0, -0.01, 0.0)
         )
     }
 }

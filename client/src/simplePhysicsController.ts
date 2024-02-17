@@ -1,10 +1,8 @@
-// @ts-ignore
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.114/build/three.module.js";
+import * as THREE from "three"
 import { PhysicsController } from "./physicsController.js";
 import { SceneObject } from "./sceneObject.js";
 import { PhysicsControllerCollision } from "./physicsControllerCollision.js";
 import { SimplePhysicsControllerDelegate } from "./simplePhysicsControllerDelegate.js";
-import { Vector3 } from "./vector3.js";
 import { PhysicsControllerDelegate } from "./physicsControllerDelegate.js";
 import { PhysicsControllerCollisionDirection } from "./physicsControllerCollisionDirection.js";
 import { float } from "./types.js";

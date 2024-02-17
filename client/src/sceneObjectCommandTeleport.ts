@@ -1,16 +1,16 @@
 import { SceneObjectCommand } from "./sceneObjectCommand.js";
-import { Vector3 } from "./vector3";
+import * as THREE from "three"
 
 export class SceneObjectCommandTeleport extends SceneObjectCommand {
     
-    position: Vector3
-    rotation: Vector3
+    position: THREE.Vector3
+    rotation: THREE.Vector3
 
     constructor(
         name: String,
         time: number,
-        position: Vector3,
-        rotation: Vector3,
+        position: THREE.Vector3,
+        rotation: THREE.Vector3,
         nextCommand: String
     ) {
         super(name, time, nextCommand)

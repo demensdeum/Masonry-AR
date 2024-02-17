@@ -1,11 +1,8 @@
 import * as THREE from "three"
 
-// @ts-ignore
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-// @ts-ignore
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-// @ts-ignore
-import { RGBELoader }  from 'three/addons/loaders/RGBELoader.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { RGBELoader }  from 'three/examples/jsm/loaders/RGBELoader.js'
 import { Utils } from "./utils.js"
 import { SceneObject } from "./sceneObject.js"
 
@@ -21,7 +18,6 @@ import { PhysicsControllerCollision } from "./physicsControllerCollision.js"
 import { PhysicsControllerCollisionDirection } from "./physicsControllerCollisionDirection.js"
 import { debugPrint, raiseCriticalError } from "./runtime.js"
 import { float } from "./types.js"
-import { Vector3 } from "./vector3.js"
 import { Controls } from "./controls.js"
 import { Paths } from "./paths.js"
 import { WeatherControllerDelegate } from "./weatherControllerDelegate.js"
@@ -63,14 +59,12 @@ export class SceneController implements
 
     private debugControls: any
     
-    // @ts-ignore
     private scene: any;
     private camera: any;
     private renderer: any;
     private texturesToLoad: any[] = [];
-    // @ts-ignore
+
     private textureLoader: any = new THREE.TextureLoader();
-    // @ts-ignore
     private pmremGenerator: any;
 
     private clock = new THREE.Clock();
@@ -124,7 +118,7 @@ export class SceneController implements
         if (physicsController instanceof SimplePhysicsController) {
             (physicsController as SimplePhysicsController).simplePhysicsControllerDelegate = this
         }
-// @ts-ignore
+
         this.failbackTexture = this.textureLoader.load(
             Paths.texturePath(
                 "com.demensdeum.failback"
@@ -136,11 +130,10 @@ export class SceneController implements
                 "com.demensdeum.loading"
             )
         );
-// @ts-ignore
+
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xFFFFFF);
-
-// @ts-ignore      
+   
     this.camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -160,7 +153,7 @@ export class SceneController implements
     );
 
     this.objects[Names.Camera] = cameraSceneObject;    
-// @ts-ignore      
+
       this.renderer = new THREE.WebGLRenderer({ 
         canvas: canvas, 
         antialias: true
@@ -187,20 +180,13 @@ export class SceneController implements
       const renderer = this.renderer;
 
       function onWindowResize() {
-        // @ts-ignore
         camera.aspect = window.innerWidth / window.innerHeight;
-        // @ts-ignore
         camera.updateProjectionMatrix();
-        // @ts-ignore
         renderer.setSize(window.innerWidth, window.innerHeight);
       }      
 
       window.addEventListener("resize", onWindowResize, false);
 
-      // this.weatherController = new SnowflakesController(this);
-      this.weatherController?.initialize();    
-
-      // @ts-ignore
       this.debugControls = new OrbitControls(
         camera, 
         renderer.domElement
@@ -210,13 +196,10 @@ export class SceneController implements
     physicControllerRequireApplyPosition(
         objectName: string,
         physicsController: PhysicsController,
-        position: Vector3
+        position: THREE.Vector3
     ): void {
-        // @ts-ignore
         this.sceneObject(objectName).threeObject.position.x = position.x;
-        // @ts-ignore
         this.sceneObject(objectName).threeObject.position.y = position.y;
-        // @ts-ignore
         this.sceneObject(objectName).threeObject.position.z = position.z;
     }
 
@@ -426,12 +409,12 @@ export class SceneController implements
         nextCommandName: string
     )
     {
-        const position = new Vector3(
+        const position = new THREE.Vector3(
             x,
             y,
             z
         )
-        const rotation = new Vector3(
+        const rotation = new THREE.Vector3(
             rX,
             rY,
             rZ
@@ -975,7 +958,7 @@ export class SceneController implements
 
             // @ts-ignore
             model.traverse((entity) => {
-                if (entity.isMesh) {
+                if ((<THREE.Mesh> entity).isMesh) {
                     const mesh = entity;
                     sceneObject.meshes.push(mesh)
                 }

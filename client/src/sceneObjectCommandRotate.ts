@@ -1,14 +1,14 @@
 import { SceneObjectCommand } from "./sceneObjectCommand.js";
-import { Vector3 } from "./vector3.js";
+import * as THREE from "three"
 
 export class SceneObjectCommandRotate extends SceneObjectCommand {
 
-    rotate: Vector3
+    rotate: THREE.Vector3
 
     constructor(
         name: String,
         time: number,
-        rotate: Vector3
+        rotate: THREE.Vector3
     ) {
         super(
             name,
