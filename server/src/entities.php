@@ -1,11 +1,7 @@
 <?php
+include("config.php");
 include("utils.php");
 ini_set('display_errors', 1); 
-
-$servername = "localhost";
-$username = "root";
-$password = "new_password";
-$database = "masonry_ar";
 
 $heroUuid = "";
 
@@ -81,7 +77,7 @@ if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) 
     exit(0);
 }
 
-$conn = new mysqli($servername, $username, $password, $database);
+$conn = dbConnect();
 
 if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);

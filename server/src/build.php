@@ -1,15 +1,11 @@
 <?php
+include("config.php");
 include("utils.php");
 ini_set('display_errors', 1); 
 
-$servername = "localhost";
-$username = "root";
-$password = "new_password";
-$database = "masonry_ar";
-
 $build_enabled = false;
 
-$conn = new mysqli($servername, $username, $password, $database);
+$conn = dbConnect();
 $heroUuid = "";
 
 if ($build_enabled == false) {

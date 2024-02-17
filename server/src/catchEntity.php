@@ -1,4 +1,5 @@
 <?php
+include("config.php");
 ini_set('display_errors', 1); 
 
 $servername = "localhost";
@@ -6,7 +7,7 @@ $username = "root";
 $password = "new_password";
 $database = "masonry_ar";
 
-$conn = new mysqli($servername, $username, $password, $database);
+$conn = dbConnect();
 $heroUuid = "";
 
 if ($conn->connect_error) {
@@ -20,6 +21,7 @@ if (!isset($_COOKIE["heroUuid"])) {
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    $conn->close();
     exit(0);    
 } else {
     $heroUuid = $_COOKIE["heroUuid"];
@@ -30,6 +32,7 @@ if (!isset($_COOKIE["heroUuid"])) {
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        $conn->close();
         exit(0);
     }
 }
@@ -52,6 +55,7 @@ if (isset($_GET['uuid'])) {
                     'entities' => []
                 );    
                 echo json_encode($response, JSON_UNESCAPED_UNICODE);
+                $conn->close();
                 exit(0);
             }  
                         
@@ -83,8 +87,11 @@ if (isset($_GET['uuid'])) {
         );
     }
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    $conn->close();
     exit(0);
 } else {
     echo json_encode(array('code' => 3, 'message' => 'UUID parameter is missing'), JSON_UNESCAPED_UNICODE);
+    $conn->close();
     exit(0);
 }
+
