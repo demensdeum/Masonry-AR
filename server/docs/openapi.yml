@@ -1,6 +1,7 @@
 openapi: 3.0.3
 tags:
   - name: authorization
+  - name: gameplay
 info:
   title: Gameplay
   version: '1.0'
@@ -37,10 +38,31 @@ paths:
                 type: string
               description: UUID for player entity
       operationId: authorize.php
-      x-stoplight:
-        id: rqc92tvxdpto8
       description: Set cookie
       parameters: []
+      
+  /entities.php:
+    get:
+      tags: 
+        - gameplay    
+      summary: Your GET endpoint
+      responses:
+        '200':
+          description: |
+            Successfully authenticated. The session ID is returned in a cookie named `JSESSIONID`. You need to include this cookie in subsequent requests.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: JSESSIONID=abcde12345; Path=/; HttpOnly
+              description: Set cookie
+            heroUuid:
+              schema:
+                type: string
+              description: UUID for player entity
+      operationId: entities.php
+      description: Set cookie
+      parameters: []      
 components:
   schemas: {}
   securitySchemes:
