@@ -1,0 +1,7 @@
+  {
+    "imports": {
+      "dat": "./build/dat.gui.module.js",
+      "three": "./build/three/three.js",
+      "three/addons/": "./build/three/addons/"
+    }
+  }

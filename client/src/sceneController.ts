@@ -1,15 +1,16 @@
 // @ts-ignore
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.114/build/three.module.js";
+import * as THREE from "three";
+
 // @ts-ignore
-import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 // @ts-ignore
-import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.114/examples/jsm/loaders/GLTFLoader.js";
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 // @ts-ignore
-import { RGBELoader } from "https://cdn.jsdelivr.net/npm/three@0.114/examples/jsm/loaders/RGBELoader.js";
+import { RGBELoader }  from 'three/addons/loaders/RGBELoader.js'
 import { Utils } from "./utils.js"
-import { SceneObject } from "./sceneObject.js";
+import { SceneObject } from "./sceneObject.js"
 // @ts-ignore
-import * as dat from "../build/dat.gui.module.js";
+import * as dat from "dat"
 import { Names } from "./names.js"
 import { ControlsDataSource } from "./playerControlsDataSource.js";
 import { ControlsDelegate } from "./controlsDelegate.js";
@@ -865,7 +866,7 @@ export class SceneController implements
         const pmremGenerator = this.pmremGenerator;
 // @ts-ignore
       new RGBELoader()
-      .setDataType( THREE.UnsignedByteType )
+      .setDataType(THREE.HalfFloatType)
       .setPath("./" + Paths.assetsDirectory + "/")
 // @ts-ignore      
       .load(Paths.environmentPath(name), (texture) => {

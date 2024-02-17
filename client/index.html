@@ -13,8 +13,17 @@
     display: block;
   }
 </style>
+<script type="importmap">
+  {
+    "imports": {
+      "dat": "./build/dat.gui/dat.gui.module.js",
+      "three": "./build/three/three.module.js",
+      "three/addons/": "./build/three/addons/"
+    }
+  }
+</script>
 </head>
 <body>
-    <canvas class="webgl"></canvas>  
+    <canvas class="webgl"></canvas>
     <script type="module" src="./build/main.js"></script>
 </body>
