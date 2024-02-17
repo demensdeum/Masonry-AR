@@ -6,8 +6,21 @@ $username = "root";
 $password = "new_password";
 $database = "masonry_ar";
 
+$build_enabled = false;
+
 $conn = new mysqli($servername, $username, $password, $database);
 $heroUuid = "";
+
+if ($build_enabled == false) {
+    $response = array(
+        'code' => 6,
+        'message' => "Building temporarily disabled",
+        'entities' => []
+    );    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    $conn->close();    
+    exit(0);  
+}
 
 if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
