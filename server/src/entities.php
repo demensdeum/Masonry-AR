@@ -3,25 +3,25 @@ include("config.php");
 include("utils.php");
 ini_set('display_errors', 1); 
 
-$heroUuid = "";
+$heroUUID = "";
 
 $insertEnabled = true;
 $minEntitesPerSector = 3;
 
-if (!isset($_COOKIE["heroUuid"])) {
+if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
         'code' => 3,
-        'message' => "Not authorized: no heroUuid",
+        'message' => "Not authorized: no heroUUID",
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit(0);    
 } else {
-    $heroUuid = $_COOKIE["heroUuid"];
-    if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $heroUuid)) {
+    $heroUUID = $_COOKIE["privateHeroUUID"];
+    if (!validateUUID($heroUUID)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUuid",
+            'message' => "Invalid UUID format for $heroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -29,7 +29,7 @@ if (!isset($_COOKIE["heroUuid"])) {
     }
 }
 
-$heroUuid = $_COOKIE["heroUuid"];
+$heroUUID = $_COOKIE["privateHeroUUID"];
 $latitude = 0.0;
 $longitude = 0.0;
 
@@ -83,9 +83,7 @@ if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
-
-
-$sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude WHERE uuid = '$heroUuid'";
+$sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude WHERE private_uuid = '$heroUUID'";
 $conn->query($sqlUpdate);
 
 if ($insertEnabled) {

@@ -216,7 +216,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         entities.forEach((entity) => {
 
-            if (entity.uuid == self.gameData.heroUuid) {
+            if (entity.uuid == self.gameData.heroUUID) {
                 self.gameData.balance = entity.balance
                 return
             }
@@ -380,14 +380,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     authorizeControllerDidAuthorize(
         controller: AuthorizeController
     ) {
-        const heroUuid = Utils.getCookieValue("heroUuid")
-        if (heroUuid) {
-            this.gameData.heroUuid = heroUuid
+        const heroUUID = Utils.getCookieValue("heroUUID")
+        if (heroUUID) {
+            this.gameData.heroUUID = heroUUID
             this.geolocationController.askPermission()
             this.entitiesTrackingStep()            
         }
         else {
-            alert("No heroUuid in cookie!")
+            alert("No heroUUID in cookie!")
         }
     }
 

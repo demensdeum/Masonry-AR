@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 $build_enabled = false;
 
 $conn = dbConnect();
-$heroUuid = "";
+$heroUUID = "";
 
 if ($build_enabled == false) {
     $response = array(
@@ -23,21 +23,21 @@ if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
-if (!isset($_COOKIE["heroUuid"])) {
+if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
         'code' => 3,
-        'message' => "Not authorized: no heroUuid",
+        'message' => "Not authorized: no heroUUID",
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     $conn->close();    
     exit(0);    
 } else {
-    $heroUuid = $_COOKIE["heroUuid"];
-    if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $heroUuid)) {
+    $heroUUID = $_COOKIE["privateHeroUUID"];
+    if (!validateUUID($heroUUID)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUuid",
+            'message' => "Invalid UUID format for $heroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -46,13 +46,13 @@ if (!isset($_COOKIE["heroUuid"])) {
     }
 }
 
-$sql = "SELECT * FROM entities WHERE uuid = '$heroUuid'";
+$sql = "SELECT * FROM entities WHERE uuid = '$heroUUID'";
 $result = $conn->query($sql);
 
 if ($result == false) {
     $response = array(
         'code' => 4,
-        'message' => "Build error: heroUuid search error 1",
+        'message' => "Build error: heroUUID search error 1",
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE); 
@@ -66,7 +66,7 @@ if ($result->num_rows > 0) {
     if ($row == null) {
         $response = array(
             'code' => 5,
-            'message' => "Build error: heroUuid search error 2",
+            'message' => "Build error: heroUUID search error 2",
             'entities' => []
         );    
         echo json_encode($response, JSON_UNESCAPED_UNICODE); 

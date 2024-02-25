@@ -33,7 +33,7 @@ paths:
                 type: string
                 example: JSESSIONID=abcde12345; Path=/; HttpOnly
               description: Set cookie
-            heroUuid:
+            heroUUID:
               schema:
                 type: string
               description: UUID for player entity
@@ -56,7 +56,7 @@ paths:
                 type: string
                 example: JSESSIONID=abcde12345; Path=/; HttpOnly
               description: Set cookie
-            heroUuid:
+            heroUUID:
               schema:
                 type: string
               description: UUID for player entity

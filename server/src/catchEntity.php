@@ -1,5 +1,6 @@
 <?php
 include("config.php");
+include("utils.php");
 ini_set('display_errors', 1); 
 
 $servername = "localhost";
@@ -8,27 +9,27 @@ $password = "new_password";
 $database = "masonry_ar";
 
 $conn = dbConnect();
-$heroUuid = "";
+$heroUUID = "";
 
 if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
-if (!isset($_COOKIE["heroUuid"])) {
+if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
         'code' => 3,
-        'message' => "Not authorized: no heroUuid",
+        'message' => "Not authorized: no heroUUID",
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     $conn->close();
     exit(0);    
 } else {
-    $heroUuid = $_COOKIE["heroUuid"];
-    if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $heroUuid)) {
+    $heroUUID = $_COOKIE["privateHeroUUID"];
+    if (!validateUUID($heroUUID)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUuid",
+            'message' => "Invalid UUID format for $heroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -40,7 +41,7 @@ if (!isset($_COOKIE["heroUuid"])) {
 if (isset($_GET['uuid'])) {
     $uuid = $_GET['uuid'];
 
-    if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid)) {
+    if (validateUUID($heroUUID)) {
 
         $sql = "SELECT * FROM entities WHERE uuid = '$uuid'";
         $result = $conn->query($sql);
@@ -61,7 +62,7 @@ if (isset($_GET['uuid'])) {
                         
             $entityBalance = $row['balance'];          
 
-            $balanceUpdateSql = "UPDATE entities SET balance = balance + $entityBalance WHERE uuid = '$heroUuid'";
+            $balanceUpdateSql = "UPDATE entities SET balance = balance + $entityBalance WHERE private_uuid = '$heroUUID'";
             $conn->query($balanceUpdateSql);
 
             $deleteSql = "DELETE FROM entities WHERE uuid = '$uuid'";
