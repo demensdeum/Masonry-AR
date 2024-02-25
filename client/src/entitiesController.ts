@@ -55,7 +55,7 @@ export class EntitiesController {
             const jsonData: any = await response.json()
 
             const result = RequestResult.fromJson(jsonData)
-            const entity =result.entities[0]
+            const entity = result.entities[0]
 
             if (result.code == RequestResultCodes.Success) {
                 this.delegate.entitiesControllerDidBuildEntity(

@@ -48,7 +48,7 @@ if (isset($_GET['order'])) {
         $conn->close();
         exit(0);        
     }
-    $updateSql = "UPDATE entities SET masonic_order = '$order' WHERE private_uuid = '$heroUUID' LIMIT 1";
+    $updateSql = "UPDATE entities SET masonic_order = '$order' WHERE private_uuid = '$heroUUID'";
     $conn->query($updateSql);
 
     $response = array(

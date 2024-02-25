@@ -3,10 +3,12 @@ include("config.php");
 include("utils.php");
 ini_set('display_errors', 1); 
 
-$build_enabled = false;
+$build_enabled = true;
 
 $conn = dbConnect();
 $heroUUID = "";
+
+$buildPrice = 1000;
 
 if ($build_enabled == false) {
     $response = array(
@@ -46,19 +48,8 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     }
 }
 
-$sql = "SELECT * FROM entities WHERE uuid = '$heroUUID'";
-$result = $conn->query($sql);
-
-if ($result == false) {
-    $response = array(
-        'code' => 4,
-        'message' => "Build error: heroUUID search error 1",
-        'entities' => []
-    );    
-    echo json_encode($response, JSON_UNESCAPED_UNICODE); 
-    $conn->close();      
-    exit(0);        
-}    
+$sql = "SELECT * FROM entities WHERE private_uuid = '$heroUUID'";
+$result = $conn->query($sql);  
 
 if ($result->num_rows > 0) {
 
@@ -74,12 +65,38 @@ if ($result->num_rows > 0) {
         exit(0);  
     }
 
+    $balance = $row["balance"];
+
+    if ($balance < $buildPrice) {
+        $response = array(
+            'code' => 7,
+            'message' => "Build error: not enough money: $balance < $buildPrice",
+            'entities' => []
+        );    
+        echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+        $conn->close();          
+        exit(0);          
+    }
+
     $latitude = $row['latitude'];
     $longitude = $row['longitude'];
 
     $uuid = generateUUID();
 
-    $sqlInsert = "INSERT INTO entities (uuid, type, balance, latitude, longitude) VALUES ('$uuid', 'building', 1000, $latitude, $longitude)";
+    $order = $row['masonic_order'];
+
+    if  ($order == "NONE") {
+        $response = array(
+            'code' => 8,
+            'message' => "Can't build without Masonic order ($order), select order first!",
+            'entities' => []
+        );    
+        echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+        $conn->close();      
+        exit(0);        
+    }
+
+    $sqlInsert = "INSERT INTO entities (uuid, masonic_order, type, balance, latitude, longitude) VALUES ('$uuid', '$order', 'building', 1000, $latitude, $longitude)";
     $conn->query($sqlInsert);
 
     $lastInsertID = $conn->insert_id;
@@ -100,6 +117,9 @@ if ($result->num_rows > 0) {
         );
     }
 
+    $balanceUpdateSql = "UPDATE entities SET balance = balance - $buildPrice WHERE private_uuid = '$heroUUID'";
+    $conn->query($balanceUpdateSql);
+
     $response = array(
         'code' => 0,
         'message' => "Build success!",
@@ -109,4 +129,13 @@ if ($result->num_rows > 0) {
     $conn->close();    
     exit(0);    
 }
-
+else {
+    $response = array(
+        'code' => 4,
+        'message' => "Build error: heroUUID $heroUUID not found}",
+        'entities' => []
+    );    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+    $conn->close();      
+    exit(0);       
+}

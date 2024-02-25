@@ -11,7 +11,8 @@ $sql = "SELECT masonic_order, SUM(balance) AS total_balance
         FROM entities 
         WHERE masonic_order <> 'NONE'
         GROUP BY masonic_order 
-        ORDER BY total_balance DESC";
+        ORDER BY total_balance DESC
+        LIMIT 10";
 
 $result = $conn->query($sql);
 

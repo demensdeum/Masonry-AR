@@ -7,6 +7,7 @@ $heroUUID = "";
 
 $insertEnabled = true;
 $minEntitesPerSector = 3;
+$eyeChance = 4;
 
 if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
@@ -112,14 +113,16 @@ if ($insertEnabled) {
     $count = $rowCheck['count'];
 
     if ($count < $minEntitesPerSector) {
-        $randomRecords = mt_rand(0, 10) == 0 ? mt_rand(1, $minEntitesPerSector) : 0;        
-        for ($i = 0; $i < $randomRecords; $i++) {
-            $uuid = generateUUID();
-            $balance = mt_rand(1, 3) * 100;
-            $entityLatitude = $minimalEntityLatitude + mt_rand(0, $borderDistance * 2) / 10000;
-            $entityLongitude = $minimalEntityLongitude + mt_rand(0, $borderDistance * 2) / 10000;
-            $sqlInsert = "INSERT INTO entities (uuid, type, balance, latitude, longitude) VALUES ('$uuid', 'eye', $balance, $entityLatitude, $entityLongitude)";
-            $conn->query($sqlInsert);
+        if (mt_rand(0, $eyeChance) == 0) {     
+            $randomRecords = mt_rand(1, $minEntitesPerSector);
+            for ($i = 0; $i < $randomRecords; $i++) {
+                $uuid = generateUUID();
+                $balance = mt_rand(1, 3) * 100;
+                $entityLatitude = $minimalEntityLatitude + mt_rand(0, $borderDistance * 2) / 10000;
+                $entityLongitude = $minimalEntityLongitude + mt_rand(0, $borderDistance * 2) / 10000;
+                $sqlInsert = "INSERT INTO entities (uuid, type, balance, latitude, longitude) VALUES ('$uuid', 'eye', $balance, $entityLatitude, $entityLongitude)";
+                $conn->query($sqlInsert);
+            }
         }
     }
 }

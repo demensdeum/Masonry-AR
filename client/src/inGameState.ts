@@ -32,7 +32,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private entityUuidToSceneObjectUuid: { [key: string]: string} = {}
     private heroStatusController = new HeroStatusController(this)
     private gameData = new GameData()
-    private readonly buildingEnabled = false
+    private readonly buildingEnabled = true
     private readonly orderChangeEnabled = true
 
     initialize(): void {
@@ -419,33 +419,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     entitiesControllerDidBuildEntity(
         _: EntitiesController,
-        entity: Entity
+        __: Entity
     ): void {
-        const controls = new DecorControls(
-            "building",
-            new SceneObjectCommandIdle(
-                "idle",
-                0
-            ),
-            this.context.sceneController,
-            this.context.sceneController,
-            this.context.sceneController
-        )        
-        const sceneObjectName = `${entity.type}-${entity.id}`
-        this.context.sceneController.addModelAt(
-            sceneObjectName,
-            this.modelNameFromType(entity.type),
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            false,
-            controls
-        )
-        this.entityUuidToSceneObjectUuid[entity.uuid] = sceneObjectName
-        this.sceneObjectUuidToEntity[sceneObjectName] = entity   
+        debugPrint("Build success")
     }
 
     entitiesControllerDidNotBuildEntity(
