@@ -15,11 +15,14 @@ import { SceneController } from "./sceneController.js"
 import { GameData } from "./gameData.js"
 import { AuthorizeController } from "./authorizeController.js"
 import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js"
+import { HeroStatusControllerDelegate } from "./heroStatusControllerDelegate.js"
+import { HeroStatusController } from "./heroStatusController.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     AuthorizeControllerDelegate,
                                                     EntitiesControllerDelegate,
-                                                    SceneControllerDelegate {
+                                                    SceneControllerDelegate,
+                                                    HeroStatusControllerDelegate {
     name = "InGameState"
     
     private geolocationController = new GeolocationController(this)
@@ -27,6 +30,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private authorizeController = new AuthorizeController(this)
     private sceneObjectUuidToEntity: { [key: string]: Entity } = {}
     private entityUuidToSceneObjectUuid: { [key: string]: string} = {}
+    private heroStatusController = new HeroStatusController(this)
     private gameData = new GameData()
     private readonly buildingEnabled = false
     private readonly orderChangeEnabled = true
@@ -103,13 +107,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         if (this.orderChangeEnabled) {        
             let action = () => {
-                this.entitiesController.build()
+                this.switchOrder()
             }
-            var button = {
-                ["Build"] : action
+            const button = {
+                ["Order"] : action
             }
             this.context.sceneController.addButton(
-                "Build",
+                "Order",
                 button
             )
         }
@@ -118,7 +122,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             let action = () => {
                 this.entitiesController.build()
             }
-            var button = {
+            const button = {
                 ["Build"] : action
             }
             this.context.sceneController.addButton(
@@ -148,7 +152,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         )        
     }
 
-    step(): void {
+    switchOrder() {
+        const order = prompt("Название масонского ордена")
+        if (order) {
+            this.heroStatusController.set(order)
+        }
+    }
+
+    step() {
         if (this.gameData.cameraLock) {
             const cameraPosition = this.context.sceneController.sceneObjectPosition("hero").clone()
             cameraPosition.y += 1.7
@@ -225,6 +236,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
             if (entity.uuid == self.gameData.heroUUID) {
                 self.gameData.balance = entity.balance
+                self.gameData.order = entity.order
                 return
             }
 
@@ -442,5 +454,19 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         message: string
     ): void {
         alert(message)
+    }
+
+    heroStatusControllerDidChange(
+        _: HeroStatusController, 
+        order: String
+    ): void {
+        this.gameData.order = order
+    }
+
+    heroStatusControllerDidReceiveError(
+        _: HeroStatusController,
+        error: String
+    ): void {
+        alert(error)
     }
 }

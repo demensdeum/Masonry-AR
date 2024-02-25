@@ -135,6 +135,7 @@ if ($result->num_rows > 0) {
         $data[] = array(
             'id' => $row["id"],
             'uuid' => $row["uuid"],
+            'order' => $row["masonic_order"],
             'type' => $row["type"],
             'balance' => $row["balance"],
             'latitude' => $row["latitude"],            

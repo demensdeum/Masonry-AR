@@ -3,11 +3,6 @@ include("config.php");
 include("utils.php");
 ini_set('display_errors', 1); 
 
-$servername = "localhost";
-$username = "root";
-$password = "new_password";
-$database = "masonry_ar";
-
 $conn = dbConnect();
 $heroUUID = "";
 
