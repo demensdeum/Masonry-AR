@@ -29,4 +29,15 @@ export interface EntitiesControllerDelegate {
         entity: Entity,
         message: string
     ): void    
+
+    entitiesControllerDidDestroyEntity(
+        controller: EntitiesController,
+        entity: Entity
+    ): void
+
+    entitiesControllerDidNotDestroyEntity(
+        controller: EntitiesController,
+        entity: Entity,
+        message: string
+    ): void       
 }

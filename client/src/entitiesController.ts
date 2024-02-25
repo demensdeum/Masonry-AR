@@ -76,6 +76,41 @@ export class EntitiesController {
         }
     }
 
+    public async destroy(entity: Entity) {
+        const url = `../server/destroy.php?uuid=${entity.uuid}`;
+
+        debugPrint(`destroy: ${entity.uuid}`)
+
+        try {
+            const response = await fetch(url)
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} - ${response.statusText}`)
+            }
+
+            const jsonData: any = await response.json()
+
+            const result = RequestResult.fromJson(jsonData)
+
+            if (result.code == RequestResultCodes.Success) {
+                this.delegate.entitiesControllerDidDestroyEntity(
+                    this,
+                    entity
+                )    
+            }
+            else {
+                this.delegate.entitiesControllerDidNotDestroyEntity(
+                    this,
+                    entity,
+                    result.message
+                )
+            }
+
+        } catch (error) {
+            console.error("Error fetching entities:", error);
+        }
+    }
+
     public async catch(entity: Entity) {
         const url = `../server/catchEntity.php?uuid=${entity.uuid}`;
 

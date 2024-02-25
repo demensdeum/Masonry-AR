@@ -34,6 +34,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private gameData = new GameData()
     private readonly buildingEnabled = true
     private readonly orderChangeEnabled = true
+    private readonly entitiesTrackingStepTimeout = 3000
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -360,12 +361,45 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         debugPrint(message)    
     }
 
+    askIfWantToRemoveBuilding(entity: Entity) {
+        if (this.gameData.order == entity.order) {
+            alert(`Это здание вашего ордена ${entity.order}`)
+            return
+        }
+        else if (confirm(`Хотите уничтожить здание масонского ордена ${entity.order} ?`)) {
+            this.entitiesController.destroy(entity)
+            return
+        }
+    }
+
+    entitiesControllerDidDestroyEntity(
+        _: EntitiesController,
+        entity: Entity
+    ): void {
+        this.removeEntity(entity)
+    }
+
+    entitiesControllerDidNotDestroyEntity(
+        _: EntitiesController, 
+        __: Entity, 
+        message: string
+    ): void {
+        alert(message);
+    }
+
     sceneControllerDidPickSceneObjectWithName(
         _: SceneController, 
         name: string
     ): void {     
         if (name.startsWith("collider-box-")) {
             name = name.substring("collider-box-".length)
+        }
+        else if (name in this.sceneObjectUuidToEntity) {
+            const entity = this.sceneObjectUuidToEntity[name]
+            if (entity.type == "building") {
+                this.askIfWantToRemoveBuilding(entity)
+                return
+            }
         }
         else {
             debugPrint(`Skip touch outside of collider-box: ${name}`)
@@ -376,7 +410,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
         const entity = this.sceneObjectUuidToEntity[name]
 
-        this.entitiesController.catch(entity)      
+        if (entity.type != "eye") {
+            debugPrint(`Unknown entity type tap: ${entity.type}`)
+        }
+        else {
+            this.entitiesController.catch(entity)      
+        }
     }
 
     private entitiesTrackingStep() {
@@ -386,13 +425,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             const self = this
             setTimeout(()=>{
                 self.entitiesController.getEntities(position)
-            }, 1000)
+            }, self.entitiesTrackingStepTimeout)
         }
         else {
             const self = this
             setTimeout(()=>{
                 self.entitiesTrackingStep()
-            }, 1000)
+            }, self.entitiesTrackingStepTimeout)
         }
     }
 

@@ -7,7 +7,7 @@ $heroUUID = "";
 
 $insertEnabled = true;
 $minEntitesPerSector = 3;
-$eyeChance = 4;
+$eyeChance = 8;
 
 if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
@@ -95,7 +95,7 @@ if ($insertEnabled) {
     $maximalEntityLatitude = $latitude + $borderDistance / 10000;
     $maximalEntityLongitude = $longitude + $borderDistance / 10000;
 
-    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
+    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE type = 'eye' AND latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
 
