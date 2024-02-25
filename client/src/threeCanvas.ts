@@ -17,8 +17,6 @@ customElements.define('three-canvas',
             super();
             this.playerControls = null;
 
-            // this.skyboxChanger = 0
-
             this.delegate = null;
             this.canvas = null;
             this.debugEnabled = false;

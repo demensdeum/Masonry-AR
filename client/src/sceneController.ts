@@ -56,8 +56,6 @@ export class SceneController implements
     private currentSkyboxName?: String | null
 
     private stepCounter: int = 0
-
-    private debugControls: any
     
     private scene: any;
     private camera: any;
@@ -73,7 +71,6 @@ export class SceneController implements
     private objects: { [key: string]: SceneObject } = {};
     private commands: { [key: string]: SceneObjectCommand } = {};
 
-    private failbackTexture: any;
     private loadingTexture: any;
 
     private physicsController: PhysicsController;
@@ -92,6 +89,9 @@ export class SceneController implements
 
     public physicsEnabled: boolean;
     public delegate: SceneControllerDelegate | null = null
+
+    // @ts-ignore:next-line
+    private debugControls: OrbitControls
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -113,17 +113,9 @@ export class SceneController implements
             this.physicsController.enabled = false
         }
 
-        const sceneController = this;
-
         if (physicsController instanceof SimplePhysicsController) {
             (physicsController as SimplePhysicsController).simplePhysicsControllerDelegate = this
         }
-
-        this.failbackTexture = this.textureLoader.load(
-            Paths.texturePath(
-                "com.demensdeum.failback"
-            )
-        );
 
         this.loadingTexture = this.textureLoader.load(
             Paths.texturePath(
@@ -195,7 +187,7 @@ export class SceneController implements
 
     physicControllerRequireApplyPosition(
         objectName: string,
-        physicsController: PhysicsController,
+        _: PhysicsController,
         position: THREE.Vector3
     ): void {
         this.sceneObject(objectName).threeObject.position.x = position.x;
@@ -204,8 +196,8 @@ export class SceneController implements
     }
 
     physicsControllerDidDetectFreeSpace(
-        physicsController: PhysicsController,
-        sceneObject: SceneObject,
+        _: PhysicsController,
+        __: SceneObject,
         direction: PhysicsControllerCollisionDirection
     ): void {
         switch (direction) {
@@ -223,7 +215,7 @@ export class SceneController implements
     }
 
     physicsControllerDidDetectDistance(
-        physicsController: PhysicsController,
+        _: PhysicsController,
         collision: PhysicsControllerCollision
     ): void { 
 
@@ -287,7 +279,7 @@ export class SceneController implements
     }
     
     public decorControlsDidRequestCommandWithName(
-        decorControls: DecorControls,
+        _: DecorControls,
         commandName: string
     ): SceneObjectCommand
     {
@@ -327,7 +319,7 @@ export class SceneController implements
     }
 
     controlsRequireJump(
-        controls: Controls,
+        _: Controls,
         objectName: string
     ) {
         const sceneObject = this.sceneObject(objectName);
@@ -335,7 +327,7 @@ export class SceneController implements
     }
 
     public controlsRequireObjectTranslate(
-        controls: Controls,
+        _: Controls,
         objectName: string,
         x: float,
         y: float,
@@ -350,7 +342,7 @@ export class SceneController implements
     }
 
     public controlsRequireObjectRotation(
-        controls: Controls,
+        _: Controls,
         objectName: string, 
         euler: any
     ) {
@@ -362,35 +354,35 @@ export class SceneController implements
     }
 
     controlsCanMoveLeftObject(
-        controls: Controls,
-        objectName: string
+        _: Controls,
+        __: string
     ) {
         return this.canMoveLeft;
     }
 
     controlsCanMoveRightObject(
-        controls: Controls,
-        objectName: string
+        _: Controls,
+        __: string
     ) {
         return this.canMoveRight;
     }
 
     controlsCanMoveForwardObject(
-        controls: Controls,
-        objectName: string
+        _: Controls,
+        __: string
     ) {
         return this.canMoveForward;
     }
 
     controlsCanMoveBackwardObject(
-        controls: Controls,
-        objectName: string
+        _: Controls,
+        __: string
     ) {
         return this.canMoveBackward;
     }
 
     weatherControllerDidRequireToAddInstancedMeshToScene(
-        weatherController: WeatherController,
+        _: WeatherController,
         instancedMesh: any
     ): void {
         this.scene.add(instancedMesh);
@@ -715,7 +707,6 @@ export class SceneController implements
             }
         }
         this.currentSkyboxName = name;
-        const sceneController = this;
         this.addPlaneAt(
             Names.Skybox + "Front",
             0,
@@ -977,7 +968,7 @@ export class SceneController implements
                     material.needsUpdate;
                 },
                 (error: unknown) => {
-                    console.log("WUT!!!!");
+                    console.log(`WUT!!!! Error: ${error}`);
                 }
             ),
             transparent: true,
@@ -1038,11 +1029,12 @@ export class SceneController implements
                     material.needsUpdate = true;
                 },
                 (error: unknown)=>{
-                    console.log("WUT!");
+                    console.log(`WUT! Error: ${error}`);
                 }),
             depthWrite: !resetDepthBuffer,
             side: THREE.DoubleSide,
-            transparent: transparent
+            transparent: transparent,
+            opacity: opacity
         });
         if (newMaterial.map != null) {
             this.texturesToLoad.push(newMaterial);
@@ -1055,8 +1047,6 @@ export class SceneController implements
         if (resetDepthBuffer) {
             plane.renderOrder = -1;
         }
-
-        const box = new THREE.Box3().setFromObject(plane);
 
         const sceneObject = new SceneObject(
             name,
@@ -1072,7 +1062,7 @@ export class SceneController implements
     }    
 
     objectsPickerControllerDidPickObject(
-        controller: ObjectsPickerController,
+        _: ObjectsPickerController,
         object: SceneObject
     ) {
         debugPrint(`pick: ${object.name}`)
@@ -1122,7 +1112,6 @@ export class SceneController implements
         z: number = 0
     ): SceneObject
     {
-        const sceneController = this;
         var object = this.objects[name];
         if (!object || object == undefined) {
             debugPrint("Can't find object with name: {"+ name +"}!!!!!");
@@ -1147,7 +1136,7 @@ export class SceneController implements
     }
 
     controlsRequireObjectTeleport(
-        controls: Controls,
+        _: Controls,
         name: string,
         x: number,
         y: number,

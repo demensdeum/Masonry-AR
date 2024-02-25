@@ -126,7 +126,7 @@ export class SimplePhysicsController implements PhysicsController {
 
     private emitRay(
         alice: SceneObject,
-        delta: float,
+        _: float,
         directionVector: any,
         direction: PhysicsControllerCollisionDirection,
         hex: int

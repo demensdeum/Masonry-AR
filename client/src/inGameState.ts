@@ -29,6 +29,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private entityUuidToSceneObjectUuid: { [key: string]: string} = {}
     private gameData = new GameData()
     private readonly buildingEnabled = false
+    private readonly orderChangeEnabled = true
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -95,19 +96,25 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             "message",
             this.gameData
         )
+        this.context.sceneController.addText(
+            "order",
+            this.gameData
+        )
 
-        if (this.buildingEnabled) {
-            const self = this;
-            const controls = new DecorControls(
-                "building",
-                new SceneObjectCommandIdle(
-                    "idle",
-                    0
-                ),
-                self.context.sceneController,
-                self.context.sceneController,
-                self.context.sceneController
-            )            
+        if (this.orderChangeEnabled) {        
+            let action = () => {
+                this.entitiesController.build()
+            }
+            var button = {
+                ["Build"] : action
+            }
+            this.context.sceneController.addButton(
+                "Build",
+                button
+            )
+        }
+
+        if (this.buildingEnabled) {            
             let action = () => {
                 this.entitiesController.build()
             }
@@ -157,7 +164,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     geolocationControllerDidGetPosition(
-        controller: GeolocationController,
+        _: GeolocationController,
         position: GeolocationPosition
     ) {
         this.gameData.position = position
@@ -180,7 +187,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     geolocationControllerGeolocationAccessGranted(
-        controller: GeolocationController,
+        _: GeolocationController,
         position: GeolocationPosition
     ) {
         this.gameData.position = position
@@ -188,14 +195,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     geolocationControllerGeolocationDidReceiveError(
-        controller: GeolocationController, 
+        _: GeolocationController, 
         error: string
     ) {
         alert(error)
     }
 
     entitiesControllerDidFetchEntities(
-        controller: EntitiesController,
+        _: EntitiesController,
         entities: Entity[]
     ) {
         const self = this
@@ -325,7 +332,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     entitiesControllerDidCatchEntity(
-        controller: EntitiesController, 
+        _: EntitiesController, 
         entity: Entity
     ): void {
         this.removeEntity(entity)
@@ -334,15 +341,15 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     entitiesControllerDidNotCatchEntity(
-        controller: EntitiesController, 
-        entity: Entity, 
+        _: EntitiesController, 
+        __: Entity, 
         message: string
     ): void {
         debugPrint(message)    
     }
 
     sceneControllerDidPickSceneObjectWithName(
-        controller: SceneController, 
+        _: SceneController, 
         name: string
     ): void {     
         if (name.startsWith("collider-box-")) {
@@ -378,7 +385,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     authorizeControllerDidAuthorize(
-        controller: AuthorizeController
+        _: AuthorizeController
     ) {
         const heroUUID = Utils.getCookieValue("heroUUID")
         if (heroUUID) {
@@ -392,14 +399,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     authorizeControllerDidReceiveError(
-        controller: AuthorizeController,
+        _: AuthorizeController,
         message: string
     ) {
         alert(`AuthorizeController error: ${message}`)
     }
 
     entitiesControllerDidBuildEntity(
-        controller: EntitiesController,
+        _: EntitiesController,
         entity: Entity
     ): void {
         const controls = new DecorControls(
@@ -430,8 +437,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     entitiesControllerDidNotBuildEntity(
-        controller: EntitiesController,
-        entity: Entity,
+        _: EntitiesController,
+        __: Entity,
         message: string
     ): void {
         alert(message)

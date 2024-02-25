@@ -32,7 +32,6 @@ export class Entity {
             json.latitude,
             json.longitude
         )
-        const isVisible = json.isVisible
 
         return new Entity(
             id,

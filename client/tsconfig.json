@@ -4,6 +4,8 @@
       "module": "ESNext",
       "strict": true,
       "noImplicitReturns": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
       "target": "ES2017",
       "lib": ["es2019", "dom"]
     },

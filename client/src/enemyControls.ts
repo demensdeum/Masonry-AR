@@ -1,5 +1,4 @@
 import { SceneObjectCommandsFactory } from "./commandsFactory.js";
-import { debugPrint } from "./runtime.js";
 import { SceneObjectCommand } from "./sceneObjectCommand.js";
 import { SceneObjectCommandPerformer } from "./sceneObjectCommandPerformer.js";
 import { Utils } from "./utils.js";
@@ -9,7 +8,6 @@ export class EnemyControls extends SceneObjectCommandPerformer {
     private secondaryMoveCommand: SceneObjectCommand = SceneObjectCommandsFactory.idle("Idle", 0);    
     private extraMoveCommand: SceneObjectCommand = SceneObjectCommandsFactory.idle("Idle", 0);   
     private rotationCommand: SceneObjectCommand = SceneObjectCommandsFactory.idle("Idle", 0); 
-    private actionCommand: SceneObjectCommand = SceneObjectCommandsFactory.idle("Idle", 0);
 
     public step(delta: any): void {
         super.step(delta)

@@ -1,6 +1,5 @@
 import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js"
 import { GeolocationPosition } from "./geolocationPosition.js"
-import { debugPrint } from "./runtime.js"
 
 export class GeolocationController {
 

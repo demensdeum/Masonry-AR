@@ -5,7 +5,7 @@ export class ThreeCanvasHandler implements ThreeCanvasDelegate {
     private debugEnabled: boolean = false;
 
     threeCanvasDidUpdateCanvas(
-        threeCanvas: any, 
+        _: any, 
         canvas: any
     ) {
         const output = JSON.stringify(canvas);
@@ -20,7 +20,7 @@ export class ThreeCanvasHandler implements ThreeCanvasDelegate {
     }
 
     threeCanvasButtonDidPress(
-        threeCanvas: any, 
+        _: any, 
         name: string
     ): void {
         this

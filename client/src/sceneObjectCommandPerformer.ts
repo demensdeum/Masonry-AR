@@ -76,7 +76,7 @@ export class SceneObjectCommandPerformer implements Controls {
         ); 
     }
 
-    private performJump(command: SceneObjectCommandJump) {
+    private performJump(_: SceneObjectCommandJump) {
         this.delegate.controlsRequireJump(this, this.objectName);
     }
 
@@ -88,6 +88,6 @@ export class SceneObjectCommandPerformer implements Controls {
         this.delegate.controlsRequireObjectTeleport(this, this.objectName, x, y, z);
     }
     
-    public step(delta: any): void {
+    public step(_: any): void {
     }    
 }

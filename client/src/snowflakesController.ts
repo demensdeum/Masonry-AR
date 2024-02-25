@@ -6,7 +6,6 @@ import { WeatherController } from "./weatherController.js";
 import { int } from "./types.js";
 import { WeatherControllerDelegate } from "./weatherControllerDelegate.js";
 import { Utils } from "./utils.js";
-import { debugPrint } from "./runtime.js";
 
 export class SnowflakesController implements WeatherController {
 
@@ -82,7 +81,7 @@ export class SnowflakesController implements WeatherController {
             });        
     }
 
-    step(delta: any) {
+    step(_: any) {
         this.changeSnowflakesPositionStep();
     }
 
@@ -90,8 +89,6 @@ export class SnowflakesController implements WeatherController {
         if (!this.instancedSnowflakeMesh) {
             return;
         }
-
-        const startX = -30;
 
         for (let i = 0; i < this.snowflakesCount; i++) {
             this.instancedSnowflakeMesh.getMatrixAt(i, this.matrix);
