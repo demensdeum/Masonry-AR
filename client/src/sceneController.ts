@@ -81,6 +81,8 @@ export class SceneController implements
     private canMoveLeft: boolean = false;
     private canMoveRight: boolean = false;
 
+    private readonly wireframeRenderer = false
+
     public gameSettings: GameSettings;
 
     private flyMode: boolean = false;
@@ -840,7 +842,7 @@ export class SceneController implements
         controls: Controls,
         boxSize: number = 1.0,
         successCallback: (()=>void) = ()=>{},     
-        color: number = 0xFFFFFF,
+        color: number = 0xFFFFFF
     ): void {
         debugPrint("addModelAt");
 
@@ -922,8 +924,12 @@ export class SceneController implements
 
             model.traverse((entity) => {
                 if ((<THREE.Mesh> entity).isMesh) {
-                    const mesh = entity;
-                    sceneObject.meshes.push(mesh)
+                    const mesh = (<THREE.Mesh> entity);
+                    sceneObject.meshes.push(mesh);
+                    if (sceneController.wireframeRenderer) {
+                        (<THREE.MeshBasicMaterial>mesh.material).wireframe = true;
+                        (<THREE.MeshBasicMaterial>mesh.material).needsUpdate = true
+                    }
                 }
             })
             
