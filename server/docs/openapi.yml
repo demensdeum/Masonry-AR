@@ -22,7 +22,7 @@ paths:
     get:
       tags: 
         - authorization        
-      summary: Your GET endpoint
+      summary: Authorize player
       responses:
         '200':
           description: |
@@ -33,7 +33,7 @@ paths:
                 type: string
                 example: JSESSIONID=abcde12345; Path=/; HttpOnly
               description: Set cookie
-            heroUUID:
+            heroUuid:
               schema:
                 type: string
               description: UUID for player entity
@@ -41,11 +41,11 @@ paths:
       description: Set cookie
       parameters: []
       
-  /entities.php:
+  /catchEntity.php:
     get:
       tags: 
         - gameplay    
-      summary: Your GET endpoint
+      summary: Catch entities logic
       responses:
         '200':
           description: |
@@ -56,13 +56,60 @@ paths:
                 type: string
                 example: JSESSIONID=abcde12345; Path=/; HttpOnly
               description: Set cookie
-            heroUUID:
+            heroUuid:
+              schema:
+                type: string
+              description: UUID for player entity
+      operationId: catchEntity.php
+      description: Set cookie
+      parameters: []         
+      
+  /entities.php:
+    get:
+      tags: 
+        - gameplay    
+      summary: Return entities in sector
+      responses:
+        '200':
+          description: |
+            Successfully authenticated. The session ID is returned in a cookie named `JSESSIONID`. You need to include this cookie in subsequent requests.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: JSESSIONID=abcde12345; Path=/; HttpOnly
+              description: Set cookie
+            heroUuid:
               schema:
                 type: string
               description: UUID for player entity
       operationId: entities.php
       description: Set cookie
+      parameters: []   
+      
+  /logout.php:
+    get:
+      tags: 
+        - authorization         
+      summary: Removes client cookies
+      responses:
+        '200':
+          description: |
+            Successfully authenticated. The session ID is returned in a cookie named `JSESSIONID`. You need to include this cookie in subsequent requests.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: JSESSIONID=abcde12345; Path=/; HttpOnly
+              description: Set cookie
+            heroUuid:
+              schema:
+                type: string
+              description: UUID for player entity
+      operationId: logout.php
+      description: Set cookie
       parameters: []      
+      
 components:
   schemas: {}
   securitySchemes:
