@@ -35,6 +35,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly buildingEnabled = true
     private readonly orderChangeEnabled = true
     private readonly entitiesTrackingStepTimeout = 3000
+    private heroInserted = false
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -45,27 +46,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.context.sceneController.switchSkyboxIfNeeded(
             "com.demensdeum.blue.field"
         )
-        this.context.sceneController.addModelAt(
-            "hero",
-            "com.demensdeum.hero",
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            true,
-            new DecorControls(
-                "hero",
-                new SceneObjectCommandIdle(
-                    "idle",
-                    0
-                ),
-                this.context.sceneController,
-                this.context.sceneController,
-                this.context.sceneController
-            )
-        )
+        this.switchHeroSkin(this.gameData.skin)
         this.context.sceneController.addModelAt(
             "floor",
             "com.demensdeum.floor",
@@ -183,18 +164,24 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         debugPrint(`Position: ${position.latitude}, ${position.longitude}`) 
     }
 
-    private modelNameFromType(type: string) {
-        if (type == "hero") {
-            return "com.demensdeum.hero"
-        }
-        else if (type == "building") {
-            return "com.demensdeum.hitech.building"
-        }
-        else if (type == "eye") {
-            return "com.demensdeum.eye"
+    private modelNameFromEntity(entity: Entity) {
+        if (entity.skin == "DEFAULT") {
+            const type = entity.type
+            if (type == "hero") {
+                return "com.demensdeum.hero"
+            }
+            else if (type == "building") {
+                return "com.demensdeum.hitech.building"
+            }
+            else if (type == "eye") {
+                return "com.demensdeum.eye"
+            }
+            else {
+                return "com.demensdeum.hero"
+            }
         }
         else {
-            return "com.demensdeum.hero"
+            return entity.skin
         }
     }
 
@@ -211,6 +198,51 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         error: string
     ) {
         alert(error)
+    }
+
+    private switchHeroSkin(skin: string) {
+        if (this.heroInserted == true) {
+            this.context.sceneController.removeSceneObjectWithName("hero")
+        }
+        this.context.sceneController.addModelAt(
+            "hero",
+            skin == "DEFAULT" ? "com.demensdeum.hero" : skin,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            true,
+            new DecorControls(
+                "hero",
+                new SceneObjectCommandIdle(
+                    "idle",
+                    0
+                ),
+                this.context.sceneController,
+                this.context.sceneController,
+                this.context.sceneController
+            )
+        )
+        this.heroInserted = true
+    }
+
+    private removeEntityIfExists(entity: Entity) {
+        if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
+            return
+        }
+        this.removeEntity(entity)
+    }
+
+    private skinIsSameForEntity(entity: Entity): boolean {
+        if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
+            raiseCriticalError(`Can't check same skin or not, because there is no entity ${entity.uuid} in entityUuidToSceneObjectUuid`)
+            return false
+        }
+        const currentEntity = this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]]
+        const result = currentEntity.skin == entity.skin
+        return result
     }
 
     entitiesControllerDidFetchEntities(
@@ -238,10 +270,19 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             if (entity.uuid == self.gameData.heroUUID) {
                 self.gameData.balance = entity.balance
                 self.gameData.order = entity.order
+
+                if (self.gameData.skin != entity.skin) {
+                    self.gameData.skin = entity.skin
+                    self.switchHeroSkin(entity.skin)
+                }
                 return
             }
 
-            if (entity.uuid in this.entityUuidToSceneObjectUuid) {
+            if (
+                entity.uuid in this.entityUuidToSceneObjectUuid 
+                &&
+                this.skinIsSameForEntity(entity)
+            ) {
                 const position = this.gameData.position  
                 if (position == null) {
                     raiseCriticalError(`Position is null!`)
@@ -274,8 +315,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 }
             }
             else {   
+                this.removeEntityIfExists(entity)
                 const uuid = entity.uuid
-                const modelName = this.modelNameFromType(entity.type)
+                const modelName = this.modelNameFromEntity(entity)
 
                 const position = this.gameData.position
                 if (position == null) {

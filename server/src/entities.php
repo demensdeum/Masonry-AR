@@ -140,6 +140,7 @@ if ($result->num_rows > 0) {
             'uuid' => $row["uuid"],
             'order' => $row["masonic_order"],
             'type' => $row["type"],
+            'skin' => $row["skin"],
             'balance' => $row["balance"],
             'latitude' => $row["latitude"],            
             'longitude' => $row["longitude"]

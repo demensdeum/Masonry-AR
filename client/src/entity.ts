@@ -7,6 +7,7 @@ export class Entity {
     uuid: string
     order: string
     type: string
+    skin: string
     balance: int
     position: GeolocationPosition
 
@@ -15,6 +16,7 @@ export class Entity {
         uuid: string,
         order: string,
         type: string,
+        skin: string,
         balance: int,
         position: GeolocationPosition
     ) {
@@ -22,6 +24,7 @@ export class Entity {
         this.uuid = uuid
         this.order = order
         this.type = type
+        this.skin = skin
         this.balance = balance
         this.position = position
     }
@@ -31,6 +34,7 @@ export class Entity {
         const uuid: string = json.uuid
         const order: string = json.order
         const type: string = json.type
+        const skin: string = json.skin
         const balance: int = json.balance
         const position = new GeolocationPosition(
             json.latitude,
@@ -42,6 +46,7 @@ export class Entity {
             uuid,
             order,
             type,
+            skin,
             balance,
             position
         )

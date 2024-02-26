@@ -7,4 +7,5 @@ export class GameData {
     public balance = 0
     public cameraLock = false
     public message = "No message"
+    public skin = "DEFAULT"
 }

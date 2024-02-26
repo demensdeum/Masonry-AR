@@ -96,6 +96,40 @@ if ($result->num_rows > 0) {
         exit(0);        
     }
 
+    $borderDistance = 14;
+    $minimalEntityLatitude = $latitude - $borderDistance / 10000;
+    $minimalEntityLongitude = $longitude - $borderDistance / 10000;
+    $maximalEntityLatitude = $latitude + $borderDistance / 10000;
+    $maximalEntityLongitude = $longitude + $borderDistance / 10000;
+
+    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE type = 'building' AND latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
+    $resultCheck = $conn->query($sqlCheck);
+    $rowCheck = $resultCheck->fetch_assoc();
+
+    if ($rowCheck == null) {
+        $response = array(
+            'code' => 9,
+            'message' => "RowCheck = null",
+            'entities' => []
+        );    
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        $conn->close();
+        exit(0);  
+    }
+
+    $count = $rowCheck['count'];
+
+    if ($count > 0) {
+        $response = array(
+            'code' => 10,
+            'message' => "There is building in this area",
+            'entities' => []
+        );    
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        $conn->close();
+        exit(0); 
+    }
+
     $sqlInsert = "INSERT INTO entities (uuid, masonic_order, type, balance, latitude, longitude) VALUES ('$uuid', '$order', 'building', 1000, $latitude, $longitude)";
     $conn->query($sqlInsert);
 
