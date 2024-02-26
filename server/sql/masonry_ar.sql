@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 17, 2024 at 11:45 AM
+-- Generation Time: Feb 25, 2024 at 07:54 PM
 -- Server version: 11.2.2-MariaDB
 -- PHP Version: 8.3.2
 
@@ -29,15 +29,16 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `entities` (
   `id` int(11) NOT NULL,
-  `uuid` varchar(36) DEFAULT NULL,
-  `type` varchar(255) NOT NULL,
+  `private_uuid` varchar(36) NOT NULL DEFAULT 'NONE',
+  `uuid` varchar(36) NOT NULL DEFAULT 'NONE',
+  `masonic_order` varchar(32) NOT NULL DEFAULT 'NONE',
+  `type` varchar(256) NOT NULL,
   `balance` int(11) NOT NULL DEFAULT 0,
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
   `creation_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `update_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- --------------------------------------------------------
 
 --
@@ -45,15 +46,16 @@ CREATE TABLE `entities` (
 --
 
 CREATE TABLE `info` (
-  `schema_version` int(11) NOT NULL
+  `key` varchar(256) NOT NULL DEFAULT 'NONE',
+  `value` varchar(256) NOT NULL DEFAULT 'NONE'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `info`
 --
 
-INSERT INTO `info` (`schema_version`) VALUES
-(1);
+INSERT INTO `info` (`key`, `value`) VALUES
+('scheme_version', '2');
 
 --
 -- Indexes for dumped tables
@@ -67,6 +69,13 @@ ALTER TABLE `entities`
   ADD UNIQUE KEY `uuid` (`uuid`);
 
 --
+-- Indexes for table `info`
+--
+ALTER TABLE `info`
+  ADD PRIMARY KEY (`key`),
+  ADD UNIQUE KEY `key` (`key`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -74,7 +83,7 @@ ALTER TABLE `entities`
 -- AUTO_INCREMENT for table `entities`
 --
 ALTER TABLE `entities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1062;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1463;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

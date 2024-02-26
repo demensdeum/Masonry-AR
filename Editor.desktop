@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=code-oss
+Exec=code-oss /home/demensdeum_stream/Sources/Masonry-AR/
 GenericName[en_US]=
 GenericName=
 Icon=system-run

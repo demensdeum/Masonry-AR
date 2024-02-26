@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { debugPrint } from "./runtime.js"
+import { debugPrint, raiseCriticalError } from "./runtime.js"
 import { SceneObject } from "./sceneObject.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
 
@@ -28,6 +28,15 @@ export class ObjectsPickerController {
     addSceneObject(sceneObject: SceneObject) {
         this.sceneObjects.push(sceneObject);
         debugPrint(`objectsPickerController addSceneObject: ${sceneObject.name}`)
+    }
+
+    public removeSceneObject(sceneObject: SceneObject) {
+        const index = this.sceneObjects.findIndex(a => a == sceneObject)
+        if (index == -1) {
+            raiseCriticalError("Can't find object to remove in sceneObjects!!!")
+            return
+        }
+        delete this.sceneObjects[index]
     }
 
     public pick(event: MouseEvent) {

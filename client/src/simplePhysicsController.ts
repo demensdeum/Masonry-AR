@@ -9,6 +9,7 @@ import { PhysicsControllerCollisionDirection } from "./physicsControllerCollisio
 import { float } from "./types.js";
 import { debugPrint } from "./runtime.js";
 import { SimplePhysicsControllerBody } from "./simplePhysicsControllerBody.js";
+import { raiseCriticalError } from "./runtime.js";
 
 export class SimplePhysicsController implements PhysicsController {
     private raycaster: any;
@@ -32,6 +33,15 @@ export class SimplePhysicsController implements PhysicsController {
         this.sceneObjects.push(sceneObject);
         const physicsBody = new SimplePhysicsControllerBody();
         this.sceneObjectToPhysicsBody[sceneObject.name] = physicsBody;
+    }
+
+    removeSceneObject(sceneObject: SceneObject): void {
+        const index = this.sceneObjects.findIndex(a => a == sceneObject)
+        if (index == -1) {
+            raiseCriticalError("Can't find object to remove in sceneObjects!!!")
+            return
+        }
+        delete this.sceneObjects[index]        
     }
 
     public step(
