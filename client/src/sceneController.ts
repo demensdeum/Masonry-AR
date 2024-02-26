@@ -3,9 +3,6 @@ import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader }  from 'three/examples/jsm/loaders/RGBELoader.js'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { Utils } from "./utils.js"
 import { SceneObject } from "./sceneObject.js"
 
@@ -98,18 +95,6 @@ export class SceneController implements
     // @ts-ignore:next-line
     private debugControls: OrbitControls
 
-    private renderPass: RenderPass
-    private effectComposer: EffectComposer
-    private unrealBloomPass: UnrealBloomPass = new UnrealBloomPass(
-        new THREE.Vector2(
-            window.innerWidth,
-            window.innerHeight
-        ),
-        1.6,
-        0.1,
-        0.1
-    )
-
     constructor(
         canvas: HTMLCanvasElement,
         physicsController: PhysicsController,
@@ -188,10 +173,10 @@ export class SceneController implements
       const camera = this.camera;
       const renderer = this.renderer;
 
-      function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+      const onWindowResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
       }      
 
       window.addEventListener("resize", onWindowResize, false);
@@ -200,12 +185,6 @@ export class SceneController implements
         camera, 
         renderer.domElement
       )      
-
-        this.renderPass = new RenderPass(this.scene, camera)
-        this.effectComposer = new EffectComposer(renderer)
-        this.effectComposer.addPass(this.renderPass)
-
-        this.effectComposer.addPass(this.unrealBloomPass)
     }
 
     physicControllerRequireApplyPosition(
@@ -590,8 +569,7 @@ export class SceneController implements
     }    
 
     private render() {
-        //this.renderer.render(this.scene, this.camera);
-        this.effectComposer.render()
+        this.renderer.render(this.scene, this.camera);
     }
 
     private addSceneObject(sceneObject: SceneObject): void {
