@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 25, 2024 at 07:54 PM
+-- Generation Time: Feb 26, 2024 at 07:30 PM
 -- Server version: 11.2.2-MariaDB
 -- PHP Version: 8.3.2
 
@@ -33,12 +33,14 @@ CREATE TABLE `entities` (
   `uuid` varchar(36) NOT NULL DEFAULT 'NONE',
   `masonic_order` varchar(32) NOT NULL DEFAULT 'NONE',
   `type` varchar(256) NOT NULL,
+  `skin` varchar(32) NOT NULL DEFAULT 'DEFAULT',
   `balance` int(11) NOT NULL DEFAULT 0,
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
   `creation_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `update_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -46,7 +48,7 @@ CREATE TABLE `entities` (
 --
 
 CREATE TABLE `info` (
-  `key` varchar(256) NOT NULL DEFAULT 'NONE',
+  `key` varchar(32) NOT NULL DEFAULT 'NONE',
   `value` varchar(256) NOT NULL DEFAULT 'NONE'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -55,7 +57,8 @@ CREATE TABLE `info` (
 --
 
 INSERT INTO `info` (`key`, `value`) VALUES
-('scheme_version', '2');
+('minimal_client_version', '3'),
+('scheme_version', '3');
 
 --
 -- Indexes for dumped tables
@@ -83,7 +86,7 @@ ALTER TABLE `info`
 -- AUTO_INCREMENT for table `entities`
 --
 ALTER TABLE `entities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1463;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1566;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
