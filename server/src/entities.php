@@ -87,14 +87,13 @@ if ($conn->connect_error) {
 $sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude WHERE private_uuid = '$heroUUID'";
 $conn->query($sqlUpdate);
 
+$borderDistance = 7;
+$minimalEntityLatitude = $latitude - $borderDistance / 10000;
+$minimalEntityLongitude = $longitude - $borderDistance / 10000;
+$maximalEntityLatitude = $latitude + $borderDistance / 10000;
+$maximalEntityLongitude = $longitude + $borderDistance / 10000;
+
 if ($insertEnabled) {
-
-    $borderDistance = 7;
-    $minimalEntityLatitude = $latitude - $borderDistance / 10000;
-    $minimalEntityLongitude = $longitude - $borderDistance / 10000;
-    $maximalEntityLatitude = $latitude + $borderDistance / 10000;
-    $maximalEntityLongitude = $longitude + $borderDistance / 10000;
-
     $sqlCheck = "
     SELECT COUNT(*) as count FROM entities WHERE type = 'eye' 
     AND latitude >= $minimalEntityLatitude 
@@ -136,7 +135,11 @@ if ($insertEnabled) {
 $sqlSelect = "
 SELECT e.*, o.name AS owner_name
 FROM entities e
-LEFT JOIN entities o ON e.owner_uuid = o.uuid;
+LEFT JOIN entities o ON e.owner_uuid = o.uuid
+WHERE e.latitude >= $minimalEntityLatitude 
+  AND e.latitude <= $maximalEntityLatitude 
+  AND e.longitude >= $minimalEntityLongitude 
+  AND e.longitude <= $maximalEntityLongitude;
 ";
 $result = $conn->query($sqlSelect);
 
