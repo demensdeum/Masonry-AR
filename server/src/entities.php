@@ -95,7 +95,13 @@ if ($insertEnabled) {
     $maximalEntityLatitude = $latitude + $borderDistance / 10000;
     $maximalEntityLongitude = $longitude + $borderDistance / 10000;
 
-    $sqlCheck = "SELECT COUNT(*) as count FROM entities WHERE type = 'eye' AND latitude >= $minimalEntityLatitude AND latitude <= $maximalEntityLatitude AND longitude >= $minimalEntityLongitude AND longitude <= $maximalEntityLongitude";
+    $sqlCheck = "
+    SELECT COUNT(*) as count FROM entities WHERE type = 'eye' 
+    AND latitude >= $minimalEntityLatitude 
+    AND latitude <= $maximalEntityLatitude 
+    AND longitude >= $minimalEntityLongitude 
+    AND longitude <= $maximalEntityLongitude
+    ";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
 
@@ -127,7 +133,11 @@ if ($insertEnabled) {
     }
 }
 
-$sqlSelect = "SELECT * FROM entities";
+$sqlSelect = "
+SELECT e.*, o.name AS owner_name
+FROM entities e
+LEFT JOIN entities o ON e.owner_uuid = o.uuid;
+";
 $result = $conn->query($sqlSelect);
 
 if ($result->num_rows > 0) {
@@ -139,6 +149,7 @@ if ($result->num_rows > 0) {
             'id' => $row["id"],
             'uuid' => $row["uuid"],
             'name' => $row['name'],
+            'ownerName' => $row['owner_name'],
             'order' => $row["masonic_order"],
             'type' => $row["type"],
             'model' => $row["model"],

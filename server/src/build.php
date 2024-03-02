@@ -84,6 +84,7 @@ if ($result->num_rows > 0) {
     $uuid = generateUUID();
 
     $order = $row['masonic_order'];
+    $heroPublicUUID = $row['uuid'];
 
     if  ($order == "NONE") {
         $response = array(
@@ -130,7 +131,7 @@ if ($result->num_rows > 0) {
         exit(0); 
     }
 
-    $sqlInsert = "INSERT INTO entities (uuid, masonic_order, type, balance, latitude, longitude) VALUES ('$uuid', '$order', 'building', 1000, $latitude, $longitude)";
+    $sqlInsert = "INSERT INTO entities (uuid, owner_uuid, masonic_order, type, balance, latitude, longitude) VALUES ('$uuid', '$heroPublicUUID', '$order', 'building', 1000, $latitude, $longitude)";
     $conn->query($sqlInsert);
 
     $lastInsertID = $conn->insert_id;

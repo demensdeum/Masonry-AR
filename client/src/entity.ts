@@ -6,6 +6,7 @@ export class Entity {
     id: int
     uuid: string
     name: string
+    ownerName: string
     order: string
     type: string
     model: string
@@ -16,6 +17,7 @@ export class Entity {
         id: int,
         uuid: string,
         name: string,
+        ownerName: string,
         order: string,
         type: string,
         model: string,
@@ -25,6 +27,7 @@ export class Entity {
         this.id = id
         this.uuid = uuid
         this.name = name
+        this.ownerName = ownerName
         this.order = order
         this.type = type
         this.model = model
@@ -36,6 +39,7 @@ export class Entity {
         const id: int = json.id
         const uuid: string = json.uuid
         const name: string = json.name
+        const ownerName: string = json.ownerName
         const order: string = json.order
         const type: string = json.type
         const model: string = json.model
@@ -49,6 +53,7 @@ export class Entity {
             id,
             uuid,
             name,
+            ownerName,
             order,
             type,
             model,

@@ -410,10 +410,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     askIfWantToRemoveBuilding(entity: Entity) {
         if (this.gameData.order == entity.order) {
-            alert(`Это здание вашего ордена ${entity.order}`)
+            alert(`Это здание вашего ордена ${entity.order} - построено ${entity.ownerName}`)
             return
         }
-        else if (confirm(`Хотите уничтожить здание масонского ордена ${entity.order} ?`)) {
+        else if (confirm(`Хотите уничтожить здание масонского ордена ${entity.order} - построено ${entity.ownerName} ?`)) {
             this.entitiesController.destroy(entity)
             return
         }
