@@ -34,7 +34,10 @@ import { ObjectsPickerController } from "./objectsPickerController.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 
-const gui = new dat.GUI({width: 340 });
+const gui = new dat.GUI({ autoPlace: false });
+var moveGUIElement = document.querySelector('.moveGUI');
+var guiDomElement = gui.domElement;
+moveGUIElement?.appendChild(guiDomElement);
 
 export class SceneController implements 
                                         ControlsDataSource, 

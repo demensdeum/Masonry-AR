@@ -12,6 +12,12 @@
     background-color: blue;
     display: block;
   }
+  .moveGUI{ 
+    position: absolute;
+    top: 6em;
+    right: 8em;
+    transform: scale(2.2);
+  }
 </style>
 <script type="importmap">
   {
@@ -25,6 +31,7 @@
 </script>
 </head>
 <body>
+  <div  class = "moveGUI"></div>  
     <canvas class="webgl"></canvas>
     <script type="module" src="./build/main.js"></script>
 </body>

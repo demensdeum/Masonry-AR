@@ -88,18 +88,25 @@ $sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude W
 $conn->query($sqlUpdate);
 
 $borderDistance = 40;
+$eyesDistance = 7;
+
 $minimalEntityLatitude = $latitude - $borderDistance / 10000;
 $minimalEntityLongitude = $longitude - $borderDistance / 10000;
 $maximalEntityLatitude = $latitude + $borderDistance / 10000;
 $maximalEntityLongitude = $longitude + $borderDistance / 10000;
 
+$eyesMinimalEntityLatitude = $latitude - $eyesDistance / 10000;
+$eyesMinimalEntityLongitude = $longitude - $eyesDistance / 10000;
+$eyesMaximalEntityLatitude = $latitude + $eyesDistance / 10000;
+$eyesMaximalEntityLongitude = $longitude + $eyesDistance / 10000;
+
 if ($insertEnabled) {
     $sqlCheck = "
     SELECT COUNT(*) as count FROM entities WHERE type = 'eye' 
-    AND latitude >= $minimalEntityLatitude 
-    AND latitude <= $maximalEntityLatitude 
-    AND longitude >= $minimalEntityLongitude 
-    AND longitude <= $maximalEntityLongitude
+    AND latitude >= $eyesMinimalEntityLatitude 
+    AND latitude <= $eyesMaximalEntityLatitude 
+    AND longitude >= $eyesMinimalEntityLongitude 
+    AND longitude <= $eyesMaximalEntityLongitude
     ";
     $resultCheck = $conn->query($sqlCheck);
     $rowCheck = $resultCheck->fetch_assoc();
@@ -123,8 +130,8 @@ if ($insertEnabled) {
             for ($i = 0; $i < $randomRecords; $i++) {
                 $uuid = generateUUID();
                 $balance = mt_rand(1, 3) * 100;
-                $entityLatitude = $minimalEntityLatitude + mt_rand(0, $borderDistance * 2) / 10000;
-                $entityLongitude = $minimalEntityLongitude + mt_rand(0, $borderDistance * 2) / 10000;
+                $entityLatitude = $eyesMinimalEntityLatitude + mt_rand(0, $eyesDistance * 2) / 10000;
+                $entityLongitude = $eyesMinimalEntityLongitude + mt_rand(0, $eyesDistance * 2) / 10000;
                 $sqlInsert = "INSERT INTO entities (uuid, type, balance, latitude, longitude) VALUES ('$uuid', 'eye', $balance, $entityLatitude, $entityLongitude)";
                 $conn->query($sqlInsert);
             }

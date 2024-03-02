@@ -32,6 +32,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private entityUuidToSceneObjectUuid: { [key: string]: string} = {}
     private heroStatusController = new HeroStatusController(this)
     private gameData = new GameData()
+    private readonly cameraLockEnabled = false
     private readonly buildingEnabled = true
     private readonly orderChangeEnabled = true
     private readonly entitiesTrackingStepTimeout = 3000
@@ -122,10 +123,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.gameData.message = "Authorization"
         this.authorizeController.authorizeIfNeeded()
 
-        this.context.sceneController.addText(
-            "cameraLock",
-            this.gameData
-        )
+        if (this.cameraLockEnabled) {
+            this.context.sceneController.addText(
+                "cameraLock",
+                this.gameData
+            )
+        }
 
         const cameraPosition = this.context.sceneController.sceneObjectPosition("hero").clone()
         cameraPosition.y += 1.7
