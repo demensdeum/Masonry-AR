@@ -14,7 +14,7 @@ export class HeroStatusController {
         this.delegate = delegate
     }
 
-    public async set(order: String) {
+    public async set(order: string) {
 
         const url = `../server/setOrder.php?order=${order}`
 

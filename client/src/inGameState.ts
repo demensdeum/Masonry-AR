@@ -75,6 +75,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             0
         )
         this.context.sceneController.addText(
+            "name",
+            this.gameData
+        )
+        this.context.sceneController.addText(
             "balance",
             this.gameData
         )      
@@ -268,6 +272,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         entities.forEach((entity) => {
 
             if (entity.uuid == self.gameData.heroUUID) {
+                self.gameData.name = entity.name 
                 self.gameData.balance = entity.balance
                 self.gameData.order = entity.order
 
@@ -515,14 +520,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     heroStatusControllerDidChange(
         _: HeroStatusController, 
-        order: String
+        order: string
     ): void {
         this.gameData.order = order
     }
 
     heroStatusControllerDidReceiveError(
         _: HeroStatusController,
-        error: String
+        error: string
     ): void {
         alert(error)
     }

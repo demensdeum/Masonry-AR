@@ -5,6 +5,7 @@ export class Entity {
 
     id: int
     uuid: string
+    name: string
     order: string
     type: string
     skin: string
@@ -14,6 +15,7 @@ export class Entity {
     constructor(
         id: int,
         uuid: string,
+        name: string,
         order: string,
         type: string,
         skin: string,
@@ -22,6 +24,7 @@ export class Entity {
     ) {
         this.id = id
         this.uuid = uuid
+        this.name = name
         this.order = order
         this.type = type
         this.skin = skin
@@ -32,6 +35,7 @@ export class Entity {
     static fromJson(json: any): Entity {
         const id: int = json.id
         const uuid: string = json.uuid
+        const name: string = json.name
         const order: string = json.order
         const type: string = json.type
         const skin: string = json.skin
@@ -44,6 +48,7 @@ export class Entity {
         return new Entity(
             id,
             uuid,
+            name,
             order,
             type,
             skin,

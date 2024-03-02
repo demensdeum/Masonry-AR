@@ -1,6 +1,6 @@
 import { HeroStatusController } from "./heroStatusController.js";
 
 export interface HeroStatusControllerDelegate {
-    heroStatusControllerDidChange(controller: HeroStatusController, order: String): void
-    heroStatusControllerDidReceiveError(controller: HeroStatusController, string: String): void
+    heroStatusControllerDidChange(controller: HeroStatusController, order: string): void
+    heroStatusControllerDidReceiveError(controller: HeroStatusController, string: string): void
 }

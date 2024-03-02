@@ -1,8 +1,9 @@
 import { GeolocationPosition } from "./geolocationPosition.js"
 
 export class GameData {
-    public heroUUID: String = ""
-    public order: String = ""
+    public heroUUID: string = ""
+    public order: string = ""
+    public name: string = ""
     public position: GeolocationPosition | null = null    
     public balance = 0
     public cameraLock = false
