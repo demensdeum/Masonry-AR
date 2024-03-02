@@ -106,6 +106,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         if (this.buildingEnabled) {            
             let action = () => {
+                this.showBuildingAnimation()
                 this.entitiesController.build()
             }
             const button = {
@@ -143,6 +144,50 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         if (order) {
             this.heroStatusController.set(order)
         }
+    }
+
+    private showBuildingAnimation() {
+        const position = this.gameData.position
+        if (position == null) {
+            return
+        }
+        const uuid = "UUID-FOR-BUILDING-ANIMATION"
+        const entity = new Entity(
+            -1,
+            uuid,
+            "build-animation",
+            this.gameData.name,
+            this.gameData.order,
+            "building",
+            "com.demensdeum.hitech.building",
+            0,
+            position
+        )
+        const controls = new DecorControls(
+            uuid,
+            new SceneObjectCommandIdle(
+                "idle",
+                0
+            ),
+            this.context.sceneController,
+            this.context.sceneController,
+            this.context.sceneController
+        )        
+        this.context.sceneController.addModelAt(
+            uuid,
+            "com.demensdeum.hitech.building",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            false,
+            controls
+        )
+
+        this.sceneObjectUuidToEntity[uuid] = entity
+        this.entityUuidToSceneObjectUuid[entity.uuid] = uuid        
     }
 
     step() {
