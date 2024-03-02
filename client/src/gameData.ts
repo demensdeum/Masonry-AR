@@ -9,4 +9,5 @@ export class GameData {
     public cameraLock = false
     public message = "No message"
     public model = "DEFAULT"
+    public isZonesViewEnabled = true
 }

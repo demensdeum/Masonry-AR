@@ -87,7 +87,7 @@ if ($conn->connect_error) {
 $sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude WHERE private_uuid = '$heroUUID'";
 $conn->query($sqlUpdate);
 
-$borderDistance = 7;
+$borderDistance = 40;
 $minimalEntityLatitude = $latitude - $borderDistance / 10000;
 $minimalEntityLongitude = $longitude - $borderDistance / 10000;
 $maximalEntityLatitude = $latitude + $borderDistance / 10000;

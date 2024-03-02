@@ -363,6 +363,16 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                         adaptedZ
                     )
                 }
+                else if (entity.type == "building") {
+                    const uuid = entity.uuid
+                    const objectName = `order-zone-${uuid}`                    
+                    this.context.sceneController.moveObjectTo(
+                        objectName,
+                        adaptedX,
+                        0.01,
+                        adaptedZ
+                    )
+                }
             }
             else {   
                 this.removeEntityIfExists(entity)
@@ -419,6 +429,24 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 )
                 i += 0.5
 
+                if (entity.type == "building") {
+                    this.context.sceneController.addPlaneAt(
+                        `order-zone-${uuid}`,
+                        adaptedX,
+                        0.01,
+                        adaptedZ,
+                        4,
+                        4,
+                        "com.demensdeum.dollar"                 
+                    )
+                    this.context.sceneController.rotateObjectTo(
+                        `order-zone-${uuid}`,
+                        Utils.angleToRadians(90),
+                        0,
+                        0
+                    )
+                }
+
                 self.sceneObjectUuidToEntity[uuid] = entity
                 self.entityUuidToSceneObjectUuid[entity.uuid] = uuid
             }
@@ -429,7 +457,16 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private removeEntity(entity: Entity) {
         const sceneObjectUuid = this.entityUuidToSceneObjectUuid[entity.uuid]
         this.context.sceneController.removeSceneObjectWithName(sceneObjectUuid)
-        this.context.sceneController.removeSceneObjectWithName(`collider-box-${sceneObjectUuid}`)
+
+        if (entity.type == "eye") {
+            this.context.sceneController.removeSceneObjectWithName(`collider-box-${sceneObjectUuid}`)
+        }
+
+        if (entity.type == "building") {
+            const uuid = entity.uuid
+            const objectName = `order-zone-${uuid}`
+            this.context.sceneController.removeSceneObjectWithName(objectName);
+        }
 
         const name = `${entity.type}-${entity.id}`
         delete this.entityUuidToSceneObjectUuid[entity.uuid]

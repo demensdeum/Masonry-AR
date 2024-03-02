@@ -97,7 +97,7 @@ if ($result->num_rows > 0) {
         exit(0);        
     }
 
-    $borderDistance = 14;
+    $borderDistance = 10;
     $minimalEntityLatitude = $latitude - $borderDistance / 10000;
     $minimalEntityLongitude = $longitude - $borderDistance / 10000;
     $maximalEntityLatitude = $latitude + $borderDistance / 10000;
