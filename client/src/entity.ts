@@ -8,7 +8,7 @@ export class Entity {
     name: string
     order: string
     type: string
-    skin: string
+    model: string
     balance: int
     position: GeolocationPosition
 
@@ -18,7 +18,7 @@ export class Entity {
         name: string,
         order: string,
         type: string,
-        skin: string,
+        model: string,
         balance: int,
         position: GeolocationPosition
     ) {
@@ -27,7 +27,7 @@ export class Entity {
         this.name = name
         this.order = order
         this.type = type
-        this.skin = skin
+        this.model = model
         this.balance = balance
         this.position = position
     }
@@ -38,7 +38,7 @@ export class Entity {
         const name: string = json.name
         const order: string = json.order
         const type: string = json.type
-        const skin: string = json.skin
+        const model: string = json.model
         const balance: int = json.balance
         const position = new GeolocationPosition(
             json.latitude,
@@ -51,7 +51,7 @@ export class Entity {
             name,
             order,
             type,
-            skin,
+            model,
             balance,
             position
         )

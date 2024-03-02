@@ -46,7 +46,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.context.sceneController.switchSkyboxIfNeeded(
             "com.demensdeum.blue.field"
         )
-        this.switchHeroSkin(this.gameData.skin)
+        this.switchHeroModel(this.gameData.model)
         this.context.sceneController.addModelAt(
             "floor",
             "com.demensdeum.floor",
@@ -169,7 +169,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     private modelNameFromEntity(entity: Entity) {
-        if (entity.skin == "DEFAULT") {
+        if (entity.model == "DEFAULT") {
             const type = entity.type
             if (type == "hero") {
                 return "com.demensdeum.hero"
@@ -185,7 +185,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             }
         }
         else {
-            return entity.skin
+            return entity.model
         }
     }
 
@@ -204,13 +204,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         alert(error)
     }
 
-    private switchHeroSkin(skin: string) {
+    private switchHeroModel(model: string) {
         if (this.heroInserted == true) {
             this.context.sceneController.removeSceneObjectWithName("hero")
         }
         this.context.sceneController.addModelAt(
             "hero",
-            skin == "DEFAULT" ? "com.demensdeum.hero" : skin,
+            model == "DEFAULT" ? "com.demensdeum.hero" : model,
             0,
             0,
             0,
@@ -239,13 +239,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.removeEntity(entity)
     }
 
-    private skinIsSameForEntity(entity: Entity): boolean {
+    private modelIsSameForEntity(entity: Entity): boolean {
         if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
-            raiseCriticalError(`Can't check same skin or not, because there is no entity ${entity.uuid} in entityUuidToSceneObjectUuid`)
+            raiseCriticalError(`Can't check same model or not, because there is no entity ${entity.uuid} in entityUuidToSceneObjectUuid`)
             return false
         }
         const currentEntity = this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]]
-        const result = currentEntity.skin == entity.skin
+        const result = currentEntity.model == entity.model
         return result
     }
 
@@ -276,9 +276,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 self.gameData.balance = entity.balance
                 self.gameData.order = entity.order
 
-                if (self.gameData.skin != entity.skin) {
-                    self.gameData.skin = entity.skin
-                    self.switchHeroSkin(entity.skin)
+                if (self.gameData.model != entity.model) {
+                    self.gameData.model = entity.model
+                    self.switchHeroModel(entity.model)
                 }
                 return
             }
@@ -286,7 +286,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             if (
                 entity.uuid in this.entityUuidToSceneObjectUuid 
                 &&
-                this.skinIsSameForEntity(entity)
+                this.modelIsSameForEntity(entity)
             ) {
                 const position = this.gameData.position  
                 if (position == null) {

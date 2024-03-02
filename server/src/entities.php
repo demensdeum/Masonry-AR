@@ -141,7 +141,7 @@ if ($result->num_rows > 0) {
             'name' => $row['name'],
             'order' => $row["masonic_order"],
             'type' => $row["type"],
-            'skin' => $row["skin"],
+            'model' => $row["model"],
             'balance' => $row["balance"],
             'latitude' => $row["latitude"],            
             'longitude' => $row["longitude"]
