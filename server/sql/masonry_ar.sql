@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 26, 2024 at 07:30 PM
--- Server version: 11.2.2-MariaDB
--- PHP Version: 8.3.2
+-- Generation Time: Mar 04, 2024 at 01:15 AM
+-- Server version: 11.3.2-MariaDB
+-- PHP Version: 8.3.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `masonry_ar`
 --
+CREATE DATABASE IF NOT EXISTS `masonry_ar` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `masonry_ar`;
 
 -- --------------------------------------------------------
 
@@ -31,9 +33,11 @@ CREATE TABLE `entities` (
   `id` int(11) NOT NULL,
   `private_uuid` varchar(36) NOT NULL DEFAULT 'NONE',
   `uuid` varchar(36) NOT NULL DEFAULT 'NONE',
+  `name` varchar(32) NOT NULL DEFAULT 'NONE',
+  `owner_uuid` varchar(36) NOT NULL DEFAULT 'NONE',
   `masonic_order` varchar(32) NOT NULL DEFAULT 'NONE',
   `type` varchar(256) NOT NULL,
-  `skin` varchar(32) NOT NULL DEFAULT 'DEFAULT',
+  `model` varchar(32) NOT NULL DEFAULT 'DEFAULT',
   `balance` int(11) NOT NULL DEFAULT 0,
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
@@ -57,8 +61,8 @@ CREATE TABLE `info` (
 --
 
 INSERT INTO `info` (`key`, `value`) VALUES
-('minimal_client_version', '3'),
-('scheme_version', '3');
+('minimal_client_version', '4'),
+('scheme_version', '4');
 
 --
 -- Indexes for dumped tables
@@ -86,7 +90,12 @@ ALTER TABLE `info`
 -- AUTO_INCREMENT for table `entities`
 --
 ALTER TABLE `entities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1566;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1848;
+--
+-- Database: `test`
+--
+CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `test`;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
