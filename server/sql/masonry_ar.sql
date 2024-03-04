@@ -20,8 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `masonry_ar`
 --
-CREATE DATABASE IF NOT EXISTS `masonry_ar` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `masonry_ar`;
+CREATE DATABASE IF NOT EXISTS `demens_masonry_ar` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `demens_masonry_ar`;
 
 -- --------------------------------------------------------
 
@@ -91,13 +91,4 @@ ALTER TABLE `info`
 --
 ALTER TABLE `entities`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1848;
---
--- Database: `test`
---
-CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `test`;
-COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
