@@ -230,6 +230,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         position: GeolocationPosition
     ) {
         this.gameData.position = position
+
+        if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
+            window.localStorage.setItem("gameplayStartInfo", "YES")
+            alert("Ваши координаты определены. Для перемещения в игре ходите с устройством в реальной жизни, собирайте масонские знаки, и стройте здания за свой орден. Приятной игры!")
+        }
+
         debugPrint(`Position: ${position.latitude}, ${position.longitude}`) 
     }
 
@@ -571,6 +577,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         const heroUUID = Utils.getCookieValue("heroUUID")
         if (heroUUID) {
             this.gameData.heroUUID = heroUUID
+            if (window.localStorage.getItem("showedStartInfo") != "YES") {
+                window.localStorage.setItem("showedStartInfo", "YES")
+                alert("Masonry-AR - это игра в дополненной реальности, потребуется доступ к вашей геолокации")
+            }
             this.geolocationController.askPermission()
             this.entitiesTrackingStep()            
         }
