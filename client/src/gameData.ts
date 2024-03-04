@@ -10,4 +10,7 @@ export class GameData {
     public message = "No message"
     public model = "DEFAULT"
     public isZonesViewEnabled = true
+    public isLocationResolvedOnce = ()=>{
+        return this.position != null
+    }
 }

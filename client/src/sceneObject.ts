@@ -1,5 +1,6 @@
 import { Controls } from "./controls"
 import { int } from "./types"
+import { Utils } from "./utils.js";
 
 class Texture {
     public readonly name: string;
@@ -16,6 +17,7 @@ class Model {
 }
 
 export class SceneObject {
+    public readonly uuid: string;
     public readonly name: string;
     public readonly type: string;
     public readonly texture: Texture;
@@ -36,6 +38,7 @@ export class SceneObject {
         controls: Controls| null,
         changeDate: int        
     ) {
+        this.uuid = Utils.generateUUID()
         this.name = name;
         this.type = type;
         this.texture = new Texture(texture);

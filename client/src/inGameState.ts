@@ -17,6 +17,7 @@ import { AuthorizeController } from "./authorizeController.js"
 import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js"
 import { HeroStatusControllerDelegate } from "./heroStatusControllerDelegate.js"
 import { HeroStatusController } from "./heroStatusController.js"
+import { BuildingStatusController } from "./buildingStatusController.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     AuthorizeControllerDelegate,
@@ -25,6 +26,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                                                     HeroStatusControllerDelegate {
     name = "InGameState"
     
+    private buildingStatusController = new BuildingStatusController(this)
     private geolocationController = new GeolocationController(this)
     private entitiesController = new EntitiesController(this)    
     private authorizeController = new AuthorizeController(this)
@@ -37,6 +39,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly orderChangeEnabled = true
     private readonly entitiesTrackingStepTimeout = 3000
     private heroInserted = false
+    private lastBuildingAnimationObjectUUID = "NONE"
 
     initialize(): void {
         const canvas = this.context.canvas
@@ -107,6 +110,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         if (this.buildingEnabled) {            
             let action = () => {
+                if (this.gameData.isLocationResolvedOnce() == false) {
+                    alert("Строить нельзя пока не будут определены ваши координаты!")
+                    return
+                }
                 this.showBuildingAnimation()
                 this.entitiesController.build()
             }
@@ -150,15 +157,20 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     private showBuildingAnimation() {
+        if (this.lastBuildingAnimationObjectUUID in this.sceneObjectUuidToEntity) {
+            debugPrint("Can't present another building animation! Already showing one!")
+            return
+        }
         const position = this.gameData.position
         if (position == null) {
             return
         }
-        const uuid = "UUID-FOR-BUILDING-ANIMATION"
+        const uuid = Utils.generateUUID()
+        this.lastBuildingAnimationObjectUUID = uuid
         const entity = new Entity(
             -1,
             uuid,
-            "build-animation",
+            "BUILDING-ANIMATION",
             this.gameData.name,
             this.gameData.order,
             "building",
@@ -186,7 +198,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             0,
             0,
             false,
-            controls
+            controls,
+            1.0,
+            ()=>{},
+            0xFFFFFF,
+            true,
+            0.4
         )
 
         this.sceneObjectUuidToEntity[uuid] = entity
@@ -346,6 +363,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
                 debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
 
+                this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]].name = entity.name
+
                 const scale = 2000
                 const adaptedX = diffX * scale
                 const adaptedZ = -(diffY * scale)    
@@ -357,16 +376,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                     0,
                     adaptedZ
                 )
-                if (entity.type == "eye") {
-                    const colliderBoxName = `collider-box-${uuid}`
-                    this.context.sceneController.moveObjectTo(
-                        colliderBoxName,
-                        adaptedX,
-                        0.22,
-                        adaptedZ
-                    )
-                }
-                else if (entity.type == "building") {
+                if (entity.type == "building") {
                     const uuid = entity.uuid
                     const objectName = `order-zone-${uuid}`                    
                     this.context.sceneController.moveObjectTo(
@@ -406,18 +416,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                     self.context.sceneController,
                     self.context.sceneController
                 )
-                if (entity.type == "eye") {
-                    self.context.sceneController.addBoxAt(
-                        `collider-box-${uuid}`,
-                        adaptedX,
-                        0.22,
-                        adaptedZ,
-                        "com.demensdeum.loading",
-                        0.4,
-                        0xFF00FF,
-                        0.6
-                    )
-                }
                 self.context.sceneController.addModelAt(
                     uuid,
                     modelName,
@@ -440,7 +438,11 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                         adaptedZ,
                         4,
                         4,
-                        "com.demensdeum.dollar"                 
+                        "com.demensdeum.dollar",
+                        0xFFFFFF,
+                        false,
+                        true,
+                        0.4                                     
                     )
                     this.context.sceneController.rotateObjectTo(
                         `order-zone-${uuid}`,
@@ -460,10 +462,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private removeEntity(entity: Entity) {
         const sceneObjectUuid = this.entityUuidToSceneObjectUuid[entity.uuid]
         this.context.sceneController.removeSceneObjectWithName(sceneObjectUuid)
-
-        if (entity.type == "eye") {
-            this.context.sceneController.removeSceneObjectWithName(`collider-box-${sceneObjectUuid}`)
-        }
 
         if (entity.type == "building") {
             const uuid = entity.uuid
@@ -495,13 +493,20 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     askIfWantToRemoveBuilding(entity: Entity) {
         if (this.gameData.order == entity.order) {
-            alert(`Это здание вашего ордена ${entity.order} - построено ${entity.ownerName}`)
+            if (confirm(`Это здание ${entity.name} вашего ордена ${entity.order} - построено ${entity.ownerName}. Переименовать?`)) {
+                this.renameBuilding(entity)
+            }
             return
         }
         else if (confirm(`Хотите уничтожить здание масонского ордена ${entity.order} - построено ${entity.ownerName} ?`)) {
             this.entitiesController.destroy(entity)
             return
         }
+    }
+
+    renameBuilding(entity: Entity) {
+        const name = prompt("Введите название здания:") || "NONE"
+        this.buildingStatusController.rename(entity, name)
     }
 
     entitiesControllerDidDestroyEntity(
@@ -523,19 +528,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: SceneController, 
         name: string
     ): void {     
-        if (name.startsWith("collider-box-")) {
-            name = name.substring("collider-box-".length)
-        }
-        else if (name in this.sceneObjectUuidToEntity) {
+        if (name in this.sceneObjectUuidToEntity) {
             const entity = this.sceneObjectUuidToEntity[name]
             if (entity.type == "building") {
                 this.askIfWantToRemoveBuilding(entity)
                 return
             }
-        }
-        else {
-            debugPrint(`Skip touch outside of collider-box: ${name}`)
-            return
         }
         if (name in this.sceneObjectUuidToEntity == false) {
             return
@@ -615,5 +613,20 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         error: string
     ): void {
         alert(error)
+    }
+
+    buildingStatusControllerDidRename(
+        _: BuildingStatusController, 
+        __: string, 
+        ___: string
+    ) {
+        debugPrint("Building rename success")
+    }
+
+    buildingStatusControllerDidReceiveError(
+        _: BuildingStatusController, 
+        string: string
+    ) {
+        alert(string)
     }
 }

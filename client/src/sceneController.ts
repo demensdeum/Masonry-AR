@@ -48,8 +48,6 @@ export class SceneController implements
                                         DecorControlsDataSource,
                                         ObjectsPickerControllerDelegate {
 
-    private readonly collisionsDebugEnabled: boolean = false;
-
     public static readonly itemSize: number = 1;
     public static readonly carSize: number = 1;
     public static readonly roadSegmentSize: number = 2;
@@ -72,6 +70,7 @@ export class SceneController implements
     private animationMixers: any[] = []; 
 
     private objects: { [key: string]: SceneObject } = {};
+    private objectsUUIDs: { [key: string]: SceneObject } = {};
     private commands: { [key: string]: SceneObjectCommand } = {};
 
     private loadingTexture: any;
@@ -584,6 +583,7 @@ export class SceneController implements
             return;
         }
 
+        this.objectsUUIDs[sceneObject.uuid] = sceneObject
         this.objects[sceneObject.name] = sceneObject
         this.scene.add(sceneObject.threeObject)
 
@@ -680,6 +680,7 @@ export class SceneController implements
         this.objectsPickerController.removeSceneObject(sceneObject)
         this.scene.remove(sceneObject.threeObject)
         delete this.objects[name]
+        delete this.objectsUUIDs[sceneObject.uuid]
     }
 
     private removeCurrentSkybox() {
@@ -847,7 +848,9 @@ export class SceneController implements
         controls: Controls,
         boxSize: number = 1.0,
         successCallback: (()=>void) = ()=>{},     
-        color: number = 0xFFFFFF
+        color: number = 0xFFFFFF,
+        transparent: boolean = false,
+        opacity: float = 1.0
     ): void {
         debugPrint("addModelAt");
 
@@ -857,14 +860,17 @@ export class SceneController implements
             boxSize
         );
 
-        const material = new THREE.MeshBasicMaterial({
+        const boxMaterial = new THREE.MeshBasicMaterial({
              color: color,
              map: this.loadingTexture,
              transparent: true,             
-             opacity: this.collisionsDebugEnabled ? 0.5 : 0
+             opacity: 0.7
         });     
 
-        const box = new THREE.Mesh(boxGeometry, material);
+        const box = new THREE.Mesh(
+            boxGeometry,
+            boxMaterial
+        );
         box.position.x = x;
         box.position.y = y;
         box.position.z = z;
@@ -890,36 +896,30 @@ export class SceneController implements
         const modelLoader = new GLTFLoader();
         const modelPath = Paths.modelPath(modelName);
 
+        const self = this
+
         modelLoader.load(
           modelPath,
           function (container) {
+            if ((sceneObject.uuid in self.objectsUUIDs) == false) {
+                debugPrint(`Don't add model for object name ${sceneObject.name}, because it's removed`)
+                return
+            }
+
             const model = container.scene;
-            
-            const oldX = box.position.x;
-            const oldY = box.position.y;
-            const oldZ = box.position.z;
 
-            const oldRX = box.rotation.x;
-            const oldRY = box.rotation.y;
-            const oldRZ = box.rotation.z;
-            
-            box.position.x = 0;
-            box.position.y = 0;
-            box.position.z = 0;
+            self.scene.add(model)
 
-            box.rotation.x = 0;
-            box.rotation.y = 0;
-            box.rotation.z = 0;
+            model.position.x = box.position.x
+            model.position.y = box.position.y
+            model.position.z = box.position.z
 
-            box.attach(model);
+            model.rotation.x = box.rotation.x
+            model.rotation.y = box.rotation.y
+            model.rotation.z = box.rotation.z
 
-            box.position.x = oldX;
-            box.position.y = oldY;
-            box.position.z = oldZ;
-
-            box.rotation.x = oldRX;
-            box.rotation.y = oldRY;
-            box.rotation.z = oldRZ;
+            self.scene.remove(box)
+            sceneObject.threeObject = model
 
             const animationMixer = new THREE.AnimationMixer(model);
             container.animations.forEach((clip) => {
@@ -930,6 +930,10 @@ export class SceneController implements
             model.traverse((entity) => {
                 if ((<THREE.Mesh> entity).isMesh) {
                     const mesh = (<THREE.Mesh> entity);
+                    if (transparent) {
+                        (<THREE.Material> mesh.material).transparent = true;
+                        (<THREE.Material> mesh.material).opacity = opacity;
+                    }
                     sceneObject.meshes.push(mesh);
                     if (sceneController.wireframeRenderer) {
                         (<THREE.MeshBasicMaterial>mesh.material).wireframe = true;
@@ -951,7 +955,8 @@ export class SceneController implements
         z: number,
         textureName: string = "com.demensdeum.failback",    
         size: number = 1.0,            
-        color: number = 0x00FFFF,
+        color: number = 0xFFFFFF,
+        transparent: boolean = false,
         opacity: number = 1.0
     ): void {
         debugPrint("addBoxAt: " + x + " " + y + " " + z);
@@ -966,7 +971,7 @@ export class SceneController implements
         const material = new THREE.MeshBasicMaterial({
              color: color,
              map: this.loadingTexture,
-             transparent: true,             
+             transparent: transparent,             
              opacity: opacity
         })
 
@@ -1028,7 +1033,8 @@ export class SceneController implements
             map: this.loadingTexture,
             depthWrite: !resetDepthBuffer,
             side: THREE.DoubleSide,
-            transparent: transparent
+            transparent: transparent,
+            opacity: opacity
         });
 
         const newMaterial = new THREE.MeshBasicMaterial({
