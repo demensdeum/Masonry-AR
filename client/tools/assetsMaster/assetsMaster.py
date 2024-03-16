@@ -205,13 +205,14 @@ def update_resources(gltf_filepath, source_resources_filepath, textures, destina
         print(f"image: {image_name} - {format_size(compressed_image_data_length)} replacement_data_length % 4 = {compressed_image_data_length % 4}")
 
     gltf_file["buffers"][0]["uri"] = "gltf-resources.bin.output.bin"
-    gltf_file["buffers"][0]["byteLength"] = os.path.getsize("/tmp/gltf-resources.bin.output.bin")
 
     with open(output_gltf_filepath, 'w') as output_gltf_file:
         json.dump(gltf_file, output_gltf_file)
 
     with open(destination_resources_filepath, 'wb') as destination_resources_file:
         destination_resources_file.write(resources_data)
+
+    gltf_file["buffers"][0]["byteLength"] = os.path.getsize("/tmp/gltf-resources.bin.output.bin")        
     
 
 def process_glb(source_filepath, destination_filepath = "", only_extract_textures = False):

@@ -94,6 +94,8 @@ export class SceneController implements
     public physicsEnabled: boolean;
     public delegate: SceneControllerDelegate | null = null
 
+    private highQuality: boolean = false
+
     // @ts-ignore:next-line
     private debugControls: OrbitControls
 
@@ -132,7 +134,7 @@ export class SceneController implements
    
     this.camera = new THREE.PerspectiveCamera(
         75,
-        window.innerWidth / window.innerHeight,
+        this.windowWidth() / this.windowHeight(),
         0.1,
         1000
     )
@@ -155,11 +157,12 @@ export class SceneController implements
         antialias: true
     })
     
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
-      this.renderer.setPixelRatio(window.devicePixelRatio);
-      this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 0.8;
-      this.renderer.outputEncoding = THREE.sRGBEncoding;
+      this.renderer.setSize(this.windowWidth(), this.windowHeight());
+      if (this.highQuality) {
+        this.renderer.setPixelRatio(window.devicePixelRatio)
+      }
+      this.renderer.toneMapping = THREE.ACESFilmicToneMapping
+      this.renderer.toneMappingExposure = 0.8
 
       this.objectsPickerController = new ObjectsPickerController(
         this.renderer,
@@ -175,10 +178,13 @@ export class SceneController implements
       const camera = this.camera;
       const renderer = this.renderer;
 
+      const self = this
+
       const onWindowResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight
+        debugPrint("onWindowResize")
+        camera.aspect = self.windowWidth() / self.windowHeight()
         camera.updateProjectionMatrix()
-        renderer.setSize(window.innerWidth, window.innerHeight)
+        renderer.setSize(self.windowWidth(), self.windowHeight())
       }      
 
       window.addEventListener("resize", onWindowResize, false);
@@ -187,6 +193,16 @@ export class SceneController implements
         camera, 
         renderer.domElement
       )      
+    }
+
+    private windowWidth() {
+        debugPrint("windowWidth: " + window.innerWidth)
+        return window.innerWidth
+    }
+
+    private windowHeight() {
+        debugPrint("windowHeight: " + window.innerHeight)
+        return window.innerHeight
     }
 
     physicControllerRequireApplyPosition(
