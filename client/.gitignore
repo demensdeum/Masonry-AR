@@ -1,4 +1,6 @@
 # Logs
+assets-src
+pyenv
 logs
 *.log
 npm-debug.log*

@@ -34,5 +34,15 @@ def run_commands():
     subprocess.run('tsc', shell=True, check=True)
     shutil.copytree('external-libs', 'build', dirs_exist_ok=True)
 
+    assets_master_path = os.path.join('.', 'tools', 'assetsMaster', 'assetsMaster.py')
+    assets_src_path = os.path.join('.', 'assets-src')
+    assets_output_path = os.path.join('.', 'assets')
+
+    try:
+        subprocess.run(['python', assets_master_path, assets_src_path, assets_output_path], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred! Exit code: {e.returncode}")
+        exit(e.returncode)    
+
 if __name__ == "__main__":
     run_commands()

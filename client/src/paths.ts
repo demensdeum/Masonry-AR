@@ -1,7 +1,7 @@
 export class Paths {
     static readonly assetsDirectory: string = "assets";    
     
-    static readonly textureExtension: string = "png";
+    static readonly textureExtension: string = "jpg";
     static readonly modelExtension: string = "glb";    
     static readonly skyboxEnvironmentExtension: string = "hdr"; 
 
