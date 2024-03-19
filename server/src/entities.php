@@ -84,7 +84,7 @@ if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
-$sqlUpdate = "UPDATE entities SET latitude = $latitude, longitude = $longitude WHERE private_uuid = '$heroUUID'";
+$sqlUpdate = "UPDATE entities SET update_date = NOW(), latitude = $latitude, longitude = $longitude WHERE private_uuid = '$heroUUID'";
 $conn->query($sqlUpdate);
 
 $borderDistance = 40;
@@ -132,7 +132,9 @@ if ($insertEnabled) {
                 $balance = mt_rand(1, 3) * 100;
                 $entityLatitude = $eyesMinimalEntityLatitude + mt_rand(0, $eyesDistance * 2) / 10000;
                 $entityLongitude = $eyesMinimalEntityLongitude + mt_rand(0, $eyesDistance * 2) / 10000;
-                $sqlInsert = "INSERT INTO entities (uuid, type, balance, latitude, longitude) VALUES ('$uuid', 'eye', $balance, $entityLatitude, $entityLongitude)";
+                $sqlInsert = "INSERT INTO entities 
+                (uuid, type, balance, latitude, longitude) 
+                VALUES ('$uuid', 'eye', $balance, $entityLatitude, $entityLongitude)";
                 $conn->query($sqlInsert);
             }
         }
@@ -146,7 +148,8 @@ LEFT JOIN entities o ON e.owner_uuid = o.uuid
 WHERE e.latitude >= $minimalEntityLatitude 
   AND e.latitude <= $maximalEntityLatitude 
   AND e.longitude >= $minimalEntityLongitude 
-  AND e.longitude <= $maximalEntityLongitude;
+  AND e.longitude <= $maximalEntityLongitude
+  AND (e.type != 'hero' OR e.update_date > DATE_SUB(NOW(), INTERVAL 1 MINUTE));
 ";
 $result = $conn->query($sqlSelect);
 
