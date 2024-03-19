@@ -153,6 +153,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             cameraPosition.y,
             cameraPosition.z
         )        
+
+        this.context.sceneController.setFog(
+            0xb3ffcb,
+            3,
+            20
+        )
     }
 
     switchOrder() {

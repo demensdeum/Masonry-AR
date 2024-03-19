@@ -195,6 +195,18 @@ export class SceneController implements
       )      
     }
 
+    public setFog(
+        color: number = 0xcccccc,
+        near: float = 10,
+        far: float = 30
+    ) {
+        this.scene.fog = new THREE.Fog(
+            color,
+            near,
+            far
+        )
+    }
+
     private windowWidth() {
         debugPrint("windowWidth: " + window.innerWidth)
         return window.innerWidth
