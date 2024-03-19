@@ -1,6 +1,6 @@
 import { HeroStatusControllerDelegate } from "./heroStatusControllerDelegate.js";
 import { debugPrint } from "./runtime.js";
-import { RequestResult } from "./requestResult.js";
+import { EntitiesRequestResult } from "./entitiesRequestResult.js";
 import { RequestResultCodes } from "./requestResultCodes.js";
 
 export class HeroStatusController {
@@ -29,7 +29,7 @@ export class HeroStatusController {
 
             const jsonData: any = await response.json()
 
-            const result = RequestResult.fromJson(jsonData)
+            const result = EntitiesRequestResult.fromJson(jsonData)
 
             if (result.code == RequestResultCodes.Success) {
                 this.delegate.heroStatusControllerDidChange(

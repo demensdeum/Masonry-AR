@@ -18,8 +18,12 @@ import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js"
 import { HeroStatusControllerDelegate } from "./heroStatusControllerDelegate.js"
 import { HeroStatusController } from "./heroStatusController.js"
 import { BuildingStatusController } from "./buildingStatusController.js"
+import { ServerInfoController } from "./serverInfoController.js"
+import { ServerInfoControllerDelegate } from "./serverInfoControllerDelegate.js"
+import { ServerInfoEntry } from "./serverInfoEntry.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
+                                                    ServerInfoControllerDelegate,
                                                     AuthorizeControllerDelegate,
                                                     EntitiesControllerDelegate,
                                                     SceneControllerDelegate,
@@ -30,6 +34,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private geolocationController = new GeolocationController(this)
     private entitiesController = new EntitiesController(this)    
     private authorizeController = new AuthorizeController(this)
+    private serverInfoController = new ServerInfoController(this)
     private sceneObjectUuidToEntity: { [key: string]: Entity } = {}
     private entityUuidToSceneObjectUuid: { [key: string]: string} = {}
     private heroStatusController = new HeroStatusController(this)
@@ -38,6 +43,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly buildingEnabled = true
     private readonly orderChangeEnabled = true
     private readonly entitiesTrackingStepTimeout = 3000
+    private readonly currentClientVersion = 5
     private heroInserted = false
     private lastBuildingAnimationObjectUUID = "NONE"
 
@@ -128,7 +134,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.gameData.cameraLock = false
         this.gameData.message = "Authorization"
-        this.authorizeController.authorizeIfNeeded()
+        this.serverInfoController.fetch()
 
         if (this.cameraLockEnabled) {
             this.context.sceneController.addText(
@@ -237,6 +243,24 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
 
         debugPrint(`Position: ${position.latitude}, ${position.longitude}`) 
+    }
+
+    serverInfoControllerDidFetchInfo(
+        _: ServerInfoController,
+        entries: ServerInfoEntry[]
+    ) {
+        const minimalClientVersion = entries.filter((a) => { return a.key == "minimal_client_version" })[0]?.value
+
+        if (!minimalClientVersion) {
+            alert("Server info get error, minimal_client_version is null")
+            return
+        }
+        if (parseInt(minimalClientVersion) > this.currentClientVersion) {
+            alert(`Client is too old: ${this.currentClientVersion} / ${minimalClientVersion}`)
+            return
+        }
+
+        this.authorizeController.authorizeIfNeeded()
     }
 
     private modelNameFromEntity(entity: Entity) {

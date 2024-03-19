@@ -2,7 +2,7 @@ import { GeolocationPosition } from "./geolocationPosition.js"
 import { Entity } from "./entity.js"
 import { RequestResultCodes } from "./requestResultCodes.js"
 import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"
-import { RequestResult } from "./requestResult.js"
+import { EntitiesRequestResult } from "./entitiesRequestResult.js"
 import { debugPrint } from "./runtime.js"
 
 export class EntitiesController {
@@ -28,7 +28,7 @@ export class EntitiesController {
 
             const jsonData: [any] = await response.json()
 
-            const result = RequestResult.fromJson(jsonData)
+            const result = EntitiesRequestResult.fromJson(jsonData)
 
             const entities = result.entities
 
@@ -54,7 +54,7 @@ export class EntitiesController {
 
             const jsonData: any = await response.json()
 
-            const result = RequestResult.fromJson(jsonData)
+            const result = EntitiesRequestResult.fromJson(jsonData)
             const entity = result.entities[0]
 
             if (result.code == RequestResultCodes.Success) {
@@ -90,7 +90,7 @@ export class EntitiesController {
 
             const jsonData: any = await response.json()
 
-            const result = RequestResult.fromJson(jsonData)
+            const result = EntitiesRequestResult.fromJson(jsonData)
 
             if (result.code == RequestResultCodes.Success) {
                 this.delegate.entitiesControllerDidDestroyEntity(
@@ -125,7 +125,7 @@ export class EntitiesController {
 
             const jsonData: any = await response.json()
 
-            const result = RequestResult.fromJson(jsonData)
+            const result = EntitiesRequestResult.fromJson(jsonData)
 
             if (result.code == RequestResultCodes.Success) {
                 this.delegate.entitiesControllerDidCatchEntity(

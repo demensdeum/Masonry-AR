@@ -195,7 +195,7 @@ WHERE e.latitude >= $minimalEntityLatitude
   AND e.latitude <= $maximalEntityLatitude 
   AND e.longitude >= $minimalEntityLongitude 
   AND e.longitude <= $maximalEntityLongitude
-  AND (e.type != 'hero' OR e.update_date > DATE_SUB(NOW(), INTERVAL 1 MINUTE));
+  AND (e.type != 'hero' OR e.update_date > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 MINUTE));
 ";
 $result = $conn->query($sqlSelect);
 
