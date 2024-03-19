@@ -512,6 +512,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     renameBuilding(entity: Entity) {
         const name = prompt("Введите название здания:") || "NONE"
+        entity.name = name
         this.buildingStatusController.rename(entity, name)
     }
 

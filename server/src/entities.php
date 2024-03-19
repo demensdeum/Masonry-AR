@@ -8,6 +8,7 @@ $heroUUID = "";
 $insertEnabled = true;
 $minEntitesPerSector = 3;
 $eyeChance = 8;
+$polling_timeout_seconds = 3;
 
 if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
@@ -84,7 +85,52 @@ if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
-$sqlUpdate = "UPDATE entities SET update_date = NOW(), latitude = $latitude, longitude = $longitude WHERE private_uuid = '$heroUUID'";
+$sql = "SELECT * FROM entities WHERE type = 'hero' AND private_uuid = '$heroUUID'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    if ($row == null) {
+        $response = array(
+            'code' => 7,
+            'message' => "Build error: heroUUID search error 2",
+            'entities' => []
+        );    
+        echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+        $conn->close();          
+        exit(0);  
+    }
+
+    $update_date = strtotime($row["update_date"]);
+    $three_seconds_ago = time() - $polling_timeout_seconds;
+
+    if ($update_date > $three_seconds_ago) {
+
+        $formatted_update_date = date('Y-m-d H:i:s', $update_date);
+        $formatted_three_seconds_ago_date = date('Y-m-d H:i:s', $three_seconds_ago);
+
+        $response = array(
+            'code' => 8,
+            'message' => "Entities fetch error: too early ($formatted_update_date / $formatted_three_seconds_ago_date) ! wait 3 seconds!}",
+            'entities' => []
+        );    
+        echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+        $conn->close();      
+        exit(0);              
+    }
+}
+else {
+    $response = array(
+        'code' => 6,
+        'message' => "Entities fetch error: heroUUID $heroUUID not found}",
+        'entities' => []
+    );    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+    $conn->close();      
+    exit(0);       
+}
+
+$sqlUpdate = "UPDATE entities SET update_date = utc_timestamp(), latitude = $latitude, longitude = $longitude WHERE private_uuid = '$heroUUID'";
 $conn->query($sqlUpdate);
 
 $borderDistance = 40;
