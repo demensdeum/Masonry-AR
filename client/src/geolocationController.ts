@@ -1,7 +1,8 @@
 import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js"
-import { GeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./geolocationPosition.js"
+import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 
-export class GeolocationController {
+export class GeolocationController implements GeolocationControllerInterface {
 
     private delegate: GeolocationControllerDelegate
 
@@ -14,7 +15,7 @@ export class GeolocationController {
         navigator.geolocation.getCurrentPosition((position) => {
             self.delegate.geolocationControllerGeolocationAccessGranted(
                 this,
-                new GeolocationPosition(
+                new GameGeolocationPosition(
                     position.coords.latitude, 
                     position.coords.longitude
                 )
@@ -27,7 +28,7 @@ export class GeolocationController {
         navigator.geolocation.watchPosition((position) => {
             self.delegate.geolocationControllerDidGetPosition(
                 self,
-                new GeolocationPosition(
+                new GameGeolocationPosition(
                     position.coords.latitude, 
                     position.coords.longitude
                 )

@@ -1,42 +1,42 @@
-import { EntitiesController } from "./entitiesController.js";
+import { EntitiesControllerInterface } from "./entitiesControllerInterface.js";
 import { Entity } from "./entity.js";
 
 export interface EntitiesControllerDelegate {
 
     entitiesControllerDidFetchEntities(
-        controller: EntitiesController, 
+        controller: EntitiesControllerInterface, 
         entities: Entity[]
     ): void
 
     entitiesControllerDidCatchEntity(
-        controller: EntitiesController,
+        controller: EntitiesControllerInterface,
         entity: Entity
     ): void
 
     entitiesControllerDidNotCatchEntity(
-        controller: EntitiesController,
+        controller: EntitiesControllerInterface,
         entity: Entity,
         message: string
     ): void
 
     entitiesControllerDidBuildEntity(
-        controller: EntitiesController,
+        controller: EntitiesControllerInterface,
         entity: Entity
     ): void
 
     entitiesControllerDidNotBuildEntity(
-        controller: EntitiesController,
+        controller: EntitiesControllerInterface,
         entity: Entity,
         message: string
     ): void    
 
     entitiesControllerDidDestroyEntity(
-        controller: EntitiesController,
+        controller: EntitiesControllerInterface,
         entity: Entity
     ): void
 
     entitiesControllerDidNotDestroyEntity(
-        controller: EntitiesController,
+        controller: EntitiesControllerInterface,
         entity: Entity,
         message: string
     ): void       

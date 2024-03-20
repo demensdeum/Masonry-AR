@@ -1,5 +1,5 @@
 import { int } from "./types.js";
-import { GeolocationPosition } from "./geolocationPosition.js";
+import { GameGeolocationPosition } from "./geolocationPosition.js";
 
 export class Entity {
 
@@ -11,7 +11,7 @@ export class Entity {
     type: string
     model: string
     balance: int
-    position: GeolocationPosition
+    position: GameGeolocationPosition
 
     constructor(
         id: int,
@@ -22,7 +22,7 @@ export class Entity {
         type: string,
         model: string,
         balance: int,
-        position: GeolocationPosition
+        position: GameGeolocationPosition
     ) {
         this.id = id
         this.uuid = uuid
@@ -44,7 +44,7 @@ export class Entity {
         const type: string = json.type
         const model: string = json.model
         const balance: int = json.balance
-        const position = new GeolocationPosition(
+        const position = new GameGeolocationPosition(
             json.latitude,
             json.longitude
         )

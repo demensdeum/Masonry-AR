@@ -1,9 +1,11 @@
 import { State } from "./state.js"
 import { debugPrint, raiseCriticalError } from "./runtime.js"
+import { MockGeolocationController } from "./mockGeolocationController.js"
 import { GeolocationController } from "./geolocationController.js"
 import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js"
-import { GeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./geolocationPosition.js"
 import { EntitiesController } from "./entitiesController.js"
+import { MockEntitiesController } from "./mockEntitiesController.js"
 import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"
 import { Entity } from "./entity.js"
 import { DecorControls } from "./decorControls.js"
@@ -31,8 +33,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     name = "InGameState"
     
     private buildingStatusController = new BuildingStatusController(this)
-    private geolocationController = new GeolocationController(this)
-    private entitiesController = new EntitiesController(this)    
+    private geolocationController = new MockGeolocationController(this)
+    private entitiesController = new MockEntitiesController(this)    
     private authorizeController = new AuthorizeController(this)
     private serverInfoController = new ServerInfoController(this)
     private sceneObjectUuidToEntity: { [key: string]: Entity } = {}
@@ -239,7 +241,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     geolocationControllerDidGetPosition(
         _: GeolocationController,
-        position: GeolocationPosition
+        position: GameGeolocationPosition
     ) {
         this.gameData.position = position
 
@@ -292,7 +294,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     geolocationControllerGeolocationAccessGranted(
         _: GeolocationController,
-        position: GeolocationPosition
+        position: GameGeolocationPosition
     ) {
         this.gameData.position = position
         this.geolocationController.trackPosition()    

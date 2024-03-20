@@ -1,11 +1,12 @@
-import { GeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./geolocationPosition.js"
 import { Entity } from "./entity.js"
 import { RequestResultCodes } from "./requestResultCodes.js"
 import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"
 import { EntitiesRequestResult } from "./entitiesRequestResult.js"
 import { debugPrint } from "./runtime.js"
+import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 
-export class EntitiesController {
+export class EntitiesController implements EntitiesControllerInterface {
 
     private delegate: EntitiesControllerDelegate
 
@@ -16,7 +17,7 @@ export class EntitiesController {
         this.delegate = delegate
     }
 
-    public async getEntities(position: GeolocationPosition) {
+    public async getEntities(position: GameGeolocationPosition): Promise<void> {
         const url = `../server/entities.php?latitude=${position.latitude}&longitude=${position.longitude}`;
 
         try {
@@ -42,7 +43,7 @@ export class EntitiesController {
         }
     }
 
-    public async build() {
+    public async build(): Promise<void> {
         const url = `../server/build.php`;
 
         try {
@@ -76,7 +77,7 @@ export class EntitiesController {
         }
     }
 
-    public async destroy(entity: Entity) {
+    public async destroy(entity: Entity): Promise<void> {
         const url = `../server/destroy.php?uuid=${entity.uuid}`;
 
         debugPrint(`destroy: ${entity.uuid}`)
@@ -111,7 +112,7 @@ export class EntitiesController {
         }
     }
 
-    public async catch(entity: Entity) {
+    public async catch(entity: Entity): Promise<void> {
         const url = `../server/catchEntity.php?uuid=${entity.uuid}`;
 
         debugPrint(`catch: ${entity.uuid}`)

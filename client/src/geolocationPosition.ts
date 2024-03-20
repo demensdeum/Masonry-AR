@@ -1,6 +1,6 @@
 import { float } from "./types.js"
 
-export class GeolocationPosition {
+export class GameGeolocationPosition {
     latitude: float
     longitude: float
 
@@ -11,5 +11,12 @@ export class GeolocationPosition {
     {
         this.latitude = latitude
         this.longitude = longitude
+    }
+
+    public clone(): GameGeolocationPosition {
+        return new GameGeolocationPosition(
+            this.latitude,
+            this.longitude
+        )
     }
 }
