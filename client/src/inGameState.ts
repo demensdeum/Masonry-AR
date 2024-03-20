@@ -24,7 +24,7 @@ import { ServerInfoController } from "./serverInfoController.js"
 import { ServerInfoControllerDelegate } from "./serverInfoControllerDelegate.js"
 import { ServerInfoEntry } from "./serverInfoEntry.js"
 import { SceneObjectsAnimatorController } from "./sceneObjectsAnimatorController.js"
-import { Vector3 } from "three"
+import { GameVector3 } from "./gameVector3.js"
 import { SceneObjectsAnimatorControllerDelegate } from "./sceneObjectsAnimatorControllerDelegate.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
@@ -139,7 +139,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             )
         }
 
-        this.gameData.cameraLock = false
         this.gameData.message = "Authorization"
         this.serverInfoController.fetch()
 
@@ -230,24 +229,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     step() {
-        if (this.gameData.cameraLock) {
-            const cameraPosition = this.context.sceneController.sceneObjectPosition("hero").clone()
-            cameraPosition.y += 1.7
-            cameraPosition.z += 1.2
-
-            this.context.sceneController.moveObjectTo(
-                Names.Camera,
-                cameraPosition.x,
-                cameraPosition.y,
-                cameraPosition.z
-            )
-        }
+        this.sceneObjectsAnimatorController.step()
     }
 
     sceneObjectsAnimatorControllerDidRequireToMoveObject(
         _: SceneObjectsAnimatorController,
         objectUuid: string,
-        position: Vector3
+        position: GameVector3
     ) {
         this.context.sceneController.moveObjectTo(
             objectUuid,
@@ -427,12 +415,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 const adaptedZ = -(diffY * scale)    
                 
                 const uuid = entity.uuid
-                this.context.sceneController.moveObjectTo(
-                    uuid,
-                    adaptedX,
-                    0,
-                    adaptedZ
-                )
+
+                // this.context.sceneController.moveObjectTo(
+                //     uuid,
+                //     adaptedX,
+                //     0,
+                //     adaptedZ
+                // )
+                
                 if (entity.type == "building") {
                     const uuid = entity.uuid
                     const objectName = `order-zone-${uuid}`                    
@@ -446,7 +436,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
                 this.sceneObjectsAnimatorController.movePosition(
                     uuid,
-                    new Vector3(
+                    new GameVector3(
                         adaptedX,
                         0,
                         adaptedZ
@@ -524,7 +514,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
                 this.sceneObjectsAnimatorController.addPosition(
                     uuid,
-                    new Vector3(
+                    new GameVector3(
                         adaptedX,
                         0,
                         adaptedZ

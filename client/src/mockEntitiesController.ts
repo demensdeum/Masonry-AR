@@ -34,6 +34,7 @@ export class MockEntitiesController implements EntitiesControllerInterface {
         }
         else {
             this.eye.position.latitude += 0.0004
+            this.eye.position.longitude += 0.0004
         }
         this.delegate.entitiesControllerDidFetchEntities(
             this, 

@@ -6,7 +6,6 @@ export class GameData {
     public name: string = ""
     public position: GameGeolocationPosition | null = null    
     public balance = 0
-    public cameraLock = false
     public message = "No message"
     public model = "DEFAULT"
     public isZonesViewEnabled = true
