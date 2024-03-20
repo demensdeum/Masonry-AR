@@ -30,8 +30,10 @@ export class MockEntitiesController implements EntitiesControllerInterface {
     async getEntities(position: GameGeolocationPosition): Promise<void> {
         if (this.isEyePositionSet == false) {
             this.eye.position = position.clone()
-            this.eye.position.latitude += 0.0005
             this.isEyePositionSet = true
+        }
+        else {
+            this.eye.position.latitude += 0.0004
         }
         this.delegate.entitiesControllerDidFetchEntities(
             this, 

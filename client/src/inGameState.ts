@@ -23,15 +23,20 @@ import { BuildingStatusController } from "./buildingStatusController.js"
 import { ServerInfoController } from "./serverInfoController.js"
 import { ServerInfoControllerDelegate } from "./serverInfoControllerDelegate.js"
 import { ServerInfoEntry } from "./serverInfoEntry.js"
+import { SceneObjectsAnimatorController } from "./sceneObjectsAnimatorController.js"
+import { Vector3 } from "three"
+import { SceneObjectsAnimatorControllerDelegate } from "./sceneObjectsAnimatorControllerDelegate.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,
                                                     AuthorizeControllerDelegate,
                                                     EntitiesControllerDelegate,
                                                     SceneControllerDelegate,
-                                                    HeroStatusControllerDelegate {
+                                                    HeroStatusControllerDelegate,
+                                                    SceneObjectsAnimatorControllerDelegate {
     name = "InGameState"
     
+    private sceneObjectsAnimatorController = new SceneObjectsAnimatorController(this)
     private buildingStatusController = new BuildingStatusController(this)
     private geolocationController = new MockGeolocationController(this)
     private entitiesController = new MockEntitiesController(this)    
@@ -239,6 +244,19 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
     }
 
+    sceneObjectsAnimatorControllerDidRequireToMoveObject(
+        _: SceneObjectsAnimatorController,
+        objectUuid: string,
+        position: Vector3
+    ) {
+        this.context.sceneController.moveObjectTo(
+            objectUuid,
+            position.x,
+            position.y,
+            position.z
+        )
+    }
+
     geolocationControllerDidGetPosition(
         _: GeolocationController,
         position: GameGeolocationPosition
@@ -391,6 +409,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 &&
                 this.modelIsSameForEntity(entity)
             ) {
+                // move object
                 const position = this.gameData.position  
                 if (position == null) {
                     raiseCriticalError(`Position is null!`)
@@ -424,8 +443,18 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                         adaptedZ
                     )
                 }
+
+                this.sceneObjectsAnimatorController.movePosition(
+                    uuid,
+                    new Vector3(
+                        adaptedX,
+                        0,
+                        adaptedZ
+                    )
+                )
             }
-            else {   
+            else {  
+                // add object 
                 this.removeEntityIfExists(entity)
                 const uuid = entity.uuid
                 const modelName = this.modelNameFromEntity(entity)
@@ -492,6 +521,15 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
                 self.sceneObjectUuidToEntity[uuid] = entity
                 self.entityUuidToSceneObjectUuid[entity.uuid] = uuid
+
+                this.sceneObjectsAnimatorController.addPosition(
+                    uuid,
+                    new Vector3(
+                        adaptedX,
+                        0,
+                        adaptedZ
+                    )
+                )                
             }
         })
         this.entitiesTrackingStep()
@@ -509,7 +547,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         const name = `${entity.type}-${entity.id}`
         delete this.entityUuidToSceneObjectUuid[entity.uuid]
-        delete this.sceneObjectUuidToEntity[name]        
+        delete this.sceneObjectUuidToEntity[name]    
+        this.sceneObjectsAnimatorController.removePosition(
+            entity.uuid
+        )    
     }
 
     entitiesControllerDidCatchEntity(
