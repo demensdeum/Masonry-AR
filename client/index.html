@@ -33,5 +33,15 @@
 <body>
   <div  class = "moveGUI"></div>  
     <canvas class="webgl"></canvas>
+    <script>
+      if (window.location.protocol === 'http:') {
+        var newUrl = window.location.href.replace('http:', 'https:')
+        window.location.assign(newUrl)
+      }      
+    </script>
     <script type="module" src="./build/main.js"></script>
+    <script src="build/eruda/eruda.js"></script>
+    <script>
+      eruda.init();   
+    </script>    
 </body>

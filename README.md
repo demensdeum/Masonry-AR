@@ -30,3 +30,4 @@ https://www.phpmyadmin.net
 * Fix/install more tools, change configs/source code  
 * Run build_and_deploy.py  
 * Repeat until success  
+* Run game in lastest browser for your platform
