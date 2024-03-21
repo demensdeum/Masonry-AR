@@ -16,6 +16,21 @@ export class GameVector3 {
         this.z = z
     }
 
+    public moveVector(
+        toPosition: GameVector3,
+        speed: float
+    ) {
+        const directionVector = toPosition.subtract(this)
+        const normalizedDirection = directionVector.normalize()
+        const step = normalizedDirection.multiply(speed)
+        const distanceToTarget = this.distanceTo(toPosition)
+        if (distanceToTarget <= step.length()) {
+            return toPosition
+        }        
+        const newPosition = this.add(step)
+        return newPosition        
+    }
+
     public add(otherVector: GameVector3) {
         return new GameVector3(
             this.x + otherVector.x,

@@ -17,14 +17,9 @@ export class SceneObjectsAnimatorControllerPosition {
     } 
 
     public moveVector(): GameVector3 {
-        const directionVector = this.toPosition.subtract(this.currentPosition)
-        const normalizedDirection = directionVector.normalize()
-        const step = normalizedDirection.multiply(this.speed)
-        const distanceToTarget = this.currentPosition.distanceTo(this.toPosition)
-        if (distanceToTarget <= step.length()) {
-            return this.toPosition
-        }        
-        const newPosition = this.currentPosition.add(step)
-        return newPosition;
+        return this.currentPosition.moveVector(
+            this.toPosition,
+            this.speed
+        )
     }
 }

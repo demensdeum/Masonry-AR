@@ -55,7 +55,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly currentClientVersion = 5
     private heroInserted = false
     private lastBuildingAnimationObjectUUID = "NONE"
-    private dataFetchType = "MOCK-GEOLOCATION"
+    private dataFetchType = "MOCK"
 
     initialize(): void {
 
