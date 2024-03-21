@@ -1,4 +1,3 @@
-import { debugPrint } from "./runtime.js";
 import { GameVector3 } from "./gameVector3.js";
 import { SceneObjectsAnimatorControllerDelegate } from "./sceneObjectsAnimatorControllerDelegate.js";
 import { SceneObjectsAnimatorControllerPosition } from "./sceneObjectsAnimatorControllerPosition.js"
@@ -41,7 +40,6 @@ export class SceneObjectsAnimatorController {
     }
 
     step() {
-        debugPrint("SceneObjectsAnimatorController step")
         for (const key in this.positions) {
             const positionItem = this.positions[key]
             positionItem.currentPosition = positionItem.moveVector()

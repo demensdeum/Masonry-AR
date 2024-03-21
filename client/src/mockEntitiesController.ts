@@ -3,10 +3,13 @@ import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 import { Entity } from "./entity.js"
 import { GameGeolocationPosition } from "./geolocationPosition.js"
 import { Utils} from "./utils.js"
+import { MockEntitiesControllerDataSource } from "./mockEntitiesControllerDataSource.js"
 
 export class MockEntitiesController implements EntitiesControllerInterface {
 
     public delegate: EntitiesControllerDelegate
+    public dataSource?: MockEntitiesControllerDataSource
+
     readonly eye = new Entity(
         1,
         Utils.generateUUID(),
@@ -18,7 +21,21 @@ export class MockEntitiesController implements EntitiesControllerInterface {
         1000,
         new GameGeolocationPosition(0.0, 0.0)
     )
-    private isEyePositionSet: boolean = false
+
+    readonly building = new Entity(
+        2,
+        Utils.generateUUID(),
+        "building-1",
+        "NONE",
+        "NONE",
+        "building",
+        "DEFAULT",
+        0,
+        new GameGeolocationPosition(0.0, 0.0)
+    )
+
+    private isEyePositionSet = false
+    private isBuildingOnSceneSet = false
 
     constructor(
         delegate: EntitiesControllerDelegate
@@ -33,17 +50,37 @@ export class MockEntitiesController implements EntitiesControllerInterface {
             this.isEyePositionSet = true
         }
         else {
-            this.eye.position.latitude += 0.0004
-            this.eye.position.longitude += 0.0004
+            // this.eye.position.latitude += 0.0004
+            // this.eye.position.longitude += 0.0004
+        }
+        var entities = [this.eye]
+        if (this.isBuildingOnSceneSet) {
+            entities.push(this.building)
         }
         this.delegate.entitiesControllerDidFetchEntities(
             this, 
-            [this.eye]
+            entities
         )
     }
 
     async build(): Promise<void> {
-
+        if (this.isBuildingOnSceneSet) {
+            this.delegate.entitiesControllerDidNotBuildEntity(
+                this,
+                "There is building in this area already!"
+            )
+        }
+        else {
+            const position = this.dataSource?.mockEntitiesControllerDidRequestGeolocationPosition(this)
+            if (position) {
+                this.building.position = position.clone()
+                this.isBuildingOnSceneSet = true
+                this.delegate.entitiesControllerDidBuildEntity(
+                    this,
+                    this.building
+                )
+            }
+        }
     }
 
     async destroy(_: Entity): Promise<void> {

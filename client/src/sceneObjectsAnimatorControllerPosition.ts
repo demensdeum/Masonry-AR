@@ -1,6 +1,5 @@
 import { GameVector3 } from "./gameVector3.js";
 import { float } from "./types.js";
-import { debugPrint } from "./runtime.js";
 
 export class SceneObjectsAnimatorControllerPosition {
     currentPosition: GameVector3
@@ -26,7 +25,6 @@ export class SceneObjectsAnimatorControllerPosition {
             return this.toPosition
         }        
         const newPosition = this.currentPosition.add(step)
-        debugPrint(`newPosition: ${newPosition.printable()}`)
         return newPosition;
     }
 }

@@ -26,7 +26,6 @@ export interface EntitiesControllerDelegate {
 
     entitiesControllerDidNotBuildEntity(
         controller: EntitiesControllerInterface,
-        entity: Entity,
         message: string
     ): void    
 

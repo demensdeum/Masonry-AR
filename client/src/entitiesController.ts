@@ -67,7 +67,6 @@ export class EntitiesController implements EntitiesControllerInterface {
             else {
                 this.delegate.entitiesControllerDidNotBuildEntity(
                     this,
-                    entity,
                     result.message
                 )
             }
