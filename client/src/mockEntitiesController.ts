@@ -15,7 +15,7 @@ export class MockEntitiesController implements EntitiesControllerInterface {
         "NONE",
         "eye",
         "DEFAULT",
-        100,
+        1000,
         new GameGeolocationPosition(0.0, 0.0)
     )
     private isEyePositionSet: boolean = false
@@ -51,6 +51,10 @@ export class MockEntitiesController implements EntitiesControllerInterface {
     }
 
     async catch(_: Entity): Promise<void> {
-
+        this.delegate.entitiesControllerDidCatchEntity(
+            this,
+            this.eye
+        )
+        this.isEyePositionSet = false
     }
 }

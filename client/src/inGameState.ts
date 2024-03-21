@@ -176,7 +176,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     private showBuildingAnimation() {
         if (this.lastBuildingAnimationObjectUUID in this.sceneObjectUuidToEntity) {
-            debugPrint("Can't present another building animation! Already showing one!")
+            debugPrint("Can't present another building animation! Already presenting one!")
             return
         }
         const position = this.gameData.position
@@ -541,6 +541,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.sceneObjectsAnimatorController.removePosition(
             entity.uuid
         )    
+
+        if (entity.uuid == this.lastBuildingAnimationObjectUUID) {
+            this.lastBuildingAnimationObjectUUID = "NONE"
+        }
     }
 
     entitiesControllerDidCatchEntity(
