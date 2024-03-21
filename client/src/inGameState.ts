@@ -142,12 +142,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         if (this.buildingEnabled) {            
             let action = () => {
-                if (this.gameData.isLocationResolvedOnce() == false) {
-                    alert("Строить нельзя пока не будут определены ваши координаты!")
-                    return
-                }
-                this.showBuildingAnimation()
-                this.entitiesController.build()
+                this.build()
             }
             const button = {
                 ["Build"] : action
@@ -186,6 +181,19 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         )
     }
 
+    private build() {
+        if (this.gameData.isLocationResolvedOnce() == false) {
+            alert("Строить нельзя пока не будут определены ваши координаты!")
+            return
+        }
+        if (this.gameData.geolocationPositionIsInSync() == false) {
+            alert("Для постройки зданий сначала нужно остановиться и подождать (координаты на сервере и на клиенте разные)")
+            return
+        }
+        this.showBuildingAnimation()
+        this.entitiesController.build()
+    }
+
     switchOrder() {
         const order = prompt("Название масонского ордена")
         if (order) {
@@ -196,7 +204,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     mockEntitiesControllerDidRequestGeolocationPosition(
         _: MockEntitiesController
     ): GameGeolocationPosition {
-        const position = this.gameData.currentPosition
+        const position = this.gameData.playerClientGeolocationPosition
         if (position) {
             return position
         }
@@ -214,7 +222,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             debugPrint("Can't present another building animation! Already presenting one!")
             return
         }
-        const position = this.gameData.currentPosition
+        const position = this.gameData.playerClientGeolocationPosition
         if (position == null) {
             return
         }
@@ -313,13 +321,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: GeolocationController,
         position: GameGeolocationPosition
     ) {
-        if (this.gameData.currentPosition) {
+        if (this.gameData.playerClientGeolocationPosition) {
             this.updatePositionsFromDiffOf(
-                this.gameData.currentPosition,
+                this.gameData.playerClientGeolocationPosition,
                 position
             )
         }
-        this.gameData.currentPosition = position.clone()
+        this.gameData.playerClientGeolocationPosition = position.clone()
 
         if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
             window.localStorage.setItem("gameplayStartInfo", "YES")
@@ -372,7 +380,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: GeolocationController,
         position: GameGeolocationPosition
     ) {
-        this.gameData.currentPosition = position
+        this.gameData.playerClientGeolocationPosition = position
         this.geolocationController.trackPosition()    
     }
 
@@ -468,7 +476,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 this.modelIsSameForEntity(entity)
             ) {
                 // move object
-                const position = this.gameData.currentPosition  
+                const position = this.gameData.playerClientGeolocationPosition  
                 if (position == null) {
                     raiseCriticalError(`Position is null!`)
                     return
@@ -528,7 +536,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 const uuid = entity.uuid
                 const modelName = this.modelNameFromEntity(entity)
 
-                const position = this.gameData.currentPosition
+                const position = this.gameData.playerClientGeolocationPosition
                 if (position == null) {
                     raiseCriticalError(`Position is null!`)
                     return
@@ -715,11 +723,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     private entitiesTrackingStep() {
-        this.gameData.message = `${this.gameData.currentPosition?.latitude} - ${this.gameData.currentPosition?.longitude}`
-        const position = this.gameData.currentPosition
+        this.gameData.message = `${this.gameData.playerClientGeolocationPosition?.latitude} - ${this.gameData.playerClientGeolocationPosition?.longitude}`
+        const position = this.gameData.playerClientGeolocationPosition
         if (position != null) {
             const self = this
             setTimeout(()=>{
+                this.gameData.playerServerGeolocationPosition = position
                 self.entitiesController.getEntities(position)
             }, self.entitiesTrackingStepTimeout)
         }

@@ -7,7 +7,7 @@ export class MockGeolocationController implements GeolocationControllerInterface
     public delegate: GeolocationControllerDelegate
 
     private position = new GameGeolocationPosition(51.509865, -0.118092)
-    private trackPositionTimeout = 1000
+    private trackPositionTimeout = 3000
 
     constructor(
         delegate: GeolocationControllerDelegate
@@ -28,8 +28,8 @@ export class MockGeolocationController implements GeolocationControllerInterface
     }
 
     private trackPositionStep() {
-        this.position.latitude += 0.0002
-        //this.position.longitude += 0.00002
+        // this.position.latitude += 0.00002
+        this.position.longitude += 0.00008
         const self = this
         setTimeout(() => {
                 self.trackPositionStep()
