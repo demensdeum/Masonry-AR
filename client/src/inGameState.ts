@@ -247,7 +247,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     step() {
-        // this.sceneObjectsAnimatorController.step()
+        this.sceneObjectsAnimatorController.step()
     }
 
     sceneObjectsAnimatorControllerDidRequireToMoveObject(
@@ -263,11 +263,46 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         )
     }
 
+    private updatePositionsFromDiffOf(
+        fromPosition: GameGeolocationPosition,
+        toPosition: GameGeolocationPosition
+    ) {
+        const scale = 2000
+        const diffX = (fromPosition.longitude - toPosition.longitude) * scale
+        const diffZ = -(fromPosition.latitude - toPosition.latitude) * scale
+
+        this.sceneObjectsAnimatorController.scroll(
+            new GameVector3(
+                diffX,
+                0,
+                diffZ
+            )
+        )           
+
+        if (this.lastBuildingAnimationObjectUUID != "NONE") {
+            const position = this.context.sceneController.sceneObjectPosition(this.lastBuildingAnimationObjectUUID)
+            const x = position.x;
+            const z = position.z;
+            this.context.sceneController.moveObjectTo(
+                this.lastBuildingAnimationObjectUUID,
+                x + diffX,
+                0,
+                z + diffZ
+            )
+        }
+    }
+
     geolocationControllerDidGetPosition(
         _: GeolocationController,
         position: GameGeolocationPosition
     ) {
-        this.gameData.currentPosition = position
+        if (this.gameData.currentPosition) {
+            this.updatePositionsFromDiffOf(
+                this.gameData.currentPosition,
+                position
+            )
+        }
+        this.gameData.currentPosition = position.clone()
 
         if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
             window.localStorage.setItem("gameplayStartInfo", "YES")
@@ -434,32 +469,41 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 
                 const uuid = entity.uuid
 
-                this.context.sceneController.moveObjectTo(
-                    uuid,
-                    adaptedX,
-                    0,
-                    adaptedZ
-                )
+                // this.context.sceneController.moveObjectTo(
+                //     uuid,
+                //     adaptedX,
+                //     0,
+                //     adaptedZ
+                // )
                 
                 if (entity.type == "building") {
                     const uuid = entity.uuid
                     const objectName = `order-zone-${uuid}`                    
-                    this.context.sceneController.moveObjectTo(
+                    // this.context.sceneController.moveObjectTo(
+                    //     objectName,
+                    //     adaptedX,
+                    //     0.01,
+                    //     adaptedZ
+                    // )
+
+                    this.sceneObjectsAnimatorController.movePosition(
                         objectName,
-                        adaptedX,
-                        0.01,
-                        adaptedZ
-                    )
+                        new GameVector3(
+                            adaptedX,
+                            0.01,
+                            adaptedZ
+                        )
+                    )                    
                 }
 
-                // this.sceneObjectsAnimatorController.movePosition(
-                //     uuid,
-                //     new GameVector3(
-                //         adaptedX,
-                //         0,
-                //         adaptedZ
-                //     )
-                // )
+                this.sceneObjectsAnimatorController.movePosition(
+                    uuid,
+                    new GameVector3(
+                        adaptedX,
+                        0,
+                        adaptedZ
+                    )
+                )
             }
             else {  
                 // add object 
@@ -519,6 +563,16 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                         true,
                         0.4                                     
                     )
+
+                    this.sceneObjectsAnimatorController.addPosition(
+                        `order-zone-${uuid}`,
+                        new GameVector3(
+                            adaptedX,
+                            0.01,
+                            adaptedZ
+                        )
+                    )
+
                     this.context.sceneController.rotateObjectTo(
                         `order-zone-${uuid}`,
                         Utils.angleToRadians(90),
@@ -551,6 +605,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             const uuid = entity.uuid
             const objectName = `order-zone-${uuid}`
             this.context.sceneController.removeSceneObjectWithName(objectName);
+            this.sceneObjectsAnimatorController.removePosition(
+                objectName
+            )            
         }
 
         const name = `${entity.type}-${entity.id}`

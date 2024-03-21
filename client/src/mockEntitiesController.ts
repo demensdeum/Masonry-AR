@@ -34,6 +34,18 @@ export class MockEntitiesController implements EntitiesControllerInterface {
         new GameGeolocationPosition(0.0, 0.0)
     )
 
+    readonly hero = new Entity(
+        3,
+        Utils.generateUUID(),
+        "hero-1",
+        "NONE",
+        "NONE",
+        "hero",
+        "com.demensdeum.cat.gray",
+        1000,
+        new GameGeolocationPosition(0.0, 0.0)
+    )    
+
     private isEyePositionSet = false
     private isBuildingOnSceneSet = false
 
@@ -47,13 +59,16 @@ export class MockEntitiesController implements EntitiesControllerInterface {
     async getEntities(position: GameGeolocationPosition): Promise<void> {
         if (this.isEyePositionSet == false) {
             this.eye.position = position.clone()
+            this.hero.position = position.clone()
+            this.hero.position.longitude -= 0.0002
             this.isEyePositionSet = true
         }
         else {
-            // this.eye.position.latitude += 0.0004
-            // this.eye.position.longitude += 0.0004
+            this.eye.position.latitude += 0.0004
+            this.hero.position.longitude -= 0.0002
+            //this.eye.position.longitude += 0.0004
         }
-        var entities = [this.eye]
+        var entities = [this.eye, this.hero]
         if (this.isBuildingOnSceneSet) {
             entities.push(this.building)
         }
@@ -83,8 +98,12 @@ export class MockEntitiesController implements EntitiesControllerInterface {
         }
     }
 
-    async destroy(_: Entity): Promise<void> {
-
+    async destroy(entity: Entity): Promise<void> {
+        this.delegate.entitiesControllerDidDestroyEntity(
+            this,
+            entity
+        )
+        this.isBuildingOnSceneSet = false        
     }
 
     async catch(_: Entity): Promise<void> {
