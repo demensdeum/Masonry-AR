@@ -26,6 +26,8 @@ import { ServerInfoEntry } from "./serverInfoEntry.js"
 import { SceneObjectsAnimatorController } from "./sceneObjectsAnimatorController.js"
 import { GameVector3 } from "./gameVector3.js"
 import { SceneObjectsAnimatorControllerDelegate } from "./sceneObjectsAnimatorControllerDelegate.js"
+import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
+import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,
@@ -38,8 +40,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     
     private sceneObjectsAnimatorController = new SceneObjectsAnimatorController(this)
     private buildingStatusController = new BuildingStatusController(this)
-    private geolocationController = new MockGeolocationController(this)
-    private entitiesController = new MockEntitiesController(this)    
+    private geolocationController!: GeolocationControllerInterface
+    private entitiesController!: EntitiesControllerInterface
     private authorizeController = new AuthorizeController(this)
     private serverInfoController = new ServerInfoController(this)
     private sceneObjectUuidToEntity: { [key: string]: Entity } = {}
@@ -53,9 +55,24 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly currentClientVersion = 5
     private heroInserted = false
     private lastBuildingAnimationObjectUUID = "NONE"
+    private dataFetchType = "MOCK-GEOLOCATION"
 
     initialize(): void {
-        this.entitiesController.dataSource = this
+
+        if (this.dataFetchType == "MOCK") {
+            this.geolocationController = new MockGeolocationController(this)
+            const mockingEntitiesController = new MockEntitiesController(this)
+            mockingEntitiesController.dataSource = this
+            this.entitiesController = mockingEntitiesController
+        }
+        else if (this.dataFetchType = "MOCK-GEOLOCATION") {
+            this.geolocationController = new MockGeolocationController(this)
+            this.entitiesController = new EntitiesController(this)
+        }
+        else if (this.dataFetchType == "DEFAULT") {
+            this.geolocationController = new GeolocationController(this)
+            this.entitiesController = new EntitiesController(this)
+        }
 
         const canvas = this.context.canvas
         if (canvas == null) {
