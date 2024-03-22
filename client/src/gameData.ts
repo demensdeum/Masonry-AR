@@ -1,4 +1,4 @@
-import { GameGeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 
 export class GameData {
     public heroUUID: string = ""

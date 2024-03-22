@@ -1,10 +1,11 @@
 import { int } from "./types.js";
-import { GameGeolocationPosition } from "./geolocationPosition.js";
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js";
+import { UUID } from "./types.js";
 
 export class Entity {
 
     id: int
-    uuid: string
+    uuid: UUID
     name: string
     ownerName: string
     order: string
@@ -15,7 +16,7 @@ export class Entity {
 
     constructor(
         id: int,
-        uuid: string,
+        uuid: UUID,
         name: string,
         ownerName: string,
         order: string,

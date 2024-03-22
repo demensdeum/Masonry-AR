@@ -1,7 +1,7 @@
 import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"
 import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 import { Entity } from "./entity.js"
-import { GameGeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { Utils} from "./utils.js"
 import { MockEntitiesControllerDataSource } from "./mockEntitiesControllerDataSource.js"
 

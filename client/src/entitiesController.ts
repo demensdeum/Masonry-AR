@@ -1,4 +1,4 @@
-import { GameGeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { Entity } from "./entity.js"
 import { RequestResultCodes } from "./requestResultCodes.js"
 import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"

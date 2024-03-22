@@ -3,7 +3,7 @@ import { debugPrint, raiseCriticalError } from "./runtime.js"
 import { MockGeolocationController } from "./mockGeolocationController.js"
 import { GeolocationController } from "./geolocationController.js"
 import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js"
-import { GameGeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { EntitiesController } from "./entitiesController.js"
 import { MockEntitiesController } from "./mockEntitiesController.js"
 import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"
@@ -28,6 +28,7 @@ import { GameVector3 } from "./gameVector3.js"
 import { SceneObjectsAnimatorControllerDelegate } from "./sceneObjectsAnimatorControllerDelegate.js"
 import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
+import { InGameStateSceneController } from "./inGameStateSceneController.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,
@@ -56,6 +57,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private heroInserted = false
     private lastBuildingAnimationObjectUUID = "NONE"
     private dataFetchType = "MOCK"
+    private inGameStateSceneController!: InGameStateSceneController
 
     initialize(): void {
 
@@ -179,6 +181,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             3,
             20
         )
+
+        this.inGameStateSceneController = new InGameStateSceneController(this.context.sceneController)
     }
 
     private build() {
@@ -288,45 +292,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         )
     }
 
-    private updatePositionsFromDiffOf(
-        fromPosition: GameGeolocationPosition,
-        toPosition: GameGeolocationPosition
-    ) {
-        const scale = 2000
-        const diffX = (fromPosition.longitude - toPosition.longitude) * scale
-        const diffZ = -(fromPosition.latitude - toPosition.latitude) * scale
-
-        this.sceneObjectsAnimatorController.scroll(
-            new GameVector3(
-                diffX,
-                0,
-                diffZ
-            )
-        )           
-
-        if (this.lastBuildingAnimationObjectUUID != "NONE") {
-            const position = this.context.sceneController.sceneObjectPosition(this.lastBuildingAnimationObjectUUID)
-            const x = position.x;
-            const z = position.z;
-            this.context.sceneController.moveObjectTo(
-                this.lastBuildingAnimationObjectUUID,
-                x + diffX,
-                0,
-                z + diffZ
-            )
-        }
-    }
-
     geolocationControllerDidGetPosition(
         _: GeolocationController,
         position: GameGeolocationPosition
     ) {
-        if (this.gameData.playerClientGeolocationPosition) {
-            this.updatePositionsFromDiffOf(
-                this.gameData.playerClientGeolocationPosition,
-                position
-            )
-        }
         this.gameData.playerClientGeolocationPosition = position.clone()
 
         if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
@@ -334,7 +303,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             alert("Ваши координаты определены. Для перемещения в игре ходите с устройством в реальной жизни, собирайте масонские знаки, и стройте здания за свой орден. Приятной игры!")
         }
 
-        debugPrint(`Position: ${position.latitude}, ${position.longitude}`) 
+        this.inGameStateSceneController.setCurrentPlayerGameGeolocation(position)
     }
 
     serverInfoControllerDidFetchInfo(
@@ -355,26 +324,26 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.authorizeController.authorizeIfNeeded()
     }
 
-    private modelNameFromEntity(entity: Entity) {
-        if (entity.model == "DEFAULT") {
-            const type = entity.type
-            if (type == "hero") {
-                return "com.demensdeum.hero"
-            }
-            else if (type == "building") {
-                return "com.demensdeum.hitech.building"
-            }
-            else if (type == "eye") {
-                return "com.demensdeum.eye"
-            }
-            else {
-                return "com.demensdeum.hero"
-            }
-        }
-        else {
-            return entity.model
-        }
-    }
+    // private modelNameFromEntity(entity: Entity) {
+    //     if (entity.model == "DEFAULT") {
+    //         const type = entity.type
+    //         if (type == "hero") {
+    //             return "com.demensdeum.hero"
+    //         }
+    //         else if (type == "building") {
+    //             return "com.demensdeum.hitech.building"
+    //         }
+    //         else if (type == "eye") {
+    //             return "com.demensdeum.eye"
+    //         }
+    //         else {
+    //             return "com.demensdeum.hero"
+    //         }
+    //     }
+    //     else {
+    //         return entity.model
+    //     }
+    // }
 
     geolocationControllerGeolocationAccessGranted(
         _: GeolocationController,
@@ -419,240 +388,244 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.heroInserted = true
     }
 
-    private removeEntityIfExists(entity: Entity) {
-        if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
-            return
-        }
-        this.removeEntity(entity)
-    }
+    // private removeEntityIfExists(entity: Entity) {
+    //     if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
+    //         return
+    //     }
+    //     this.removeEntity(entity)
+    // }
 
-    private modelIsSameForEntity(entity: Entity): boolean {
-        if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
-            raiseCriticalError(`Can't check same model or not, because there is no entity ${entity.uuid} in entityUuidToSceneObjectUuid`)
-            return false
-        }
-        const currentEntity = this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]]
-        const result = currentEntity.model == entity.model
-        return result
-    }
+    // private modelIsSameForEntity(entity: Entity): boolean {
+    //     if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
+    //         raiseCriticalError(`Can't check same model or not, because there is no entity ${entity.uuid} in entityUuidToSceneObjectUuid`)
+    //         return false
+    //     }
+    //     const currentEntity = this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]]
+    //     const result = currentEntity.model == entity.model
+    //     return result
+    // }
 
     entitiesControllerDidFetchEntities(
         _: EntitiesController,
         entities: Entity[]
     ) {
-        const self = this
-        var i = 0.5
+        debugPrint(`entities: ${entities}`)
 
-        const entityServerUuids = new Set<string>(entities.map((entity) => {return entity.uuid}))
-        //debugger
-        Object.keys(this.sceneObjectUuidToEntity).forEach((uuid) => {
-            if (!entityServerUuids.has(uuid)) {
-                const entity = this.sceneObjectUuidToEntity[uuid]
-                if (entity == null) {
-                    debugPrint(`Can't remove - no entity with UUID: ${uuid}`)
-                    return
-                }
-                this.removeEntity(entity)
-            }
-        })
-
-        entities.forEach((entity) => {
-
-            if (entity.uuid == self.gameData.heroUUID) {
-                self.gameData.name = entity.name 
-                self.gameData.balance = entity.balance
-                self.gameData.order = entity.order
-
-                if (self.gameData.model != entity.model) {
-                    self.gameData.model = entity.model
-                    self.switchHeroModel(entity.model)
-                }
-                return
-            }
-
-            if (
-                entity.uuid in this.entityUuidToSceneObjectUuid 
-                &&
-                this.modelIsSameForEntity(entity)
-            ) {
-                // move object
-                const position = this.gameData.playerClientGeolocationPosition  
-                if (position == null) {
-                    raiseCriticalError(`Position is null!`)
-                    return
-                }                              
-                const diffX = entity.position.longitude - position.longitude
-                const diffY = entity.position.latitude - position.latitude
-
-                debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
-
-                this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]].name = entity.name
-
-                const scale = 2000
-                const adaptedX = diffX * scale
-                const adaptedZ = -(diffY * scale)    
-                
-                const uuid = entity.uuid
-
-                // this.context.sceneController.moveObjectTo(
-                //     uuid,
-                //     adaptedX,
-                //     0,
-                //     adaptedZ
-                // )
-                
-                if (entity.type == "building") {
-                    const uuid = entity.uuid
-                    const objectName = `order-zone-${uuid}`                    
-                    // this.context.sceneController.moveObjectTo(
-                    //     objectName,
-                    //     adaptedX,
-                    //     0.01,
-                    //     adaptedZ
-                    // )
-
-                    this.sceneObjectsAnimatorController.movePosition(
-                        objectName,
-                        new GameVector3(
-                            adaptedX,
-                            0.01,
-                            adaptedZ
-                        )
-                    )                    
-                }
-
-                this.sceneObjectsAnimatorController.movePosition(
-                    uuid,
-                    new GameVector3(
-                        adaptedX,
-                        0,
-                        adaptedZ
-                    )
-                )
-            }
-            else {  
-                // add object 
-                this.removeEntityIfExists(entity)
-                const uuid = entity.uuid
-                const modelName = this.modelNameFromEntity(entity)
-
-                const position = this.gameData.playerClientGeolocationPosition
-                if (position == null) {
-                    raiseCriticalError(`Position is null!`)
-                    return
-                }
-
-                const diffX = entity.position.longitude - position.longitude
-                const diffY = entity.position.latitude - position.latitude
-
-                debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
-
-                const scale = 2000
-                const adaptedX = diffX * scale
-                const adaptedZ = -(diffY * scale)
-                const controls = new DecorControls(
-                    uuid,
-                    new SceneObjectCommandIdle(
-                        "idle",
-                        0
-                    ),
-                    self.context.sceneController,
-                    self.context.sceneController,
-                    self.context.sceneController
-                )
-                self.context.sceneController.addModelAt(
-                    uuid,
-                    modelName,
-                    adaptedX,
-                    0,
-                    adaptedZ,
-                    0,
-                    0,
-                    0,
-                    false,
-                    controls
-                )
-                i += 0.5
-
-                if (entity.type == "building") {
-                    this.context.sceneController.addPlaneAt(
-                        `order-zone-${uuid}`,
-                        adaptedX,
-                        0.01,
-                        adaptedZ,
-                        4,
-                        4,
-                        "com.demensdeum.dollar",
-                        0xFFFFFF,
-                        false,
-                        true,
-                        0.4                                     
-                    )
-
-                    this.sceneObjectsAnimatorController.addPosition(
-                        `order-zone-${uuid}`,
-                        new GameVector3(
-                            adaptedX,
-                            0.01,
-                            adaptedZ
-                        )
-                    )
-
-                    this.context.sceneController.rotateObjectTo(
-                        `order-zone-${uuid}`,
-                        Utils.angleToRadians(90),
-                        0,
-                        0
-                    )
-                }
-
-                self.sceneObjectUuidToEntity[uuid] = entity
-                self.entityUuidToSceneObjectUuid[entity.uuid] = uuid
-
-                this.sceneObjectsAnimatorController.addPosition(
-                    uuid,
-                    new GameVector3(
-                        adaptedX,
-                        0,
-                        adaptedZ
-                    )
-                )                
-            }
-        })
+        this.inGameStateSceneController.handle(entities)
         this.entitiesTrackingStep()
+        // const self = this
+        // var i = 0.5
+
+        // const entityServerUuids = new Set<string>(entities.map((entity) => {return entity.uuid}))
+        // //debugger
+        // Object.keys(this.sceneObjectUuidToEntity).forEach((uuid) => {
+        //     if (!entityServerUuids.has(uuid)) {
+        //         const entity = this.sceneObjectUuidToEntity[uuid]
+        //         if (entity == null) {
+        //             debugPrint(`Can't remove - no entity with UUID: ${uuid}`)
+        //             return
+        //         }
+        //         this.removeEntity(entity)
+        //     }
+        // })
+
+        // entities.forEach((entity) => {
+
+        //     if (entity.uuid == self.gameData.heroUUID) {
+        //         self.gameData.name = entity.name 
+        //         self.gameData.balance = entity.balance
+        //         self.gameData.order = entity.order
+
+        //         if (self.gameData.model != entity.model) {
+        //             self.gameData.model = entity.model
+        //             self.switchHeroModel(entity.model)
+        //         }
+        //         return
+        //     }
+
+        //     if (
+        //         entity.uuid in this.entityUuidToSceneObjectUuid 
+        //         &&
+        //         this.modelIsSameForEntity(entity)
+        //     ) {
+        //         // move object
+        //         const position = this.gameData.playerServerGeolocationPosition  
+        //         if (position == null) {
+        //             raiseCriticalError(`Position is null!`)
+        //             return
+        //         }                              
+        //         const diffX = entity.position.longitude - position.longitude
+        //         const diffY = entity.position.latitude - position.latitude
+
+        //         debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
+
+        //         this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]].name = entity.name
+
+        //         const scale = 2000
+        //         const adaptedX = diffX * scale
+        //         const adaptedZ = -(diffY * scale)    
+                
+        //         const uuid = entity.uuid
+
+        //         // this.context.sceneController.moveObjectTo(
+        //         //     uuid,
+        //         //     adaptedX,
+        //         //     0,
+        //         //     adaptedZ
+        //         // )
+                
+        //         if (entity.type == "building") {
+        //             const uuid = entity.uuid
+        //             const objectName = `order-zone-${uuid}`                    
+        //             // this.context.sceneController.moveObjectTo(
+        //             //     objectName,
+        //             //     adaptedX,
+        //             //     0.01,
+        //             //     adaptedZ
+        //             // )
+
+        //             this.sceneObjectsAnimatorController.movePosition(
+        //                 objectName,
+        //                 new GameVector3(
+        //                     adaptedX,
+        //                     0.01,
+        //                     adaptedZ
+        //                 )
+        //             )                    
+        //         }
+
+        //         this.sceneObjectsAnimatorController.movePosition(
+        //             uuid,
+        //             new GameVector3(
+        //                 adaptedX,
+        //                 0,
+        //                 adaptedZ
+        //             )
+        //         )
+        //     }
+        //     else {  
+        //         // add object 
+        //         this.removeEntityIfExists(entity)
+        //         const uuid = entity.uuid
+        //         const modelName = this.modelNameFromEntity(entity)
+
+        //         const position = this.gameData.playerClientGeolocationPosition
+        //         if (position == null) {
+        //             raiseCriticalError(`Position is null!`)
+        //             return
+        //         }
+
+        //         const diffX = entity.position.longitude - position.longitude
+        //         const diffY = entity.position.latitude - position.latitude
+
+        //         debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
+
+        //         const scale = 2000
+        //         const adaptedX = diffX * scale
+        //         const adaptedZ = -(diffY * scale)
+        //         const controls = new DecorControls(
+        //             uuid,
+        //             new SceneObjectCommandIdle(
+        //                 "idle",
+        //                 0
+        //             ),
+        //             self.context.sceneController,
+        //             self.context.sceneController,
+        //             self.context.sceneController
+        //         )
+        //         self.context.sceneController.addModelAt(
+        //             uuid,
+        //             modelName,
+        //             adaptedX,
+        //             0,
+        //             adaptedZ,
+        //             0,
+        //             0,
+        //             0,
+        //             false,
+        //             controls
+        //         )
+        //         i += 0.5
+
+        //         if (entity.type == "building") {
+        //             this.context.sceneController.addPlaneAt(
+        //                 `order-zone-${uuid}`,
+        //                 adaptedX,
+        //                 0.01,
+        //                 adaptedZ,
+        //                 4,
+        //                 4,
+        //                 "com.demensdeum.dollar",
+        //                 0xFFFFFF,
+        //                 false,
+        //                 true,
+        //                 0.4                                     
+        //             )
+
+        //             this.sceneObjectsAnimatorController.addPosition(
+        //                 `order-zone-${uuid}`,
+        //                 new GameVector3(
+        //                     adaptedX,
+        //                     0.01,
+        //                     adaptedZ
+        //                 )
+        //             )
+
+        //             this.context.sceneController.rotateObjectTo(
+        //                 `order-zone-${uuid}`,
+        //                 Utils.angleToRadians(90),
+        //                 0,
+        //                 0
+        //             )
+        //         }
+
+        //         self.sceneObjectUuidToEntity[uuid] = entity
+        //         self.entityUuidToSceneObjectUuid[entity.uuid] = uuid
+
+        //         this.sceneObjectsAnimatorController.addPosition(
+        //             uuid,
+        //             new GameVector3(
+        //                 adaptedX,
+        //                 0,
+        //                 adaptedZ
+        //             )
+        //         )                
+        //     }
+        // })
+        // this.entitiesTrackingStep()
     }
 
-    private removeEntity(entity: Entity) {
-        const sceneObjectUuid = this.entityUuidToSceneObjectUuid[entity.uuid]
-        this.context.sceneController.removeSceneObjectWithName(sceneObjectUuid)
+    // private removeEntity(entity: Entity) {
+    //     const sceneObjectUuid = this.entityUuidToSceneObjectUuid[entity.uuid]
+    //     this.context.sceneController.removeSceneObjectWithName(sceneObjectUuid)
 
-        if (entity.type == "building") {
-            const uuid = entity.uuid
-            const objectName = `order-zone-${uuid}`
-            this.context.sceneController.removeSceneObjectWithName(objectName);
-            this.sceneObjectsAnimatorController.removePosition(
-                objectName
-            )            
-        }
+    //     if (entity.type == "building") {
+    //         const uuid = entity.uuid
+    //         const objectName = `order-zone-${uuid}`
+    //         this.context.sceneController.removeSceneObjectWithName(objectName);
+    //         this.sceneObjectsAnimatorController.removePosition(
+    //             objectName
+    //         )            
+    //     }
 
-        const name = `${entity.type}-${entity.id}`
-        delete this.entityUuidToSceneObjectUuid[entity.uuid]
-        delete this.sceneObjectUuidToEntity[name]    
-        this.sceneObjectsAnimatorController.removePosition(
-            entity.uuid
-        )    
+    //     const name = `${entity.type}-${entity.id}`
+    //     delete this.entityUuidToSceneObjectUuid[entity.uuid]
+    //     delete this.sceneObjectUuidToEntity[name]    
+    //     this.sceneObjectsAnimatorController.removePosition(
+    //         entity.uuid
+    //     )    
 
-        if (entity.uuid == this.lastBuildingAnimationObjectUUID) {
-            this.lastBuildingAnimationObjectUUID = "NONE"
-        }
-    }
+    //     if (entity.uuid == this.lastBuildingAnimationObjectUUID) {
+    //         this.lastBuildingAnimationObjectUUID = "NONE"
+    //     }
+    // }
 
     entitiesControllerDidCatchEntity(
         _: EntitiesController, 
         entity: Entity
     ): void {
-        this.removeEntity(entity)
-        // @ts-ignore
+        this.inGameStateSceneController.remove([entity])
+        // @ts-ignore        
         this.gameData.balance = parseInt(this.gameData.balance) + parseInt(entity.balance)
     }
 
@@ -687,7 +660,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: EntitiesController,
         entity: Entity
     ): void {
-        this.removeEntity(entity)
+        this.inGameStateSceneController.remove([entity])
+        //this.removeEntity(entity)
     }
 
     entitiesControllerDidNotDestroyEntity(
@@ -701,24 +675,17 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     sceneControllerDidPickSceneObjectWithName(
         _: SceneController, 
         name: string
-    ): void {     
-        if (name in this.sceneObjectUuidToEntity) {
-            const entity = this.sceneObjectUuidToEntity[name]
-            if (entity.type == "building") {
-                this.askIfWantToRemoveBuilding(entity)
-                return
-            }
-        }
-        if (name in this.sceneObjectUuidToEntity == false) {
+    ): void {  
+        const entity = this.inGameStateSceneController.sceneObjectNameToEntity(name)
+        if (entity?.type == "eye") {
+            this.entitiesController.catch(entity)
+        }   
+        else if (entity?.type == "building") {
+            this.askIfWantToRemoveBuilding(entity)
             return
         }
-        const entity = this.sceneObjectUuidToEntity[name]
-
-        if (entity.type != "eye") {
-            debugPrint(`Unknown entity type tap: ${entity.type}`)
-        }
         else {
-            this.entitiesController.catch(entity)      
+            debugPrint(`Unknown entity type tap: ${entity?.type}`)
         }
     }
 

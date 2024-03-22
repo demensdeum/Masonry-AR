@@ -34,7 +34,7 @@ export class SceneObject {
         texture: string,
         model: string,
         threeObject: any,
-        movable: boolean,
+        isMovable: boolean,
         controls: Controls| null,
         changeDate: int        
     ) {
@@ -44,7 +44,7 @@ export class SceneObject {
         this.texture = new Texture(texture);
         this.model = new Model(model);
         this.threeObject = threeObject;
-        this.isMovable = movable;
+        this.isMovable = isMovable;
         if (controls != null) {
             this.controls = controls;
         }

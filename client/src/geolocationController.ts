@@ -1,5 +1,5 @@
 import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js"
-import { GameGeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 
 export class GeolocationController implements GeolocationControllerInterface {

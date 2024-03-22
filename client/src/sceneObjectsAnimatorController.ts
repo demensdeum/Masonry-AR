@@ -1,7 +1,6 @@
 import { GameVector3 } from "./gameVector3.js"
 import { SceneObjectsAnimatorControllerDelegate } from "./sceneObjectsAnimatorControllerDelegate.js"
 import { SceneObjectsAnimatorControllerPosition } from "./sceneObjectsAnimatorControllerPosition.js"
-import { debugPrint } from "./runtime.js"
 
 export class SceneObjectsAnimatorController {
 
@@ -19,9 +18,13 @@ export class SceneObjectsAnimatorController {
         uuid: string,
         position: GameVector3
     ) {
+
+        const toPosition = position.clone()
+        toPosition.x += 0.1
+
         this.positions[uuid] = new SceneObjectsAnimatorControllerPosition(
             position.clone(),
-            position.clone(),
+            toPosition,
             0.02,            
         )
     }
@@ -38,18 +41,6 @@ export class SceneObjectsAnimatorController {
         uuid: string
     ) {
         delete this.positions[uuid]
-    }
-
-    scroll(
-        offset: GameVector3
-    )
-    {
-        for (const key in this.positions) {
-            const positionItem = this.positions[key]
-            positionItem.currentPosition = positionItem.currentPosition.add(offset)
-            positionItem.toPosition = positionItem.toPosition.add(offset)
-            debugPrint(`scroll offset: ${offset.printable()}`)
-        }
     }
 
     step() {

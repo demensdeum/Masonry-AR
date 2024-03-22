@@ -1,4 +1,4 @@
-import { GameGeolocationPosition } from "./geolocationPosition.js"
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { Entity } from "./entity.js"
 
 export interface EntitiesControllerInterface {
