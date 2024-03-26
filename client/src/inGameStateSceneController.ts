@@ -137,6 +137,7 @@ export class InGameStateSceneController {
     }
 
     private move(entities: Entity[]) {
+        debugger
         debugPrint(`move entities: ${entities.length}`)
         
         entities.forEach((e) => {

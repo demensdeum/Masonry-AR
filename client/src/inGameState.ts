@@ -23,9 +23,6 @@ import { BuildingStatusController } from "./buildingStatusController.js"
 import { ServerInfoController } from "./serverInfoController.js"
 import { ServerInfoControllerDelegate } from "./serverInfoControllerDelegate.js"
 import { ServerInfoEntry } from "./serverInfoEntry.js"
-import { SceneObjectsAnimatorController } from "./sceneObjectsAnimatorController.js"
-import { GameVector3 } from "./gameVector3.js"
-import { SceneObjectsAnimatorControllerDelegate } from "./sceneObjectsAnimatorControllerDelegate.js"
 import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 import { InGameStateSceneController } from "./inGameStateSceneController.js"
@@ -35,11 +32,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                                                     AuthorizeControllerDelegate,
                                                     EntitiesControllerDelegate,
                                                     SceneControllerDelegate,
-                                                    HeroStatusControllerDelegate,
-                                                    SceneObjectsAnimatorControllerDelegate {
+                                                    HeroStatusControllerDelegate {
     name = "InGameState"
     
-    private sceneObjectsAnimatorController = new SceneObjectsAnimatorController(this)
     private buildingStatusController = new BuildingStatusController(this)
     private geolocationController!: GeolocationControllerInterface
     private entitiesController!: EntitiesControllerInterface
@@ -276,20 +271,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     step() {
-        this.sceneObjectsAnimatorController.step()
-    }
 
-    sceneObjectsAnimatorControllerDidRequireToMoveObject(
-        _: SceneObjectsAnimatorController,
-        objectUuid: string,
-        position: GameVector3
-    ) {
-        this.context.sceneController.moveObjectTo(
-            objectUuid,
-            position.x,
-            position.y,
-            position.z
-        )
     }
 
     geolocationControllerDidGetPosition(
@@ -323,27 +305,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.authorizeController.authorizeIfNeeded()
     }
-
-    // private modelNameFromEntity(entity: Entity) {
-    //     if (entity.model == "DEFAULT") {
-    //         const type = entity.type
-    //         if (type == "hero") {
-    //             return "com.demensdeum.hero"
-    //         }
-    //         else if (type == "building") {
-    //             return "com.demensdeum.hitech.building"
-    //         }
-    //         else if (type == "eye") {
-    //             return "com.demensdeum.eye"
-    //         }
-    //         else {
-    //             return "com.demensdeum.hero"
-    //         }
-    //     }
-    //     else {
-    //         return entity.model
-    //     }
-    // }
 
     geolocationControllerGeolocationAccessGranted(
         _: GeolocationController,
@@ -388,23 +349,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.heroInserted = true
     }
 
-    // private removeEntityIfExists(entity: Entity) {
-    //     if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
-    //         return
-    //     }
-    //     this.removeEntity(entity)
-    // }
-
-    // private modelIsSameForEntity(entity: Entity): boolean {
-    //     if ((entity.uuid in this.entityUuidToSceneObjectUuid) == false) {
-    //         raiseCriticalError(`Can't check same model or not, because there is no entity ${entity.uuid} in entityUuidToSceneObjectUuid`)
-    //         return false
-    //     }
-    //     const currentEntity = this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]]
-    //     const result = currentEntity.model == entity.model
-    //     return result
-    // }
-
     entitiesControllerDidFetchEntities(
         _: EntitiesController,
         entities: Entity[]
@@ -413,212 +357,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.inGameStateSceneController.handle(entities)
         this.entitiesTrackingStep()
-        // const self = this
-        // var i = 0.5
-
-        // const entityServerUuids = new Set<string>(entities.map((entity) => {return entity.uuid}))
-        // //debugger
-        // Object.keys(this.sceneObjectUuidToEntity).forEach((uuid) => {
-        //     if (!entityServerUuids.has(uuid)) {
-        //         const entity = this.sceneObjectUuidToEntity[uuid]
-        //         if (entity == null) {
-        //             debugPrint(`Can't remove - no entity with UUID: ${uuid}`)
-        //             return
-        //         }
-        //         this.removeEntity(entity)
-        //     }
-        // })
-
-        // entities.forEach((entity) => {
-
-        //     if (entity.uuid == self.gameData.heroUUID) {
-        //         self.gameData.name = entity.name 
-        //         self.gameData.balance = entity.balance
-        //         self.gameData.order = entity.order
-
-        //         if (self.gameData.model != entity.model) {
-        //             self.gameData.model = entity.model
-        //             self.switchHeroModel(entity.model)
-        //         }
-        //         return
-        //     }
-
-        //     if (
-        //         entity.uuid in this.entityUuidToSceneObjectUuid 
-        //         &&
-        //         this.modelIsSameForEntity(entity)
-        //     ) {
-        //         // move object
-        //         const position = this.gameData.playerServerGeolocationPosition  
-        //         if (position == null) {
-        //             raiseCriticalError(`Position is null!`)
-        //             return
-        //         }                              
-        //         const diffX = entity.position.longitude - position.longitude
-        //         const diffY = entity.position.latitude - position.latitude
-
-        //         debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
-
-        //         this.sceneObjectUuidToEntity[this.entityUuidToSceneObjectUuid[entity.uuid]].name = entity.name
-
-        //         const scale = 2000
-        //         const adaptedX = diffX * scale
-        //         const adaptedZ = -(diffY * scale)    
-                
-        //         const uuid = entity.uuid
-
-        //         // this.context.sceneController.moveObjectTo(
-        //         //     uuid,
-        //         //     adaptedX,
-        //         //     0,
-        //         //     adaptedZ
-        //         // )
-                
-        //         if (entity.type == "building") {
-        //             const uuid = entity.uuid
-        //             const objectName = `order-zone-${uuid}`                    
-        //             // this.context.sceneController.moveObjectTo(
-        //             //     objectName,
-        //             //     adaptedX,
-        //             //     0.01,
-        //             //     adaptedZ
-        //             // )
-
-        //             this.sceneObjectsAnimatorController.movePosition(
-        //                 objectName,
-        //                 new GameVector3(
-        //                     adaptedX,
-        //                     0.01,
-        //                     adaptedZ
-        //                 )
-        //             )                    
-        //         }
-
-        //         this.sceneObjectsAnimatorController.movePosition(
-        //             uuid,
-        //             new GameVector3(
-        //                 adaptedX,
-        //                 0,
-        //                 adaptedZ
-        //             )
-        //         )
-        //     }
-        //     else {  
-        //         // add object 
-        //         this.removeEntityIfExists(entity)
-        //         const uuid = entity.uuid
-        //         const modelName = this.modelNameFromEntity(entity)
-
-        //         const position = this.gameData.playerClientGeolocationPosition
-        //         if (position == null) {
-        //             raiseCriticalError(`Position is null!`)
-        //             return
-        //         }
-
-        //         const diffX = entity.position.longitude - position.longitude
-        //         const diffY = entity.position.latitude - position.latitude
-
-        //         debugPrint(`diffX: ${diffX}; diffY: ${diffY}`)
-
-        //         const scale = 2000
-        //         const adaptedX = diffX * scale
-        //         const adaptedZ = -(diffY * scale)
-        //         const controls = new DecorControls(
-        //             uuid,
-        //             new SceneObjectCommandIdle(
-        //                 "idle",
-        //                 0
-        //             ),
-        //             self.context.sceneController,
-        //             self.context.sceneController,
-        //             self.context.sceneController
-        //         )
-        //         self.context.sceneController.addModelAt(
-        //             uuid,
-        //             modelName,
-        //             adaptedX,
-        //             0,
-        //             adaptedZ,
-        //             0,
-        //             0,
-        //             0,
-        //             false,
-        //             controls
-        //         )
-        //         i += 0.5
-
-        //         if (entity.type == "building") {
-        //             this.context.sceneController.addPlaneAt(
-        //                 `order-zone-${uuid}`,
-        //                 adaptedX,
-        //                 0.01,
-        //                 adaptedZ,
-        //                 4,
-        //                 4,
-        //                 "com.demensdeum.dollar",
-        //                 0xFFFFFF,
-        //                 false,
-        //                 true,
-        //                 0.4                                     
-        //             )
-
-        //             this.sceneObjectsAnimatorController.addPosition(
-        //                 `order-zone-${uuid}`,
-        //                 new GameVector3(
-        //                     adaptedX,
-        //                     0.01,
-        //                     adaptedZ
-        //                 )
-        //             )
-
-        //             this.context.sceneController.rotateObjectTo(
-        //                 `order-zone-${uuid}`,
-        //                 Utils.angleToRadians(90),
-        //                 0,
-        //                 0
-        //             )
-        //         }
-
-        //         self.sceneObjectUuidToEntity[uuid] = entity
-        //         self.entityUuidToSceneObjectUuid[entity.uuid] = uuid
-
-        //         this.sceneObjectsAnimatorController.addPosition(
-        //             uuid,
-        //             new GameVector3(
-        //                 adaptedX,
-        //                 0,
-        //                 adaptedZ
-        //             )
-        //         )                
-        //     }
-        // })
-        // this.entitiesTrackingStep()
     }
-
-    // private removeEntity(entity: Entity) {
-    //     const sceneObjectUuid = this.entityUuidToSceneObjectUuid[entity.uuid]
-    //     this.context.sceneController.removeSceneObjectWithName(sceneObjectUuid)
-
-    //     if (entity.type == "building") {
-    //         const uuid = entity.uuid
-    //         const objectName = `order-zone-${uuid}`
-    //         this.context.sceneController.removeSceneObjectWithName(objectName);
-    //         this.sceneObjectsAnimatorController.removePosition(
-    //             objectName
-    //         )            
-    //     }
-
-    //     const name = `${entity.type}-${entity.id}`
-    //     delete this.entityUuidToSceneObjectUuid[entity.uuid]
-    //     delete this.sceneObjectUuidToEntity[name]    
-    //     this.sceneObjectsAnimatorController.removePosition(
-    //         entity.uuid
-    //     )    
-
-    //     if (entity.uuid == this.lastBuildingAnimationObjectUUID) {
-    //         this.lastBuildingAnimationObjectUUID = "NONE"
-    //     }
-    // }
 
     entitiesControllerDidCatchEntity(
         _: EntitiesController, 
