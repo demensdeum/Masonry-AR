@@ -13,6 +13,15 @@ export class GameGeolocationPosition {
         this.longitude = longitude
     }
 
+    public diff(position: GameGeolocationPosition) {
+        const latitude = this.latitude - position.latitude
+        const longitude = this.longitude - position.longitude
+        return new GameGeolocationPosition(
+            latitude,
+            longitude
+        )
+    }
+
     public clone(): GameGeolocationPosition {
         return new GameGeolocationPosition(
             this.latitude,

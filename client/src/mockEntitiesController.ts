@@ -60,12 +60,12 @@ export class MockEntitiesController implements EntitiesControllerInterface {
         if (this.isEyePositionSet == false) {
             this.eye.position = position.clone()
             this.hero.position = position.clone()
-            this.hero.position.longitude -= 0.0002
+            //this.hero.position.longitude -= 0.0002
             this.isEyePositionSet = true
         }
         else {
-            this.eye.position.latitude += 0.0004
-            this.hero.position.longitude -= 0.0002
+            //this.eye.position.latitude += 0.0004
+            //this.hero.position.longitude -= 0.0002
             //this.eye.position.longitude += 0.0004
         }
         var entities = [this.eye, this.hero]

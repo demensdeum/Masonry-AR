@@ -700,7 +700,7 @@ export class SceneController implements
     private removeObjectWithName(name: string) {
         const sceneObject = this.objects[name]
         if (sceneObject == null) {
-            debugPrint(`removeObjectWithName: ${name} is null! WTF1!!`)
+            raiseCriticalError(`removeObjectWithName: ${name} is null! WTF1!!`)
             debugger
             return
         }
@@ -1164,8 +1164,8 @@ export class SceneController implements
                 debugPrint("But it's skybox so don't mind!")
             }
             else {
-                debugger;
-                debugPrint("Adding dummy box with name: " + name);
+                debugger
+                raiseCriticalError("Adding dummy box with name: " + name);
                 this.addBoxAt(
                     name, 
                     x, 

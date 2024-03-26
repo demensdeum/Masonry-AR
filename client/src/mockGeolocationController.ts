@@ -19,7 +19,7 @@ export class MockGeolocationController implements GeolocationControllerInterface
     askPermission(): void {
         this.delegate.geolocationControllerGeolocationAccessGranted(
             this,
-            this.position
+            this.position.clone()
         )
     }
 
@@ -29,7 +29,8 @@ export class MockGeolocationController implements GeolocationControllerInterface
 
     private trackPositionStep() {
         // this.position.latitude += 0.00002
-        // this.position.longitude += 0.000008
+        const position = this.position.clone()
+        position.longitude += 0.00002
         const self = this
         setTimeout(() => {
                 self.trackPositionStep()
@@ -38,8 +39,9 @@ export class MockGeolocationController implements GeolocationControllerInterface
         )
         this.delegate.geolocationControllerDidGetPosition(
             this,
-            this.position
+            position
         )
+        this.position = position
     }
 
 }

@@ -271,7 +271,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     step() {
-
+        this.inGameStateSceneController.step()
     }
 
     geolocationControllerDidGetPosition(
@@ -285,6 +285,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             alert("Ваши координаты определены. Для перемещения в игре ходите с устройством в реальной жизни, собирайте масонские знаки, и стройте здания за свой орден. Приятной игры!")
         }
 
+        debugPrint(`gps!: ${position.latitude} - ${position.longitude}`)
         this.inGameStateSceneController.setCurrentPlayerGameGeolocation(position)
     }
 

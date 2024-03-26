@@ -16,7 +16,7 @@ export class GameVector3 {
         this.z = z
     }
 
-    public moveVector(
+    public movedVector(
         toPosition: GameVector3,
         speed: float
     ) {
@@ -29,6 +29,15 @@ export class GameVector3 {
         }        
         const newPosition = this.add(step)
         return newPosition        
+    }
+
+    public populate(
+        sourceVector: GameVector3
+    )
+    {
+        this.x = sourceVector.x
+        this.y = sourceVector.y
+        this.z = sourceVector.z
     }
 
     public add(otherVector: GameVector3) {
