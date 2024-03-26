@@ -30,7 +30,7 @@ export class MockGeolocationController implements GeolocationControllerInterface
     private trackPositionStep() {
         // this.position.latitude += 0.00002
         const position = this.position.clone()
-        position.longitude += 0.00002
+        //position.longitude += 0.0000002
         const self = this
         setTimeout(() => {
                 self.trackPositionStep()

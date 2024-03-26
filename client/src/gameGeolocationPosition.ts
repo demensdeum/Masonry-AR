@@ -1,3 +1,4 @@
+import { GameVector3 } from "./gameVector3.js"
 import { float } from "./types.js"
 
 export class GameGeolocationPosition {
@@ -13,14 +14,37 @@ export class GameGeolocationPosition {
         this.longitude = longitude
     }
 
-    public diff(position: GameGeolocationPosition) {
+    public movedPosition(
+        targetPosition: GameGeolocationPosition,
+        speed: float
+    ) {
+        const movedVector = new GameVector3(
+            this.longitude,
+            0,
+            this.latitude
+        ).movedVector(
+            new GameVector3(
+                targetPosition.longitude,
+                0,
+                targetPosition.latitude
+            ),
+            speed
+        )
+
+        return new GameGeolocationPosition(
+            movedVector.z,
+            movedVector.x
+        )
+    }
+
+    public subtract(position: GameGeolocationPosition) {
         const latitude = this.latitude - position.latitude
         const longitude = this.longitude - position.longitude
         return new GameGeolocationPosition(
             latitude,
             longitude
         )
-    }
+    }    
 
     public clone(): GameGeolocationPosition {
         return new GameGeolocationPosition(
@@ -46,4 +70,9 @@ export class GameGeolocationPosition {
             return false;
         }
     }    
+
+    public populate(geolocation: GameGeolocationPosition) {
+        this.latitude = geolocation.latitude
+        this.longitude = geolocation.longitude
+    }
 }

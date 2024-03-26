@@ -14,6 +14,7 @@ export class InGameStateSceneController {
     private readonly geolocationScale = 2000
     private sceneController: SceneController
     private currentPlayerGameGeolocation?: GameGeolocationPosition
+    private targetPlayerGameGeolocation?: GameGeolocationPosition
     private uuidToPair: { [key: string]: InGameStateSceneControllerStateItem} = {}
 
     constructor(
@@ -23,10 +24,8 @@ export class InGameStateSceneController {
     }
 
     public setCurrentPlayerGameGeolocation(geolocation: GameGeolocationPosition) {
-        if (this.currentPlayerGameGeolocation) {
-            const diff = this.currentPlayerGameGeolocation.diff(geolocation)            
-            this.currentPlayerGameGeolocation = geolocation
-            this.updatePositionsFromGeolocationDiff(diff)
+        if (this.currentPlayerGameGeolocation) {           
+            this.targetPlayerGameGeolocation = geolocation
         }
         else if (Object.keys(this.uuidToPair).length > 0) {
             raiseCriticalError("Do not update objects position, because this.currentPlayerGameGeolocation is null!")
@@ -38,30 +37,28 @@ export class InGameStateSceneController {
         }
     }
 
-    private updatePositionsFromGeolocationDiff(diff: GameGeolocationPosition) {
-        const diffX = diff.longitude * this.geolocationScale
-        const diffZ = diff.latitude * this.geolocationScale
-        debugPrint(`diffX: ${diffX}`)
-        debugPrint(`diffZ: ${diffZ}`)
-        const self = this
-        Object.keys(this.uuidToPair).forEach((uuid) => {
-            const e = self.uuidToPair[uuid]
-            e.currentPosition.x += diffX
-            e.currentPosition.z += diffZ
+    // private updatePositionsFromDiff(diff: GameGeolocationPosition) {
+    //     const self = this
+    //     Object.keys(this.uuidToPair).forEach((uuid) => {
 
-            e.targetPosition.x += diffX
-            e.targetPosition.z += diffZ
+    //         const e = self.uuidToPair[uuid]
+            
+    //         const currentPosition = e.currentPosition.clone()
+    //         e.currentPosition.latitude += diff.latitude
+    //         e.currentPosition.longitude += diff.longitude
 
-            self.sceneController.moveObjectTo(
-                e.sceneObjectUUID,
-                e.currentPosition.x,
-                e.currentPosition.y,
-                e.currentPosition.z
-            )    
-            debugPrint("OVER DRIVE")        
-            // debugger
-        })        
-    }
+    //         const sceneVector = this.geolocationToSceneVector(
+    //             currentPosition
+    //         )
+
+    //         self.sceneController.moveObjectTo(
+    //             e.sceneObjectUUID,
+    //             sceneVector.x,
+    //             sceneVector.y,
+    //             sceneVector.z
+    //         )    
+    //     })        
+    // }
 
     public handle(entities: Entity[]) {
         debugPrint(`handle entity: ${entities}`)
@@ -169,8 +166,8 @@ export class InGameStateSceneController {
                 self.uuidToPair[e.uuid] = new InGameStateSceneControllerStateItem(
                     e,
                     sceneObjectUUID,
-                    sceneVector,
-                    sceneVector
+                    e.position,
+                    e.position
                 )
         })
     }
@@ -178,11 +175,8 @@ export class InGameStateSceneController {
     private move(entities: Entity[]) {
         debugPrint(`move entities: ${entities.length}`)
         
-        entities.forEach((e) => {
-            const sceneVector = this.geolocationToSceneVector(
-                e.position
-            )         
-            this.uuidToPair[e.uuid].targetPosition.populate(sceneVector)
+        entities.forEach((e) => {       
+            this.uuidToPair[e.uuid].targetPosition.populate(e.position)
         })
     }
 
@@ -210,22 +204,41 @@ export class InGameStateSceneController {
         })
     }
 
+    private updateObjectsPosition() {
+        debugPrint(`targetPlayerGameGeolocation: ${this.targetPlayerGameGeolocation}`)
+        const self = this
+        Object.keys(this.uuidToPair).forEach((uuid) => {
+            const e = this.uuidToPair[uuid]
+            const movedPosition = e.renderingPosition.movedPosition(
+                e.targetPosition,
+                0.00001
+            )
+            e.renderingPosition.populate(movedPosition)
+            const currentVector = this.geolocationToSceneVector(
+                e.renderingPosition
+            )
+            self.sceneController.moveObjectTo(
+                e.sceneObjectUUID,
+                currentVector.x,
+                currentVector.y,
+                currentVector.z
+            )
+        })
+
+        // if (this.currentPlayerGameGeolocation && this.targetPlayerGameGeolocation) {
+        //     const movedPosition = this.currentPlayerGameGeolocation.movedPosition(
+        //         this.targetPlayerGameGeolocation,
+        //         0.002
+        //     )
+        //     this.updatePositionsFromDiff(
+        //         this.currentPlayerGameGeolocation.subtract(
+        //             movedPosition
+        //         )
+        //     )          
+        // }            
+    }
+
     public step() {
-        // const self = this
-        // Object.keys(this.uuidToPair).forEach((uuid) => {
-        //     const e = this.uuidToPair[uuid]
-        //     const movedVector = e.currentPosition.movedVector(
-        //         e.targetPosition,
-        //         0.01
-        //     )
-        //     e.currentPosition.populate(movedVector)
-        //     self.sceneController.moveObjectTo(
-        //         e.sceneObjectUUID,
-        //         e.currentPosition.x,
-        //         e.currentPosition.y,
-        //         e.currentPosition.z
-        //     )
-        // })
-        // debugPrint("sttttteeeeeppp")
+        this.updateObjectsPosition()
     }
 }

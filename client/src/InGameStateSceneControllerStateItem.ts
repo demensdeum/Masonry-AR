@@ -1,23 +1,23 @@
 import { Entity } from "./entity.js"
-import { GameVector3 } from "./gameVector3.js"
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { UUID } from "./types.js"
 
 export class InGameStateSceneControllerStateItem {
     readonly entity: Entity
     readonly sceneObjectUUID: UUID
-    readonly currentPosition: GameVector3
-    readonly targetPosition: GameVector3
+    readonly renderingPosition: GameGeolocationPosition
+    readonly targetPosition: GameGeolocationPosition
 
     constructor(
         entity: Entity,
         sceneObjectUUID: UUID,
-        currentPosition: GameVector3,
-        targetPosition: GameVector3
+        currentPosition: GameGeolocationPosition,
+        targetPosition: GameGeolocationPosition
     )
     {
         this.entity = entity
         this.sceneObjectUUID = sceneObjectUUID
-        this.currentPosition = currentPosition.clone()
+        this.renderingPosition = currentPosition.clone()
         this.targetPosition = targetPosition.clone()
     }
 }
