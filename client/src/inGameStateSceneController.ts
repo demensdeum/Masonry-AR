@@ -13,9 +13,12 @@ export class InGameStateSceneController {
 
     private readonly geolocationScale = 2000
     private sceneController: SceneController
-    private currentPlayerGameGeolocation?: GameGeolocationPosition
-    private targetPlayerGameGeolocation?: GameGeolocationPosition
+    private renderingPlayerGameGeolocation?: GameGeolocationPosition
+    private actualPlayerGameGeolocation?: GameGeolocationPosition
     private uuidToPair: { [key: string]: InGameStateSceneControllerStateItem} = {}
+
+    private readonly cameraSpeed = 0.000004
+    private readonly entitiesSpeed = 0.000007
 
     constructor(
         sceneController: SceneController
@@ -24,8 +27,8 @@ export class InGameStateSceneController {
     }
 
     public setCurrentPlayerGameGeolocation(geolocation: GameGeolocationPosition) {
-        if (this.currentPlayerGameGeolocation) {           
-            this.targetPlayerGameGeolocation = geolocation
+        if (this.renderingPlayerGameGeolocation) {           
+            this.actualPlayerGameGeolocation = geolocation
         }
         else if (Object.keys(this.uuidToPair).length > 0) {
             raiseCriticalError("Do not update objects position, because this.currentPlayerGameGeolocation is null!")
@@ -33,7 +36,8 @@ export class InGameStateSceneController {
         }
         else {
             debugPrint("First geolocation set")
-            this.currentPlayerGameGeolocation = geolocation
+            this.actualPlayerGameGeolocation = geolocation
+            this.renderingPlayerGameGeolocation = geolocation
         }
     }
 
@@ -88,8 +92,8 @@ export class InGameStateSceneController {
         geolocation: GameGeolocationPosition,
         y: float = 0
     ): GameVector3 {
-        if (this.currentPlayerGameGeolocation) {
-            const position = this.currentPlayerGameGeolocation
+        if (this.renderingPlayerGameGeolocation) {
+            const position = this.renderingPlayerGameGeolocation
             const diffX = geolocation.longitude - position.longitude
             const diffY = geolocation.latitude - position.latitude        
             const adaptedX = diffX * this.geolocationScale
@@ -176,7 +180,7 @@ export class InGameStateSceneController {
         debugPrint(`move entities: ${entities.length}`)
         
         entities.forEach((e) => {       
-            this.uuidToPair[e.uuid].targetPosition.populate(e.position)
+            this.uuidToPair[e.uuid].actualPosition.populate(e.position)
         })
     }
 
@@ -205,13 +209,22 @@ export class InGameStateSceneController {
     }
 
     private updateObjectsPosition() {
-        debugPrint(`targetPlayerGameGeolocation: ${this.targetPlayerGameGeolocation}`)
+        debugPrint(`targetPlayerGameGeolocation: ${this.actualPlayerGameGeolocation}`)
         const self = this
+
+        if (this.renderingPlayerGameGeolocation && this.actualPlayerGameGeolocation) {
+            const movedPosition = this.renderingPlayerGameGeolocation.movedPosition(
+                this.actualPlayerGameGeolocation,
+                this.cameraSpeed
+            )
+            this.renderingPlayerGameGeolocation.populate(movedPosition)
+        }
+
         Object.keys(this.uuidToPair).forEach((uuid) => {
             const e = this.uuidToPair[uuid]
             const movedPosition = e.renderingPosition.movedPosition(
-                e.targetPosition,
-                0.00001
+                e.actualPosition,
+                this.entitiesSpeed
             )
             e.renderingPosition.populate(movedPosition)
             const currentVector = this.geolocationToSceneVector(
