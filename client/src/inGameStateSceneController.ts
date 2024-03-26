@@ -41,28 +41,9 @@ export class InGameStateSceneController {
         }
     }
 
-    // private updatePositionsFromDiff(diff: GameGeolocationPosition) {
-    //     const self = this
-    //     Object.keys(this.uuidToPair).forEach((uuid) => {
-
-    //         const e = self.uuidToPair[uuid]
-            
-    //         const currentPosition = e.currentPosition.clone()
-    //         e.currentPosition.latitude += diff.latitude
-    //         e.currentPosition.longitude += diff.longitude
-
-    //         const sceneVector = this.geolocationToSceneVector(
-    //             currentPosition
-    //         )
-
-    //         self.sceneController.moveObjectTo(
-    //             e.sceneObjectUUID,
-    //             sceneVector.x,
-    //             sceneVector.y,
-    //             sceneVector.z
-    //         )    
-    //     })        
-    // }
+    public temporaryAdd(entity: Entity) {
+        this.add([entity])
+    }
 
     public handle(entities: Entity[]) {
         debugPrint(`handle entity: ${entities}`)
@@ -155,6 +136,8 @@ export class InGameStateSceneController {
                     self.sceneController,
                     self.sceneController
                 )
+                const isTransparent = e.name == "BUILDING-ANIMATION"
+                const transparency = isTransparent ? 0.4 : 1.0
                 self.sceneController.addModelAt(
                     sceneObjectUUID,
                     modelName,
@@ -165,7 +148,12 @@ export class InGameStateSceneController {
                     0,
                     0,
                     false,
-                    controls
+                    controls,
+                    1.0,
+                    ()=>{},
+                    0xFFFFFF,
+                    isTransparent,
+                    transparency
                 )
                 self.uuidToPair[e.uuid] = new InGameStateSceneControllerStateItem(
                     e,
@@ -236,19 +224,7 @@ export class InGameStateSceneController {
                 currentVector.y,
                 currentVector.z
             )
-        })
-
-        // if (this.currentPlayerGameGeolocation && this.targetPlayerGameGeolocation) {
-        //     const movedPosition = this.currentPlayerGameGeolocation.movedPosition(
-        //         this.targetPlayerGameGeolocation,
-        //         0.002
-        //     )
-        //     this.updatePositionsFromDiff(
-        //         this.currentPlayerGameGeolocation.subtract(
-        //             movedPosition
-        //         )
-        //     )          
-        // }            
+        })          
     }
 
     public step() {

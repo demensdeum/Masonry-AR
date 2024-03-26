@@ -40,8 +40,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private entitiesController!: EntitiesControllerInterface
     private authorizeController = new AuthorizeController(this)
     private serverInfoController = new ServerInfoController(this)
-    private sceneObjectUuidToEntity: { [key: string]: Entity } = {}
-    private entityUuidToSceneObjectUuid: { [key: string]: string} = {}
     private heroStatusController = new HeroStatusController(this)
     private gameData = new GameData()
     private readonly cameraLockEnabled = false
@@ -217,7 +215,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     private showBuildingAnimation() {
-        if (this.lastBuildingAnimationObjectUUID in this.sceneObjectUuidToEntity) {
+        if (this.lastBuildingAnimationObjectUUID != "NONE") {
             debugPrint("Can't present another building animation! Already presenting one!")
             return
         }
@@ -238,36 +236,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             0,
             position
         )
-        const controls = new DecorControls(
-            uuid,
-            new SceneObjectCommandIdle(
-                "idle",
-                0
-            ),
-            this.context.sceneController,
-            this.context.sceneController,
-            this.context.sceneController
-        )        
-        this.context.sceneController.addModelAt(
-            uuid,
-            "com.demensdeum.hitech.building",
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            false,
-            controls,
-            1.0,
-            ()=>{},
-            0xFFFFFF,
-            true,
-            0.4
-        )
-
-        this.sceneObjectUuidToEntity[uuid] = entity
-        this.entityUuidToSceneObjectUuid[entity.uuid] = uuid        
+        this.inGameStateSceneController.temporaryAdd(entity)
     }
 
     step() {
@@ -358,6 +327,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.inGameStateSceneController.handle(entities)
         this.entitiesTrackingStep()
+
+        this.lastBuildingAnimationObjectUUID = "NONE"
     }
 
     entitiesControllerDidCatchEntity(
