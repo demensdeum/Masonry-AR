@@ -1,6 +1,7 @@
 import { Controls } from "./controls"
 import { int } from "./types"
 import { Utils } from "./utils.js";
+import { AnimationClip } from "three";
 
 class Texture {
     public readonly name: string;
@@ -17,15 +18,16 @@ class Model {
 }
 
 export class SceneObject {
-    public readonly uuid: string;
-    public readonly name: string;
-    public readonly type: string;
-    public readonly texture: Texture;
-    public readonly model: Model;
-    public threeObject: any; 
-    public meshes: any[] = [];
-    public readonly isMovable: boolean;
-    public controls?: Controls;
+    public readonly uuid: string
+    public readonly name: string
+    public readonly type: string
+    public readonly texture: Texture
+    public readonly model: Model
+    public animations: AnimationClip[] = []
+    public threeObject: any
+    public meshes: any[] = []
+    public readonly isMovable: boolean
+    public controls?: Controls
     public changeDate: int
 
     constructor(

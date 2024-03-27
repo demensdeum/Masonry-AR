@@ -17,7 +17,7 @@ export class InGameStateSceneController {
     private actualPlayerGameGeolocation?: GameGeolocationPosition
     private uuidToPair: { [key: string]: InGameStateSceneControllerStateItem} = {}
 
-    private readonly cameraSpeed = 0.000004
+    private readonly cameraSpeed = 0.000002
     private readonly entitiesSpeed = 0.000007
 
     constructor(
@@ -219,6 +219,16 @@ export class InGameStateSceneController {
                     0,
                     rotationY,
                     0
+                )
+                this.sceneController.objectPlayAnimation(
+                    "hero",
+                    "walk"
+                )
+            }
+            else {
+                this.sceneController.objectStopAnimation(
+                    "hero",
+                    "walk"
                 )
             }
 

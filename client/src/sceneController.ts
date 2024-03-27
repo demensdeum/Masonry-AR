@@ -67,7 +67,7 @@ export class SceneController implements
     private pmremGenerator: any;
 
     private clock = new THREE.Clock();
-    private animationMixers: any[] = []; 
+    private animationMixers: { [key: string]: THREE.AnimationMixer } = {}; 
 
     private objects: { [key: string]: SceneObject } = {};
     private objectsUUIDs: { [key: string]: SceneObject } = {};
@@ -595,7 +595,10 @@ export class SceneController implements
     }
 
     private animationsStep(delta: any) {
-        this.animationMixers.forEach((n) => n.update(delta));
+        Object.keys(this.animationMixers).forEach((animationName) => {
+            const animationMixer = this.animationMixers[animationName]
+            animationMixer.update(delta)
+        })
     }    
 
     private render() {
@@ -948,12 +951,7 @@ export class SceneController implements
 
             self.scene.remove(box)
             sceneObject.threeObject = model
-
-            const animationMixer = new THREE.AnimationMixer(model);
-            container.animations.forEach((clip) => {
-                animationMixer.clipAction(clip).play();
-            });
-            sceneController.animationMixers.push(animationMixer);
+            sceneObject.animations = container.animations
 
             model.traverse((entity) => {
                 if ((<THREE.Mesh> entity).isMesh) {
@@ -974,6 +972,46 @@ export class SceneController implements
             successCallback();
           }
         );
+    }
+
+    public objectPlayAnimation(
+        objectName: string,
+        animationName: string
+    )
+    {
+        const animationKey = `${objectName}_${animationName}`
+        if (animationKey in this.animationMixers) {
+            debugPrint(`animation already playing: ${animationName}`)
+            return
+        }
+
+        const object = this.sceneObject(objectName)
+        const model = object.threeObject
+        const animationMixer = new THREE.AnimationMixer(model)
+        const animation = object.animations.find((e) => { return e.name == animationName })
+        if (animation == null) {
+            debugPrint(`No animation with name: ${animationName}`)
+            debugger
+        }
+        else {
+            debugPrint(`Start animation play: ${animationKey}`)
+            animationMixer.clipAction(animation).play()
+            this.animationMixers[animationKey] = animationMixer
+        }
+    }
+
+    public objectStopAnimation(
+        objectName: string,
+        animationName: string
+    )
+    {
+        const animationKey = `${objectName}_${animationName}`        
+        if (animationKey in this.animationMixers) {
+            delete this.animationMixers[animationKey]
+        }
+        else {
+            debugPrint(`Can't stop animation, because not playing: ${animationKey}}`)
+        }
     }
 
     public addBoxAt(

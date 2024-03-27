@@ -34,7 +34,7 @@ def run_commands():
     subprocess.run('tsc', shell=True, check=True)
     shutil.copytree('external-libs', 'build', dirs_exist_ok=True)
 
-    compress_resources = False
+    compress_resources = True
 
     if compress_resources:
         assets_master_path = os.path.join('.', 'tools', 'assetsMaster', 'assetsMaster.py')
