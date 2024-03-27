@@ -14,6 +14,16 @@ export class GameGeolocationPosition {
         this.longitude = longitude
     }
 
+    public diff(
+        targetPosition: GameGeolocationPosition
+    )
+    {
+        return new GameGeolocationPosition(
+            this.latitude - targetPosition.latitude,
+            this.longitude - targetPosition.longitude
+        )
+    }
+
     public movedPosition(
         targetPosition: GameGeolocationPosition,
         speed: float

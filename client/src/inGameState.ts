@@ -60,7 +60,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             mockingEntitiesController.dataSource = this
             this.entitiesController = mockingEntitiesController
         }
-        else if (this.dataFetchType = "MOCK-GEOLOCATION") {
+        else if (this.dataFetchType == "MOCK-GEOLOCATION") {
             this.geolocationController = new MockGeolocationController(this)
             this.entitiesController = new EntitiesController(this)
         }

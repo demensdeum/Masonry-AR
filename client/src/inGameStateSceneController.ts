@@ -205,6 +205,23 @@ export class InGameStateSceneController {
                 this.actualPlayerGameGeolocation,
                 this.cameraSpeed
             )
+
+            const diff = this.renderingPlayerGameGeolocation.diff(
+                this.actualPlayerGameGeolocation
+            )
+            const rotationY = Math.atan2(
+                diff.longitude,
+                diff.latitude
+            )
+            if (rotationY != 0) {
+                this.sceneController.rotateObjectTo(
+                    "hero",
+                    0,
+                    rotationY,
+                    0
+                )
+            }
+
             this.renderingPlayerGameGeolocation.populate(movedPosition)
         }
 
@@ -229,5 +246,7 @@ export class InGameStateSceneController {
 
     public step() {
         this.updateObjectsPosition()
+
+
     }
 }
