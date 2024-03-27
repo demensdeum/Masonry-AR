@@ -83,32 +83,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         )
         this.switchHeroModel(this.gameData.model)
 
-        const floorEnabled = false
-
-        if (floorEnabled) {
-            this.context.sceneController.addModelAt(
-                "floor",
-                "com.demensdeum.floor",
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                false,
-                new DecorControls(
-                    "floor",
-                    new SceneObjectCommandIdle(
-                        "idle",
-                        0
-                    ),
-                    this.context.sceneController,
-                    this.context.sceneController,
-                    this.context.sceneController
-                )                
-            )
-        }
-
         this.mapScrollController = new MapScrollController(
             this.context.sceneController
         )
@@ -187,8 +161,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.context.sceneController.setFog(
             0xb3ffcb,
-            3,
-            20
+            1,
+            6
         )
 
         this.inGameStateSceneController = new InGameStateSceneController(

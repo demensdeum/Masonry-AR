@@ -132,7 +132,7 @@ def compress_textures(textures):
         output_filepath = os.path.join(tempfile.gettempdir(), output_filename)
         print(source_filepath)
         print(output_filepath)
-        subprocess.run(['magick', 'convert', source_filepath, '-quality', '75', '-resize', '256x256', output_filepath])
+        subprocess.run(['magick', 'convert', source_filepath, '-quality', '75', '-resize', '512x512', output_filepath])
     return {
         "textures": output_textures
     }

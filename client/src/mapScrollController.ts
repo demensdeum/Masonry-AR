@@ -7,7 +7,7 @@ export class MapScrollController {
     private sceneController: SceneController
     private readonly columns: int = 3
     private readonly rows: int = 3
-    private readonly planeSize: int = 3
+    private readonly planeSize: int = 20
 
     constructor(
         sceneController: SceneController
@@ -26,7 +26,7 @@ export class MapScrollController {
                     -this.planeSize + y * this.planeSize,
                     this.planeSize,
                     this.planeSize,
-                    "com.demensdeum.loading.texture"
+                    "com.demensdeum.tile"
                 )
                 this.sceneController.rotateObjectTo(
                     this.planeName(x, y),
