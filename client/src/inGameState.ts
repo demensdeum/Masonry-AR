@@ -26,6 +26,7 @@ import { ServerInfoEntry } from "./serverInfoEntry.js"
 import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 import { InGameStateSceneController } from "./inGameStateSceneController.js"
+import { MapScrollController } from "./mapScrollController.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,
@@ -35,6 +36,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                                                     HeroStatusControllerDelegate {
     name = "InGameState"
     
+    private mapScrollController!: MapScrollController
     private buildingStatusController = new BuildingStatusController(this)
     private geolocationController!: GeolocationControllerInterface
     private entitiesController!: EntitiesControllerInterface
@@ -78,33 +80,45 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             "com.demensdeum.blue.field"
         )
         this.switchHeroModel(this.gameData.model)
-        this.context.sceneController.addModelAt(
-            "floor",
-            "com.demensdeum.floor",
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            false,
-            new DecorControls(
+
+        const floorEnabled = false
+
+        if (floorEnabled) {
+            this.context.sceneController.addModelAt(
                 "floor",
-                new SceneObjectCommandIdle(
-                    "idle",
-                    0
-                ),
-                this.context.sceneController,
-                this.context.sceneController,
-                this.context.sceneController
-            )                
+                "com.demensdeum.floor",
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                false,
+                new DecorControls(
+                    "floor",
+                    new SceneObjectCommandIdle(
+                        "idle",
+                        0
+                    ),
+                    this.context.sceneController,
+                    this.context.sceneController,
+                    this.context.sceneController
+                )                
+            )
+        }
+
+        this.mapScrollController = new MapScrollController(
+            this.context.sceneController
         )
+        this.mapScrollController.initialize()
+
         this.context.sceneController.rotateObjectTo(
             Names.Camera,
             Utils.angleToRadians(-55),
             0,
             0
-        )
+        )        
+
         this.context.sceneController.addText(
             "name",
             this.gameData
