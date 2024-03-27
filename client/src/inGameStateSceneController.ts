@@ -217,7 +217,7 @@ export class InGameStateSceneController {
                 this.sceneController.rotateObjectTo(
                     "hero",
                     0,
-                    rotationY,
+                    Utils.angleToRadians(180) + rotationY,
                     0
                 )
                 this.sceneController.objectPlayAnimation(
@@ -241,6 +241,13 @@ export class InGameStateSceneController {
                 e.actualPosition,
                 this.entitiesSpeed
             )
+            const diff = e.renderingPosition.diff(
+                e.actualPosition
+            )
+            const rotationY = Math.atan2(
+                diff.longitude,
+                diff.latitude
+            )
             e.renderingPosition.populate(movedPosition)
             const currentVector = this.geolocationToSceneVector(
                 e.renderingPosition
@@ -251,6 +258,14 @@ export class InGameStateSceneController {
                 currentVector.y,
                 currentVector.z
             )
+            if (rotationY != 0) {
+                self.sceneController.rotateObjectTo(
+                    e.sceneObjectUUID,
+                    0,
+                    Utils.angleToRadians(180) + rotationY,
+                    0
+                )
+            }
         })          
     }
 
