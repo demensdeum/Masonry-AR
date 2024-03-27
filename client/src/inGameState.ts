@@ -27,13 +27,15 @@ import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 import { InGameStateSceneController } from "./inGameStateSceneController.js"
 import { MapScrollController } from "./mapScrollController.js"
+import { InGameStateSceneControllerDelegate } from "./inGameStateSceneControllerDelegate.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,
                                                     AuthorizeControllerDelegate,
                                                     EntitiesControllerDelegate,
                                                     SceneControllerDelegate,
-                                                    HeroStatusControllerDelegate {
+                                                    HeroStatusControllerDelegate,
+                                                    InGameStateSceneControllerDelegate {
     name = "InGameState"
     
     private mapScrollController!: MapScrollController
@@ -189,7 +191,22 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             20
         )
 
-        this.inGameStateSceneController = new InGameStateSceneController(this.context.sceneController)
+        this.inGameStateSceneController = new InGameStateSceneController(
+            this.context.sceneController,
+            this
+        )
+    }
+
+    inGameStateControllerDidMoveCamera(
+        _: InGameStateSceneController,
+        x: number,
+        __: number,
+        z: number
+    ) {
+        this.mapScrollController.scroll(
+            x * InGameStateSceneController.geolocationScale,
+            -z * InGameStateSceneController.geolocationScale
+        )
     }
 
     private build() {

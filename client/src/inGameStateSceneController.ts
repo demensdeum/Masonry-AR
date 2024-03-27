@@ -8,22 +8,26 @@ import { SceneController } from "./sceneController.js"
 import { SceneObjectCommandIdle } from "./sceneObjectCommandIdle.js"
 import { Utils } from "./utils.js";
 import { InGameStateSceneControllerStateItem } from "./InGameStateSceneControllerStateItem.js"
+import { InGameStateSceneControllerDelegate } from "./inGameStateSceneControllerDelegate.js"
 
 export class InGameStateSceneController {
 
-    private readonly geolocationScale = 2000
+    static geolocationScale = 2000
     private sceneController: SceneController
     private renderingPlayerGameGeolocation?: GameGeolocationPosition
     private actualPlayerGameGeolocation?: GameGeolocationPosition
     private uuidToPair: { [key: string]: InGameStateSceneControllerStateItem} = {}
+    private delegate: InGameStateSceneControllerDelegate
 
-    private readonly cameraSpeed = 0.000002
+    private readonly cameraSpeed = 0.00002
     private readonly entitiesSpeed = 0.000007
 
     constructor(
-        sceneController: SceneController
+        sceneController: SceneController,
+        delegate: InGameStateSceneControllerDelegate
     ) {
         this.sceneController = sceneController
+        this.delegate = delegate
     }
 
     public setCurrentPlayerGameGeolocation(geolocation: GameGeolocationPosition) {
@@ -77,8 +81,8 @@ export class InGameStateSceneController {
             const position = this.renderingPlayerGameGeolocation
             const diffX = geolocation.longitude - position.longitude
             const diffY = geolocation.latitude - position.latitude        
-            const adaptedX = diffX * this.geolocationScale
-            const adaptedZ = -(diffY * this.geolocationScale)
+            const adaptedX = diffX * InGameStateSceneController.geolocationScale
+            const adaptedZ = -(diffY * InGameStateSceneController.geolocationScale)
             return new GameVector3(
                 adaptedX,
                 y,
@@ -200,6 +204,10 @@ export class InGameStateSceneController {
         debugPrint(`targetPlayerGameGeolocation: ${this.actualPlayerGameGeolocation}`)
         const self = this
 
+        var cameraDiffX = 0
+        var cameraDiffY = 0
+        var cameraDiffZ = 0
+
         if (this.renderingPlayerGameGeolocation && this.actualPlayerGameGeolocation) {
             const movedPosition = this.renderingPlayerGameGeolocation.movedPosition(
                 this.actualPlayerGameGeolocation,
@@ -207,17 +215,22 @@ export class InGameStateSceneController {
             )
 
             const diff = this.renderingPlayerGameGeolocation.diff(
-                this.actualPlayerGameGeolocation
+                movedPosition
             )
+
+            cameraDiffX = diff.longitude
+            cameraDiffZ = diff.latitude
+
             const rotationY = Math.atan2(
+                diff.latitude,
                 diff.longitude,
-                diff.latitude
             )
-            if (rotationY != 0) {
+            debugPrint(`diff: ${diff.latitude} - ${diff.longitude}`)
+            if (Math.abs(diff.latitude) > 0.00001 || Math.abs(diff.longitude) > 0.00001) {
                 this.sceneController.rotateObjectTo(
                     "hero",
                     0,
-                    Utils.angleToRadians(180) + rotationY,
+                    Utils.angleToRadians(90) + rotationY,
                     0
                 )
                 this.sceneController.objectPlayAnimation(
@@ -258,15 +271,22 @@ export class InGameStateSceneController {
                 currentVector.y,
                 currentVector.z
             )
-            if (rotationY != 0) {
+            if (Math.abs(diff.latitude) > 0.00001 || Math.abs(diff.longitude) > 0.00001) {
                 self.sceneController.rotateObjectTo(
                     e.sceneObjectUUID,
                     0,
-                    Utils.angleToRadians(180) + rotationY,
+                    Utils.angleToRadians(90) + rotationY,
                     0
                 )
             }
-        })          
+        })         
+        
+        this.delegate.inGameStateControllerDidMoveCamera(
+            this,
+            cameraDiffX,
+            cameraDiffY,
+            cameraDiffZ
+        )
     }
 
     public step() {

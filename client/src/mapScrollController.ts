@@ -1,5 +1,4 @@
 import { int, float } from "./types.js"
-import { debugPrint } from "./runtime.js"
 import { SceneController } from "./sceneController.js"
 import { Utils } from "./utils.js"
 
@@ -21,7 +20,7 @@ export class MapScrollController {
         for (var y = 0; y < this.rows; y++) {
             for (var x = 0; x < this.columns; x++) {
                 this.sceneController.addPlaneAt(
-                    this.tileName(x, y),
+                    this.planeName(x, y),
                     -this.planeSize + x * this.planeSize,
                     0,
                     -this.planeSize + y * this.planeSize,
@@ -30,7 +29,7 @@ export class MapScrollController {
                     "com.demensdeum.loading.texture"
                 )
                 this.sceneController.rotateObjectTo(
-                    this.tileName(x, y),
+                    this.planeName(x, y),
                     Utils.angleToRadians(90),
                     0,
                     0
@@ -39,19 +38,47 @@ export class MapScrollController {
         }
     }
 
-    private tileName(
+    private planeName(
         x: int,
         y: int
     )
     {
-        return `${x} - ${y}`
+        return `map plane: ${x} - ${y}`
     }
 
     public scroll(
-        x: float,
-        y: float
+        offsetX: float,
+        offsetY: float
     ) {
-        debugPrint(x)
-        debugPrint(y)
+        for (var y = 0; y < this.rows; y++) {
+            for (var x = 0; x < this.columns; x++) {
+                const planePosition = this.sceneController.sceneObjectPosition(
+                    this.planeName(x, y)
+                )
+                planePosition.x += offsetX
+
+                if (planePosition.x > (this.columns - 1) * this.planeSize) {
+                    planePosition.x -= this.columns * this.planeSize
+                }
+                else if (planePosition.x < -this.planeSize) {
+                    planePosition.x += this.columns * this.planeSize
+                }
+
+                if (planePosition.z > (this.rows -1) * this.planeSize) {
+                    planePosition.z -= this.rows * this.planeSize
+                }
+                else if (planePosition.z < -this.planeSize) {
+                    planePosition.z += this.rows * this.planeSize
+                }
+                
+                planePosition.z += offsetY
+                this.sceneController.moveObjectTo(
+                    this.planeName(x,y),
+                    planePosition.x,
+                    planePosition.y,
+                    planePosition.z
+                )
+            }
+        }        
     }
 }

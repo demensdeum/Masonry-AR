@@ -1171,7 +1171,7 @@ export class SceneController implements
     ): any
     {
         const outputObject = this.sceneObject(name);
-        const outputPosition = outputObject.threeObject.position;
+        const outputPosition = outputObject.threeObject.position.clone();
         return outputPosition;
     }
 
