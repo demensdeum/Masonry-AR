@@ -19,7 +19,7 @@ export class InGameStateSceneController {
     private uuidToPair: { [key: string]: InGameStateSceneControllerStateItem} = {}
     private delegate: InGameStateSceneControllerDelegate
 
-    private readonly cameraSpeed = 0.00002
+    private readonly cameraSpeed = 0.000006
     private readonly entitiesSpeed = 0.000007
 
     constructor(
@@ -226,7 +226,7 @@ export class InGameStateSceneController {
                 diff.longitude,
             )
             debugPrint(`diff: ${diff.latitude} - ${diff.longitude}`)
-            if (Math.abs(diff.latitude) > 0.00001 || Math.abs(diff.longitude) > 0.00001) {
+            if (Math.abs(diff.latitude) > 0.000001 || Math.abs(diff.longitude) > 0.000001) {
                 this.sceneController.rotateObjectTo(
                     "hero",
                     0,

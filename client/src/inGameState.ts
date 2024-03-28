@@ -161,8 +161,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.context.sceneController.setFog(
             0xb3ffcb,
-            1,
-            6
+            2,
+            26
         )
 
         this.inGameStateSceneController = new InGameStateSceneController(
