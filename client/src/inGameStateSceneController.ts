@@ -216,12 +216,25 @@ export class InGameStateSceneController {
         var cameraDiffZ = 0
 
         if (this.renderingPlayerGameGeolocation && this.actualPlayerGameGeolocation) {
-            const movedPosition = this.renderingPlayerGameGeolocation.movedPosition(
+            var movedPosition = this.renderingPlayerGameGeolocation.movedPosition(
                 this.actualPlayerGameGeolocation,
                 this.cameraSpeed
             )
 
-            const diff = this.renderingPlayerGameGeolocation.diff(
+            var diff = this.renderingPlayerGameGeolocation.diff(
+                this.actualPlayerGameGeolocation
+            )
+
+            const teleportThreshold = 0.001
+            if (
+                Math.abs(diff.latitude) >= teleportThreshold 
+                || 
+                Math.abs(diff.longitude) >= teleportThreshold
+            ) {
+                movedPosition = this.actualPlayerGameGeolocation    
+            }
+
+            diff = this.renderingPlayerGameGeolocation.diff(
                 movedPosition
             )
 
@@ -233,7 +246,11 @@ export class InGameStateSceneController {
                 diff.longitude,
             )
             debugPrint(`diff: ${diff.latitude} - ${diff.longitude}`)
-            if (Math.abs(diff.latitude) > 0.00000001 || Math.abs(diff.longitude) > 0.00000001) {
+            if (
+                Math.abs(diff.latitude) > 0.00000001
+                || 
+                Math.abs(diff.longitude) > 0.00000001
+            ) {
                 this.sceneController.rotateObjectTo(
                     "hero",
                     0,
@@ -257,13 +274,23 @@ export class InGameStateSceneController {
 
         Object.keys(this.uuidToPair).forEach((uuid) => {
             const e = this.uuidToPair[uuid]
-            const movedPosition = e.renderingPosition.movedPosition(
+            var movedPosition = e.renderingPosition.movedPosition(
                 e.actualPosition,
                 this.entitiesSpeed
             )
             const diff = e.renderingPosition.diff(
                 e.actualPosition
             )
+
+            const teleportThreshold = 0.001
+            if (
+                Math.abs(diff.latitude) >= teleportThreshold 
+                || 
+                Math.abs(diff.longitude) >= teleportThreshold
+            ) {
+                movedPosition = e.actualPosition   
+            }
+            
             const rotationY = Math.atan2(
                 diff.latitude,
                 diff.longitude
@@ -278,7 +305,11 @@ export class InGameStateSceneController {
                 currentVector.y,
                 currentVector.z
             )
-            if (Math.abs(diff.latitude) > 0.00000001 || Math.abs(diff.longitude) > 0.00000001) {
+            if (
+                Math.abs(diff.latitude) > 0.00000001 
+                || 
+                Math.abs(diff.longitude) > 0.00000001
+            ) {
                 self.sceneController.rotateObjectTo(
                     e.sceneObjectUUID,
                     0,
