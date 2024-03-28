@@ -62,7 +62,7 @@ export class SceneController implements
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
     private renderer: THREE.WebGLRenderer;
-    private texturesToLoad: THREE.MeshBasicMaterial[] = [];
+    private texturesToLoad: THREE.MeshStandardMaterial[] = [];
 
     private textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
     private pmremGenerator: THREE.PMREMGenerator;
@@ -96,6 +96,7 @@ export class SceneController implements
     public delegate: SceneControllerDelegate | null = null
 
     private highQuality: boolean = false
+    private shadowsEnabled: boolean = true
 
     private debugControls: OrbitControls
 
@@ -161,8 +162,11 @@ export class SceneController implements
       if (this.highQuality) {
         this.renderer.setPixelRatio(window.devicePixelRatio)
       }
-      this.renderer.shadowMap.enabled = true
-      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+
+      if (this.shadowsEnabled) {
+        this.renderer.shadowMap.enabled = true
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+      }
 
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping
       this.renderer.toneMappingExposure = 0.8
@@ -505,29 +509,16 @@ export class SceneController implements
     }    
 
     public addLight() {
-        this.scene.add( new THREE.AmbientLight( 0x666666 ) );
-
-        const light1 = new THREE.SpotLight( 0xffffff, 150 );
-        light1.position.set( 2, 5, 10 );
-        light1.angle = 0.5;
-        light1.penumbra = 0.5;
-
-        light1.castShadow = true;
-        light1.shadow.mapSize.width = 1024;
-        light1.shadow.mapSize.height = 1024;
-
-        this.scene.add(light1);
-
-        const light2 = new THREE.SpotLight( 0xffffff, 150 );
-        light2.position.set( - 1, 3.5, 3.5 );
-        light2.angle = 0.5;
-        light2.penumbra = 0.5;
-
-        light2.castShadow = true;
-        light2.shadow.mapSize.width = 1024;
-        light2.shadow.mapSize.height = 1024;
-
-        this.scene.add(light2);
+        if (this.shadowsEnabled == false) {
+            debugPrint("Can't add light, because shadows are disabled")
+            return
+        }
+        const light = new THREE.DirectionalLight(0xffffff, 7);
+        light.position.set( 1, 2, 1);
+        if (this.shadowsEnabled) {
+            light.castShadow = true
+        }
+        this.scene.add( light )
     }
 
     public addValueFloat(
@@ -702,7 +693,7 @@ export class SceneController implements
             boxSize, 
             boxSize
         )
-        const material = new THREE.MeshBasicMaterial({
+        const material = new THREE.MeshStandardMaterial({
              color: "white",
              map: this.loadingPlaceholderTexture,
              transparent: true,             
@@ -904,7 +895,7 @@ export class SceneController implements
             0
         );
 
-        const pmremGenerator = this.pmremGenerator;
+    const pmremGenerator = this.pmremGenerator;
 
       new RGBELoader()
       .setDataType(THREE.HalfFloatType)
@@ -942,7 +933,7 @@ export class SceneController implements
             boxSize
         );
 
-        const boxMaterial = new THREE.MeshBasicMaterial({
+        const boxMaterial = new THREE.MeshStandardMaterial({
              color: color,
              map: this.loadingPlaceholderTexture,
              transparent: true,             
@@ -1004,22 +995,29 @@ export class SceneController implements
             sceneObject.threeObject = model
             sceneObject.animations = container.animations
 
-            model.traverse((entity) => {
+            model.traverse(entity => {
                 if ((<THREE.Mesh> entity).isMesh) {
                     const mesh = (<THREE.Mesh> entity)
-                    mesh.castShadow = true
-                    mesh.receiveShadow = true
+                    if (self.shadowsEnabled) {
+                        mesh.castShadow = true
+                    }
                     if (transparent) {
                         (<THREE.Material> mesh.material).transparent = true;
                         (<THREE.Material> mesh.material).opacity = opacity
                     }
                     sceneObject.meshes.push(mesh)
                     if (sceneController.wireframeRenderer) {
-                        (<THREE.MeshBasicMaterial>mesh.material).wireframe = true;
-                        (<THREE.MeshBasicMaterial>mesh.material).needsUpdate = true
+                        (<THREE.MeshStandardMaterial>mesh.material).wireframe = true;
+                        (<THREE.MeshStandardMaterial>mesh.material).needsUpdate = true
                     }
                 }
             })
+
+
+            if (self.shadowsEnabled) {
+                model.castShadow = true
+                model.receiveShadow = true
+            }
             
             debugPrint(`Model load success: ${modelPath}`)
             successCallback();
@@ -1075,14 +1073,14 @@ export class SceneController implements
             size
         )
 
-        const material = new THREE.MeshBasicMaterial({
+        const material = new THREE.MeshStandardMaterial({
              color: color,
              map: this.loadingPlaceholderTexture,
              transparent: transparent,             
              opacity: opacity
         })
 
-        const newMaterial = new THREE.MeshBasicMaterial({
+        const newMaterial = new THREE.MeshStandardMaterial({
             color: color,
             map: this.textureLoader.load(
                 texturePath,
@@ -1136,7 +1134,7 @@ export class SceneController implements
         const texturePath = Paths.texturePath(textureName);
         const planeGeometry = new THREE.PlaneGeometry(width, height);
 
-        const material = new THREE.MeshBasicMaterial({
+        const material = new THREE.MeshStandardMaterial({
             color: color,
             map: this.loadingPlaceholderTexture,
             depthWrite: !resetDepthBuffer,
@@ -1145,13 +1143,13 @@ export class SceneController implements
             opacity: opacity
         });
 
-        const newMaterial = new THREE.MeshBasicMaterial({
+        const newMaterial = new THREE.MeshStandardMaterial({
             color: color,
             map: this.textureLoader.load(
                 texturePath,
                 (texture: THREE.Texture)=>{
-                    material.map = texture;
-                    material.needsUpdate = true;
+                    material.map = texture
+                    material.needsUpdate = true
                 },
                 (error: unknown)=>{
                     console.log(`WUT! Error: ${error}`);
@@ -1172,10 +1170,12 @@ export class SceneController implements
         plane.position.y = y
         plane.position.z = z
 
-        plane.receiveShadow = receiveShadow
+        if (this.shadowsEnabled) {
+            plane.receiveShadow = receiveShadow
+        }
 
         if (resetDepthBuffer) {
-            plane.renderOrder = -1;
+            plane.renderOrder = -1
         }
 
         const sceneObject = new SceneObject(
