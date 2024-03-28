@@ -19,8 +19,8 @@ export class InGameStateSceneController {
     private uuidToPair: { [key: string]: InGameStateSceneControllerStateItem} = {}
     private delegate: InGameStateSceneControllerDelegate
 
-    private readonly cameraSpeed = 0.000006
-    private readonly entitiesSpeed = 0.000007
+    private readonly cameraSpeed = 0.000002
+    private readonly entitiesSpeed = 0.000002
 
     constructor(
         sceneController: SceneController,
@@ -165,6 +165,13 @@ export class InGameStateSceneController {
                     e.position,
                     e.position
                 )
+
+                if (e.type == "building") {
+                    this.sceneController.objectPlayAnimation(
+                        sceneObjectUUID,
+                        "Take 001"
+                    )
+                }
         })
     }
 
@@ -226,7 +233,7 @@ export class InGameStateSceneController {
                 diff.longitude,
             )
             debugPrint(`diff: ${diff.latitude} - ${diff.longitude}`)
-            if (Math.abs(diff.latitude) > 0.000001 || Math.abs(diff.longitude) > 0.000001) {
+            if (Math.abs(diff.latitude) > 0.00000001 || Math.abs(diff.longitude) > 0.00000001) {
                 this.sceneController.rotateObjectTo(
                     "hero",
                     0,
@@ -258,8 +265,8 @@ export class InGameStateSceneController {
                 e.actualPosition
             )
             const rotationY = Math.atan2(
-                diff.longitude,
-                diff.latitude
+                diff.latitude,
+                diff.longitude
             )
             e.renderingPosition.populate(movedPosition)
             const currentVector = this.geolocationToSceneVector(
@@ -271,7 +278,7 @@ export class InGameStateSceneController {
                 currentVector.y,
                 currentVector.z
             )
-            if (Math.abs(diff.latitude) > 0.00001 || Math.abs(diff.longitude) > 0.00001) {
+            if (Math.abs(diff.latitude) > 0.00000001 || Math.abs(diff.longitude) > 0.00000001) {
                 self.sceneController.rotateObjectTo(
                     e.sceneObjectUUID,
                     0,

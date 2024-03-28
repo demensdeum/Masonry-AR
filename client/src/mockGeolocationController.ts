@@ -31,8 +31,8 @@ export class MockGeolocationController implements GeolocationControllerInterface
         // this.position.latitude += 0.00002
         const position = this.position.clone()
         
-        position.latitude -= 0.001
-        position.longitude += 0.001
+        position.latitude -= 0.0001
+        position.longitude += 0.0001
 
         const self = this
         setTimeout(() => {

@@ -33,6 +33,7 @@ import { GameSettings } from "./gameSettings.js"
 import { ObjectsPickerController } from "./objectsPickerController.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
+import { AnimationContainer } from "./animationContainer.js"
 
 const gui = new dat.GUI({ autoPlace: false });
 var moveGUIElement = document.querySelector('.moveGUI');
@@ -67,7 +68,7 @@ export class SceneController implements
     private pmremGenerator: any;
 
     private clock = new THREE.Clock();
-    private animationMixers: { [key: string]: THREE.AnimationMixer } = {}; 
+    private animationContainers: { [key: string]: AnimationContainer } = {}; 
 
     private objects: { [key: string]: SceneObject } = {};
     private objectsUUIDs: { [key: string]: SceneObject } = {};
@@ -595,9 +596,25 @@ export class SceneController implements
     }
 
     private animationsStep(delta: any) {
-        Object.keys(this.animationMixers).forEach((animationName) => {
-            const animationMixer = this.animationMixers[animationName]
-            animationMixer.update(delta)
+        Object.keys(this.animationContainers).forEach((animationContainerName) => {
+            const animationContainer = this.animationContainers[animationContainerName]
+            if (animationContainer.animationMixer) {
+                animationContainer.animationMixer.update(delta)
+            }
+            else {
+                const object = animationContainer.sceneObject
+                const model = object.threeObject
+                const animationMixer = new THREE.AnimationMixer(model)
+                const animation = object.animations.find((e) => { return e.name == animationContainer.animationName })
+                if (animation == null) {
+                    debugPrint(`No animation with name: ${animationContainer.animationName}`)
+                    debugger
+                }
+                else {
+                    animationMixer.clipAction(animation).play()
+                    animationContainer.animationMixer = animationMixer
+                }     
+            }       
         })
     }    
 
@@ -980,24 +997,15 @@ export class SceneController implements
     )
     {
         const animationKey = `${objectName}_${animationName}`
-        if (animationKey in this.animationMixers) {
+        if (animationKey in this.animationContainers) {
             debugPrint(`animation already playing: ${animationName}`)
             return
         }
 
-        const object = this.sceneObject(objectName)
-        const model = object.threeObject
-        const animationMixer = new THREE.AnimationMixer(model)
-        const animation = object.animations.find((e) => { return e.name == animationName })
-        if (animation == null) {
-            debugPrint(`No animation with name: ${animationName}`)
-            debugger
-        }
-        else {
-            debugPrint(`Start animation play: ${animationKey}`)
-            animationMixer.clipAction(animation).play()
-            this.animationMixers[animationKey] = animationMixer
-        }
+        this.animationContainers[animationKey] = new AnimationContainer(
+            this.sceneObject(objectName),
+            animationName
+        )
     }
 
     public objectStopAnimation(
@@ -1006,11 +1014,8 @@ export class SceneController implements
     )
     {
         const animationKey = `${objectName}_${animationName}`        
-        if (animationKey in this.animationMixers) {
-            delete this.animationMixers[animationKey]
-        }
-        else {
-            debugPrint(`Can't stop animation, because not playing: ${animationKey}}`)
+        if (animationKey in this.animationContainers) {
+            delete this.animationContainers[animationKey]
         }
     }
 
