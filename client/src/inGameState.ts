@@ -161,14 +161,16 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.context.sceneController.setFog(
             0xb3ffcb,
-            2,
-            26
+            8,
+            32
         )
 
         this.inGameStateSceneController = new InGameStateSceneController(
             this.context.sceneController,
             this
         )
+
+        this.context.sceneController.addLight()
     }
 
     inGameStateControllerDidMoveCamera(

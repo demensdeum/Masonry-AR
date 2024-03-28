@@ -59,13 +59,13 @@ export class SceneController implements
 
     private stepCounter: int = 0
     
-    private scene: any;
-    private camera: any;
-    private renderer: any;
-    private texturesToLoad: any[] = [];
+    private scene: THREE.Scene;
+    private camera: THREE.PerspectiveCamera;
+    private renderer: THREE.WebGLRenderer;
+    private texturesToLoad: THREE.MeshBasicMaterial[] = [];
 
-    private textureLoader: any = new THREE.TextureLoader();
-    private pmremGenerator: any;
+    private textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
+    private pmremGenerator: THREE.PMREMGenerator;
 
     private clock = new THREE.Clock();
     private animationContainers: { [key: string]: AnimationContainer } = {}; 
@@ -74,7 +74,7 @@ export class SceneController implements
     private objectsUUIDs: { [key: string]: SceneObject } = {};
     private commands: { [key: string]: SceneObjectCommand } = {};
 
-    private loadingTexture: any;
+    private loadingPlaceholderTexture: any;
 
     private physicsController: PhysicsController;
     private objectsPickerController: ObjectsPickerController
@@ -97,7 +97,6 @@ export class SceneController implements
 
     private highQuality: boolean = false
 
-    // @ts-ignore:next-line
     private debugControls: OrbitControls
 
     constructor(
@@ -124,7 +123,7 @@ export class SceneController implements
             (physicsController as SimplePhysicsController).simplePhysicsControllerDelegate = this
         }
 
-        this.loadingTexture = this.textureLoader.load(
+        this.loadingPlaceholderTexture = this.textureLoader.load(
             Paths.texturePath(
                 "com.demensdeum.loading"
             )
@@ -156,12 +155,15 @@ export class SceneController implements
       this.renderer = new THREE.WebGLRenderer({ 
         canvas: canvas, 
         antialias: true
-    })
+    })   
     
       this.renderer.setSize(this.windowWidth(), this.windowHeight());
       if (this.highQuality) {
         this.renderer.setPixelRatio(window.devicePixelRatio)
       }
+      this.renderer.shadowMap.enabled = true
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping
       this.renderer.toneMappingExposure = 0.8
 
@@ -194,6 +196,12 @@ export class SceneController implements
         camera, 
         renderer.domElement
       )      
+
+      this.debugControls.maxPolarAngle = Math.PI / 2 - Utils.angleToRadians(40)
+      this.debugControls.minDistance = 2
+      this.debugControls.maxDistance = 3
+
+      debugPrint(this.debugControls)
     }
 
     public setFog(
@@ -496,6 +504,32 @@ export class SceneController implements
         }
     }    
 
+    public addLight() {
+        this.scene.add( new THREE.AmbientLight( 0x666666 ) );
+
+        const light1 = new THREE.SpotLight( 0xffffff, 150 );
+        light1.position.set( 2, 5, 10 );
+        light1.angle = 0.5;
+        light1.penumbra = 0.5;
+
+        light1.castShadow = true;
+        light1.shadow.mapSize.width = 1024;
+        light1.shadow.mapSize.height = 1024;
+
+        this.scene.add(light1);
+
+        const light2 = new THREE.SpotLight( 0xffffff, 150 );
+        light2.position.set( - 1, 3.5, 3.5 );
+        light2.angle = 0.5;
+        light2.penumbra = 0.5;
+
+        light2.castShadow = true;
+        light2.shadow.mapSize.width = 1024;
+        light2.shadow.mapSize.height = 1024;
+
+        this.scene.add(light2);
+    }
+
     public addValueFloat(
         name: string,
         object: any,
@@ -670,7 +704,7 @@ export class SceneController implements
         )
         const material = new THREE.MeshBasicMaterial({
              color: "white",
-             map: this.loadingTexture,
+             map: this.loadingPlaceholderTexture,
              transparent: true,             
              opacity: 0
         });    
@@ -910,7 +944,7 @@ export class SceneController implements
 
         const boxMaterial = new THREE.MeshBasicMaterial({
              color: color,
-             map: this.loadingTexture,
+             map: this.loadingPlaceholderTexture,
              transparent: true,             
              opacity: 0.7
         });     
@@ -972,12 +1006,14 @@ export class SceneController implements
 
             model.traverse((entity) => {
                 if ((<THREE.Mesh> entity).isMesh) {
-                    const mesh = (<THREE.Mesh> entity);
+                    const mesh = (<THREE.Mesh> entity)
+                    mesh.castShadow = true
+                    mesh.receiveShadow = true
                     if (transparent) {
                         (<THREE.Material> mesh.material).transparent = true;
-                        (<THREE.Material> mesh.material).opacity = opacity;
+                        (<THREE.Material> mesh.material).opacity = opacity
                     }
-                    sceneObject.meshes.push(mesh);
+                    sceneObject.meshes.push(mesh)
                     if (sceneController.wireframeRenderer) {
                         (<THREE.MeshBasicMaterial>mesh.material).wireframe = true;
                         (<THREE.MeshBasicMaterial>mesh.material).needsUpdate = true
@@ -988,7 +1024,7 @@ export class SceneController implements
             debugPrint(`Model load success: ${modelPath}`)
             successCallback();
           }
-        );
+        )
     }
 
     public objectPlayAnimation(
@@ -1041,7 +1077,7 @@ export class SceneController implements
 
         const material = new THREE.MeshBasicMaterial({
              color: color,
-             map: this.loadingTexture,
+             map: this.loadingPlaceholderTexture,
              transparent: transparent,             
              opacity: opacity
         })
@@ -1093,7 +1129,8 @@ export class SceneController implements
         color: number = 0xFFFFFF,
         resetDepthBuffer: boolean = false,
         transparent: boolean = false,
-        opacity: number = 1.0
+        opacity: number = 1.0,
+        receiveShadow: boolean = true
     ): void {
         debugPrint("addPlaneAt");
         const texturePath = Paths.texturePath(textureName);
@@ -1101,7 +1138,7 @@ export class SceneController implements
 
         const material = new THREE.MeshBasicMaterial({
             color: color,
-            map: this.loadingTexture,
+            map: this.loadingPlaceholderTexture,
             depthWrite: !resetDepthBuffer,
             side: THREE.DoubleSide,
             transparent: transparent,
@@ -1124,14 +1161,19 @@ export class SceneController implements
             transparent: transparent,
             opacity: opacity
         });
+        
         if (newMaterial.map != null) {
             this.texturesToLoad.push(newMaterial);
+            newMaterial.map.colorSpace = THREE.SRGBColorSpace;
         }        
 
-        const plane = new THREE.Mesh(planeGeometry, material);
-        plane.position.x = x;
-        plane.position.y = y;
-        plane.position.z = z;
+        const plane = new THREE.Mesh(planeGeometry, material)
+        plane.position.x = x
+        plane.position.y = y
+        plane.position.z = z
+
+        plane.receiveShadow = receiveShadow
+
         if (resetDepthBuffer) {
             plane.renderOrder = -1;
         }
@@ -1145,7 +1187,7 @@ export class SceneController implements
             false,
             null,
             new Date().getTime()
-        );
+        )
         this.addSceneObject(sceneObject);
     }    
 
