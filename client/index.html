@@ -4,12 +4,13 @@
 <title>Masonry-AR</title>
 <style>
   body {
+    background-image: url('./assets/com.demensdeum.main.background.texture.jpg');
     background-color: black;    
     margin: 0;
     overflow: hidden;
   }
   canvas {
-    background-color: blue;
+    background-color: transparent;
     display: block;
   }
   .moveGUI{ 
@@ -31,17 +32,17 @@
 </script>
 </head>
 <body>
-  <div  class = "moveGUI"></div>  
-    <canvas class="webgl"></canvas>
-    <script>
-      if (window.location.protocol === 'http:') {
-        var newUrl = window.location.href.replace('http:', 'https:')
-        window.location.assign(newUrl)
-      }      
-    </script>
-    <script type="module" src="./build/main.js"></script>
-    <script src="build/eruda/eruda.js"></script>
-    <script>
-      eruda.init();   
-    </script>    
+  <div class = "moveGUI"></div>  
+  <canvas class="webgl"></canvas>
+  <script>
+    if (window.location.protocol === 'http:') {
+      var newUrl = window.location.href.replace('http:', 'https:')
+      window.location.assign(newUrl)
+    }      
+  </script>
+  <script type="module" src="./build/main.js"></script>
+  <script src="build/eruda/eruda.js"></script>
+  <script>
+    eruda.init();   
+  </script>    
 </body>
