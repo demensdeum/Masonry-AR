@@ -53,6 +53,22 @@ export class InGameStateSceneController {
     public handle(entities: Entity[]) {
         debugPrint(`handle entity: ${entities}`)
 
+        const heroEntity = entities.find(e => { return e.uuid == this.heroEntityUUID })
+        if (heroEntity != null) {
+            this.delegate.inGameStateControllerDidReceiveName(
+                this,
+                heroEntity.name
+            )            
+            this.delegate.inGameStateControllerDidReceiveBalance(
+                this,
+                heroEntity.balance
+            )
+            this.delegate.inGameStateControllerDidReceiveOrder(
+                this,
+                heroEntity.order
+            )            
+        }
+
         const addedEntities = entities.filter((e) => { return (e.uuid in this.uuidToPair) == false })
         const movedEntities = entities.filter((e) => { return e.uuid in this.uuidToPair})
         var removedEntities: Entity[] = []
@@ -212,7 +228,6 @@ export class InGameStateSceneController {
     }
 
     private updateObjectsPosition() {
-        debugPrint(`targetPlayerGameGeolocation: ${this.actualPlayerGameGeolocation}`)
         const self = this
 
         var cameraDiffX = 0
@@ -249,7 +264,7 @@ export class InGameStateSceneController {
                 diff.latitude,
                 diff.longitude,
             )
-            debugPrint(`diff: ${diff.latitude} - ${diff.longitude}`)
+
             if (
                 Math.abs(diff.latitude) > 0.00000001
                 || 

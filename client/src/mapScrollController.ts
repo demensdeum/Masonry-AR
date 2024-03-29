@@ -1,7 +1,6 @@
 import { int, float } from "./types.js"
 import { SceneController } from "./sceneController.js"
 import { Utils } from "./utils.js"
-import { debugPrint } from "./runtime.js"
 
 export class MapScrollController {
 
@@ -67,9 +66,6 @@ export class MapScrollController {
         offsetX: float,
         offsetY: float
     ) {
-        debugPrint(offsetX)
-        debugPrint(offsetY)
-
         for (var y = 0; y < this.rows; y++) {
             for (var x = 0; x < this.columns; x++) {
                 const planePosition = this.sceneController.sceneObjectPosition(

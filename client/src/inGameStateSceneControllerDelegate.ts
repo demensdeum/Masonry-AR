@@ -1,4 +1,4 @@
-import { float } from "./types.js"
+import { int, float } from "./types.js"
 import { InGameStateSceneController } from "./inGameStateSceneController.js"
 
 export interface InGameStateSceneControllerDelegate {
@@ -8,4 +8,19 @@ export interface InGameStateSceneControllerDelegate {
         y: float,
         z: float
     ): void
+
+    inGameStateControllerDidReceiveName(
+        inGameStateSceneController: InGameStateSceneController,
+        name: string
+    ): void
+
+    inGameStateControllerDidReceiveBalance(
+        inGameStateSceneController: InGameStateSceneController,
+        balance: int
+    ): void
+
+    inGameStateControllerDidReceiveOrder(
+        inGameStateSceneController: InGameStateSceneController,
+        order: string
+    ): void    
 }
