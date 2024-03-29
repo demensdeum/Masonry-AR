@@ -34,6 +34,10 @@ import { ObjectsPickerController } from "./objectsPickerController.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 import { AnimationContainer } from "./animationContainer.js"
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 
 const gui = new dat.GUI({ autoPlace: false });
 var moveGUIElement = document.querySelector('.moveGUI');
@@ -99,6 +103,7 @@ export class SceneController implements
     private shadowsEnabled: boolean = true
 
     private debugControls: OrbitControls
+    private effectComposer: EffectComposer
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -191,7 +196,9 @@ export class SceneController implements
         debugPrint("onWindowResize")
         camera.aspect = self.windowWidth() / self.windowHeight()
         camera.updateProjectionMatrix()
+
         renderer.setSize(self.windowWidth(), self.windowHeight())
+        this.effectComposer.setSize(self.windowWidth(), self.windowHeight())
       }      
 
       window.addEventListener("resize", onWindowResize, false);
@@ -206,6 +213,20 @@ export class SceneController implements
       this.debugControls.maxDistance = 3
 
       debugPrint(this.debugControls)
+
+      const renderScene = new RenderPass( this.scene, camera );
+
+      const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+      bloomPass.threshold = 0
+      bloomPass.strength = 1
+      bloomPass.radius = 0
+
+      const outputPass = new OutputPass();
+
+      this.effectComposer = new EffectComposer(renderer)
+      this.effectComposer.addPass(renderScene)
+      this.effectComposer.addPass(bloomPass)
+      this.effectComposer.addPass(outputPass)
     }
 
     public setFog(
@@ -644,7 +665,8 @@ export class SceneController implements
     }    
 
     private render() {
-        this.renderer.render(this.scene, this.camera);
+        //this.renderer.render(this.scene, this.camera);
+        this.effectComposer.render();
     }
 
     private addSceneObject(sceneObject: SceneObject): void {
