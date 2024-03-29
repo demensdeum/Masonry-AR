@@ -19,6 +19,7 @@ export class InGameStateSceneController {
     private uuidToPair: { [key: string]: InGameStateSceneControllerStateItem} = {}
     private delegate: InGameStateSceneControllerDelegate
 
+    public heroEntityUUID = "NONE"
     private readonly cameraSpeed = 0.000002
     private readonly entitiesSpeed = 0.000002
 
@@ -124,6 +125,9 @@ export class InGameStateSceneController {
 
         const self = this
         entities.forEach((e) => {
+                if (this.heroEntityUUID == e.uuid) {
+                    return
+                }
                 const sceneObjectUUID = Utils.generateUUID()
                 const modelName = this.modelNameFromEntity(e)
                 const sceneVector = this.geolocationToSceneVector(

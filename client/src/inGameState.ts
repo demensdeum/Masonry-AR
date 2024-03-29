@@ -431,6 +431,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         const heroUUID = Utils.getCookieValue("heroUUID")
         if (heroUUID) {
             this.gameData.heroUUID = heroUUID
+            this.inGameStateSceneController.heroEntityUUID = heroUUID
             if (window.localStorage.getItem("showedStartInfo") != "YES") {
                 window.localStorage.setItem("showedStartInfo", "YES")
                 alert("Masonry-AR - это игра в дополненной реальности, потребуется доступ к вашей геолокации")
