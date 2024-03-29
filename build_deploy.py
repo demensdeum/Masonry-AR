@@ -4,11 +4,15 @@ import shutil
 import cleanterminus
 import subprocess
 import os
+import sys
 
 cleanterminus.clear()
 os.chdir("client")
 print("Building client...")
-subprocess.run('tools/build.py', shell=True, check=True)
+commandLine = "tools/build.py"
+if "-quick" in sys.argv:
+    commandLine = "tools/build.py -quick"
+subprocess.run(commandLine, shell=True, check=True)
 os.chdir("..")
 
 os.chdir("server")

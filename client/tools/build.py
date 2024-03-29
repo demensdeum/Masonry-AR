@@ -38,7 +38,7 @@ def run_commands():
     subprocess.run('tsc', shell=True, check=True)
     shutil.copytree('external-libs', 'build', dirs_exist_ok=True)
 
-    compress_resources = "-quick" in sys.argv == False
+    compress_resources = "-quick" not in sys.argv
 
     if compress_resources:
         print("Resources compress...")        

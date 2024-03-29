@@ -51,6 +51,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly orderChangeEnabled = true
     private readonly entitiesTrackingStepTimeout = 3000
     private readonly currentClientVersion = 5
+    // @ts-ignore
+    private readonly versionDate = `$PREPROCESSOR_CURRENT_DATE (${this.currentClientVersion})`
     private heroInserted = false
     private lastBuildingAnimationObjectUUID = "NONE"
     private dataFetchType = "DEFAULT"
@@ -94,6 +96,11 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             0,
             0
         )        
+
+        this.context.sceneController.addText(
+            "versionDate",
+            this
+        )
 
         this.context.sceneController.addText(
             "name",

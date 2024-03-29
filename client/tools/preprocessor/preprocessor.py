@@ -4,6 +4,7 @@ import os
 import sys
 import json
 import re
+from datetime import datetime
 
 def load_rules(file_path):
     with open(file_path, 'r') as rules_file:
@@ -20,6 +21,8 @@ def process_file(input_file, output_file, rules):
                 new_line = re.sub(re.escape(pattern), replacement, new_line)
                 if line != new_line:
                     print(f"Was: {line}\nBecome: {new_line}\noutput_file: {output_file}")
+            now = datetime.now()                    
+            new_line = new_line.replace("$PREPROCESSOR_CURRENT_DATE", now.strftime("%d.%m.%y-%H:%M:%S"))
             file.write(new_line)
 
 def process_files_in_folder(input_folder, output_folder, rules, silent_mode=True):
