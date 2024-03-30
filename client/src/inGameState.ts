@@ -54,6 +54,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private static currentClientVersion = 5
     public static readonly versionDate = `$PREPROCESSOR_CURRENT_DATE (${this.currentClientVersion})`
     private heroInserted = false
+    private ownerNameEnabled = false
     private lastBuildingAnimationObjectUUID = "NONE"
     private dataFetchType = "DEFAULT"
     private inGameStateSceneController!: InGameStateSceneController
@@ -197,12 +198,17 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             alert("Для постройки зданий сначала нужно остановиться и подождать (координаты на сервере и на клиенте разные)")
             return
         }
+        if (this.gameData.order == "NONE") {
+            alert("Для постройки здания задайте название своему ордену!")
+            return
+        }
         this.showBuildingAnimation()
         this.entitiesController.build()
     }
 
     switchOrder() {
-        const order = prompt("Название масонского ордена")
+        const orderValue = this.gameData.order == "NONE" ? "" : this.gameData.order
+        const order = prompt("Название масонского ордена", orderValue)
         if (order) {
             if (order.length >= 4) {
                 this.heroStatusController.set(order)
@@ -210,9 +216,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             else {
                 alert("Название ордена должно быть не менее 4 символов")
             }
-        }
-        else {
-            alert("Название ордена null")
         }
     }
 
@@ -393,7 +396,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     askIfWantToRemoveBuilding(entity: Entity) {
         if (this.gameData.order == entity.order) {
-            if (confirm(`Это здание ${entity.name} вашего ордена ${entity.order} - построено ${entity.ownerName}. Переименовать?`)) {
+            const ownerName = this.ownerNameEnabled ? ` - построено ${entity.ownerName}` : ""
+            if (confirm(`Это здание ${entity.name} вашего ордена ${entity.order}${ownerName}. Переименовать?`)) {
                 this.renameBuilding(entity)
             }
             return
@@ -435,7 +439,11 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             this.entitiesController.catch(entity)
         }   
         else if (entity?.type == "building") {
-            this.askIfWantToRemoveBuilding(entity)
+            const self = this
+            const confirmation = () =>{
+                self.askIfWantToRemoveBuilding(entity)
+            }
+            setTimeout(confirmation, 10)
             return
         }
         else {

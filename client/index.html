@@ -23,15 +23,20 @@
   .gameplayGUI {
     font-family: "Arial", sans-serif;
     font-weight: bold;
+    font-size: 32px;
     background-color: transparent;
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
-    padding: 16px;
+    padding: 32px;
     text-align: center;
     opacity: 0.85;
     color: white;
     text-shadow: 1px 1px 1px black;
+    width: 15%;
+  }
+  .guiButton {
+    width: 80%;
   }
   .versionGUI {
     font-family: "Arial", sans-serif;
@@ -62,12 +67,12 @@
   <div class = "moveGUI"></div>  
   <canvas class = "webgl"></canvas>
   <div class = "gameplayGUI">
-    <p><img src="./assets/com.demensdeum.gui.build.button.texture.png" onclick="document.global_gameplay_inGameState.build()"/></p>
-    <p><img src="./assets/com.demensdeum.gui.order.button.texture.png" onclick="document.global_gameplay_inGameState.switchOrder()"/></p>
-    <p id="guiBalanceText">Balance: ?</p>    
+    <p><img class="guiButton" src="./assets/com.demensdeum.gui.order.button.texture.png" onclick="document.global_gameplay_inGameState.switchOrder()"/></p>
+    <p><img class="guiButton" src="./assets/com.demensdeum.gui.build.button.texture.png" onclick="document.global_gameplay_inGameState.build()"/></p>    
+    <p id="guiBalanceText">0 ₳</p>   
   </div>
   <div class = "versionGUI">
-    <p id="guiVersionText">Version: ?</p>
+    <p id="guiVersionText"><Version></p>
   </div>
   <script>
     if (window.location.protocol === 'http:') {
