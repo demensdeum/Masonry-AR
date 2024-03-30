@@ -18,6 +18,31 @@
     top: 6em;
     right: 8em;
     transform: scale(2.2);
+    display: none;
+  }
+  .gameplayGUI {
+    font-family: "Arial", sans-serif;
+    font-weight: bold;
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 16px;
+    text-align: center;
+    opacity: 0.85;
+    color: black;
+  }
+  .versionGUI {
+    font-family: "Arial", sans-serif;
+    font-weight: bold;
+    background-color: transparent;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 10px;
+    text-align: left;
+    opacity: 0.85;
+    color: black;
   }
 </style>
 <script type="importmap">
@@ -33,7 +58,15 @@
 </head>
 <body>
   <div class = "moveGUI"></div>  
-  <canvas class="webgl"></canvas>
+  <canvas class = "webgl"></canvas>
+  <div class = "gameplayGUI">
+    <p id="guiBalanceText">Balance: ?</p>
+    <p><img src="./assets/com.demensdeum.gui.build.button.texture.png" onclick="document.global_gameplay_inGameState.build()"/></p>
+    <p><img src="./assets/com.demensdeum.gui.order.button.texture.png" onclick="document.global_gameplay_inGameState.switchOrder()"/></p>
+  </div>
+  <div class = "versionGUI">
+    <p id="guiVersionText">Version: ?</p>
+  </div>
   <script>
     if (window.location.protocol === 'http:') {
       var newUrl = window.location.href.replace('http:', 'https:')

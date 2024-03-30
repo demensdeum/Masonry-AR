@@ -1,4 +1,4 @@
-import { Context } from "./context.js";
+import { Context } from "./context.js"
 import { InGameState } from "./inGameState.js"
 
 function main(options: {[key: string]: string} = {}) {
@@ -12,6 +12,9 @@ function main(options: {[key: string]: string} = {}) {
     "Idle",
     context
   )
+
+  // @ts-ignore
+  document.global_gameplay_inGameState = initialState
 
   context.start(initialState)
 

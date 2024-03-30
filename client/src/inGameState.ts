@@ -28,6 +28,7 @@ import { GeolocationControllerInterface } from "./geolocationControllerInterface
 import { InGameStateSceneController } from "./inGameStateSceneController.js"
 import { MapScrollController } from "./mapScrollController.js"
 import { InGameStateSceneControllerDelegate } from "./inGameStateSceneControllerDelegate.js"
+import { GameplayGuiController } from "./gameplayGuiController.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,
@@ -50,16 +51,16 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly buildingEnabled = true
     private readonly orderChangeEnabled = true
     private readonly entitiesTrackingStepTimeout = 3000
-    private readonly currentClientVersion = 5
-    // @ts-ignore
-    private readonly versionDate = `$PREPROCESSOR_CURRENT_DATE (${this.currentClientVersion})`
+    private static currentClientVersion = 5
+    public static readonly versionDate = `$PREPROCESSOR_CURRENT_DATE (${this.currentClientVersion})`
     private heroInserted = false
     private lastBuildingAnimationObjectUUID = "NONE"
     private dataFetchType = "DEFAULT"
     private inGameStateSceneController!: InGameStateSceneController
+    private gameplayGuiController = new GameplayGuiController(this.gameData)
 
     initialize(): void {
-
+        debugPrint(this.gameplayGuiController)
         if (this.dataFetchType == "MOCK") {
             this.geolocationController = new MockGeolocationController(this)
             const mockingEntitiesController = new MockEntitiesController(this)
@@ -96,11 +97,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             0,
             0
         )        
-
-        this.context.sceneController.addText(
-            "versionDate",
-            this
-        )
 
         this.context.sceneController.addText(
             "name",
@@ -228,6 +224,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
     }
 
+    public buildButtonPressed() {
+        alert("BUILD!!!!!")
+    }
+
     private showBuildingAnimation() {
         if (this.lastBuildingAnimationObjectUUID != "NONE") {
             debugPrint("Can't present another building animation! Already presenting one!")
@@ -282,8 +282,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             alert("Server info get error, minimal_client_version is null")
             return
         }
-        if (parseInt(minimalClientVersion) > this.currentClientVersion) {
-            alert(`Client is too old: ${this.currentClientVersion} / ${minimalClientVersion}`)
+        if (parseInt(minimalClientVersion) > InGameState.currentClientVersion) {
+            alert(`Client is too old: ${InGameState.currentClientVersion} / ${minimalClientVersion}`)
             return
         }
 
