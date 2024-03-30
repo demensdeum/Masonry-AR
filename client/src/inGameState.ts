@@ -204,7 +204,15 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     switchOrder() {
         const order = prompt("Название масонского ордена")
         if (order) {
-            this.heroStatusController.set(order)
+            if (order.length >= 4) {
+                this.heroStatusController.set(order)
+            }
+            else {
+                alert("Название ордена должно быть не менее 4 символов")
+            }
+        }
+        else {
+            alert("Название ордена null")
         }
     }
 

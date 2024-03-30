@@ -999,6 +999,7 @@ export class SceneController implements
                     const mesh = (<THREE.Mesh> entity)
                     if (self.shadowsEnabled) {
                         mesh.castShadow = true
+                        mesh.receiveShadow = true
                     }
                     if (transparent) {
                         (<THREE.Material> mesh.material).transparent = true;
