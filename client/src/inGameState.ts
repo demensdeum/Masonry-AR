@@ -395,14 +395,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     askIfWantToRemoveBuilding(entity: Entity) {
+        const ownerName = this.ownerNameEnabled ? ` - построено ${entity.ownerName}` : ""
         if (this.gameData.order == entity.order) {
-            const ownerName = this.ownerNameEnabled ? ` - построено ${entity.ownerName}` : ""
             if (confirm(`Это здание ${entity.name} вашего ордена ${entity.order}${ownerName}. Переименовать?`)) {
                 this.renameBuilding(entity)
             }
             return
         }
-        else if (confirm(`Хотите уничтожить здание масонского ордена ${entity.order} - построено ${entity.ownerName} ?`)) {
+        else if (confirm(`Хотите уничтожить здание масонского ордена ${entity.order}${ownerName} ?`)) {
             this.entitiesController.destroy(entity)
             return
         }

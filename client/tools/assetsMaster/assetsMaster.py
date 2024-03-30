@@ -65,7 +65,11 @@ def compress_files(source_dir, output_dir):
             continue        
         extension = os.path.splitext(item)[1]
         print(extension)
-        if extension in extension_to_compressor and "com.demensdeum.gui.build.button.texture.png" not in source_file and "com.demensdeum.gui.order.button.texture.png" not in source_file:
+        if extension in extension_to_compressor \
+            and "com.demensdeum.gui.build.button.texture.svg" not in source_file \
+            and "com.demensdeum.gui.build.button.texture.png" not in source_file \
+            and "com.demensdeum.gui.order.button.texture.svg" not in source_file \
+            and "com.demensdeum.gui.order.button.texture.png" not in source_file:
             compressor = extension_to_compressor[extension]
             output_file = os.path.join(output_dir, os.path.splitext(item)[0] + compressor[0])
             compressor[1](source_file, output_file)
