@@ -209,6 +209,8 @@ export class SceneController implements
         this.debugControls.minDistance = 2
         this.debugControls.maxDistance = 3
         this.debugControls.enablePan = false  
+        this.debugControls.enableDamping = true
+        this.debugControls.dampingFactor = 0.225
     }
 
     public setFog(
@@ -603,6 +605,7 @@ export class SceneController implements
 
     private render() {
         this.renderer.render(this.scene, this.camera);
+        this.debugControls.update()
     }
 
     private addSceneObject(sceneObject: SceneObject): void {
