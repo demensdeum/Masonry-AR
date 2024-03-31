@@ -19,9 +19,9 @@ https://github.com/mrdoob/three.js
 https://github.com/phan/phan  
 https://www.python.org  
 https://www.typescriptlang.org  
-https://github.com/liriliri/eruda
-https://www.gimp.org
-https://imagemagick.org
+https://github.com/liriliri/eruda  
+https://www.gimp.org  
+https://imagemagick.org  
 https://www.php.net  
 https://mariadb.org  
 https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API  
