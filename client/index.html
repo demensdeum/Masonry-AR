@@ -68,8 +68,8 @@
   <div class = "moveGUI"></div>  
   <canvas class = "webgl"></canvas>
   <div class = "gameplayGUI">
-    <p><img class="guiButton" src="./assets/com.demensdeum.gui.order.button.texture.svg" onclick="document.global_gameplay_inGameState.switchOrder()"/></p>
-    <p><img class="guiButton" src="./assets/com.demensdeum.gui.build.button.texture.svg" onclick="document.global_gameplay_inGameState.build()"/></p>    
+    <p><img class="guiButton" src="./assets/com.demensdeum.gui.order.button.texture.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_inGameState.switchOrder()"/></p>
+    <p><img class="guiButton" src="./assets/com.demensdeum.gui.build.button.texture.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_inGameState.build()"/></p>    
     <p id="guiBalanceText">0 ₳</p>   
   </div>
   <div class = "versionGUI">
