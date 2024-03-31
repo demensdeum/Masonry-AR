@@ -201,12 +201,14 @@ export class SceneController implements
         renderer.domElement
       )      
 
-      this.debugControls.maxPolarAngle = Math.PI / 2 - Utils.angleToRadians(40)
-      this.debugControls.minDistance = 2
-      this.debugControls.maxDistance = 3
-      this.debugControls.enablePan = false
-
       debugPrint(this.debugControls)
+    }
+
+    public lockOrbitControls() {
+        this.debugControls.maxPolarAngle = Math.PI / 2 - Utils.angleToRadians(40)
+        this.debugControls.minDistance = 2
+        this.debugControls.maxDistance = 3
+        this.debugControls.enablePan = false  
     }
 
     public setFog(
@@ -720,12 +722,12 @@ export class SceneController implements
             return
         }
         const urls = [
-            `${Paths.assetsDirectory}/${Paths.skyboxRightTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
-            `${Paths.assetsDirectory}/${Paths.skyboxLeftTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`,
+            `${Paths.assetsDirectory}/${Paths.skyboxLeftTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
+            `${Paths.assetsDirectory}/${Paths.skyboxRightTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`,
             `${Paths.assetsDirectory}/${Paths.skyboxTopTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
             `${Paths.assetsDirectory}/${Paths.skyboxBottomTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`,
-            `${Paths.assetsDirectory}/${Paths.skyboxFrontTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
-            `${Paths.assetsDirectory}/${Paths.skyboxBackTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`
+            `${Paths.assetsDirectory}/${Paths.skyboxBackTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
+            `${Paths.assetsDirectory}/${Paths.skyboxFrontTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`
         ];
 
         const textureCube = new THREE.CubeTextureLoader().load( urls );

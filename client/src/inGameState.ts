@@ -174,7 +174,11 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             this
         )
 
-        this.context.sceneController.addLight()
+        this.context.sceneController.addLight();
+
+        (document.getElementsByClassName("gameplayGUI")[0] as HTMLElement).style.display = "block";
+
+        this.context.sceneController.lockOrbitControls()
     }
 
     inGameStateControllerDidMoveCamera(

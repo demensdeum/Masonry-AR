@@ -1,5 +1,5 @@
+import { CompanyLogoState } from "./companyLogoState.js"
 import { Context } from "./context.js"
-import { InGameState } from "./inGameState.js"
 
 function main(options: {[key: string]: string} = {}) {
   const debugEnabled = options["debugEnabled"] === "true"
@@ -8,15 +8,12 @@ function main(options: {[key: string]: string} = {}) {
       debugEnabled
   )
   
-  const initialState = new InGameState(
-    "Idle",
+  const companyLogoState = new CompanyLogoState(
+    "CompanyLogo",
     context
   )
 
-  // @ts-ignore
-  document.global_gameplay_inGameState = initialState
-
-  context.start(initialState)
+  context.start(companyLogoState)
 
   function step() {
       if (!context.isRunning) {
