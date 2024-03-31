@@ -2,8 +2,17 @@
 
 ![Screenshot](Screenshot.png) 
 
-AR game where Masonic lodges conquer the world
+Masonry-AR is an augmented reality (AR) game centered around Freemasonry. Players engage in strategic gameplay, building Masonic lodges, and competing for control over real-world locations.
 
+Key Features:  
+  
+Tactical Conquest: Build Masonic lodges strategically to expand influence.  
+Territorial Battles: Compete against other players for control of landmarks.  
+Order Creation: Establish personalized Masonic orders with unique characteristics.  
+Hidden Discoveries: Uncover secret knowledge and artifacts through exploration.  
+Alliance Formation: Collaborate with others to strengthen positions.  
+Engaging Narrative: Immerse yourself in a rich world of mystery and intrigue.  
+  
 # Tools  
 https://github.com/mrdoob/three.js  
 https://github.com/phan/phan  
