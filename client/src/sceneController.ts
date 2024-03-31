@@ -204,6 +204,7 @@ export class SceneController implements
       this.debugControls.maxPolarAngle = Math.PI / 2 - Utils.angleToRadians(40)
       this.debugControls.minDistance = 2
       this.debugControls.maxDistance = 3
+      this.debugControls.enablePan = false
 
       debugPrint(this.debugControls)
     }
@@ -558,13 +559,12 @@ export class SceneController implements
             if (this.physicsController instanceof SimplePhysicsController) {
                 this.physicsController.enabled = this.physicsEnabled
             }
-            this.physicsController.step(delta);
+            this.physicsController.step(delta)
         }
-        this.weatherController?.step(delta);
-        this.animationsStep(delta);
-        this.updateSkyboxPosition();
-        this.render();
-        this.updateUI();
+        this.weatherController?.step(delta)
+        this.animationsStep(delta)
+        this.render()
+        this.updateUI()
     }
 
     private controlsStep(
@@ -575,49 +575,6 @@ export class SceneController implements
             const controls = sceneObject.controls;
             controls?.step(delta);  
         })
-    }
-
-    private updateSkyboxPosition() {
-        if (!this.currentSkyboxName) {
-            return;
-        }
-        const cameraPosition = this.camera.position;
-        this.moveObjectTo(
-            Names.Skybox + "Front",
-            cameraPosition.x,
-            cameraPosition.y,
-            cameraPosition.z - SceneController.skyboxPositionDiff
-        );        
-        this.moveObjectTo(
-            Names.Skybox + "Back",
-            cameraPosition.x,
-            cameraPosition.y,
-            cameraPosition.z + SceneController.skyboxPositionDiff
-        );        
-        this.moveObjectTo(
-            Names.Skybox + "Top",
-            cameraPosition.x,
-            cameraPosition.y + SceneController.skyboxPositionDiff,
-            cameraPosition.z
-        );       
-        this.moveObjectTo(
-            Names.Skybox + "Bottom",
-            cameraPosition.x,
-            cameraPosition.y - SceneController.skyboxPositionDiff,
-            cameraPosition.z
-        );           
-        this.moveObjectTo(
-            Names.Skybox + "Left",
-            cameraPosition.x - SceneController.skyboxPositionDiff,
-            cameraPosition.y,
-            cameraPosition.z
-        );
-        this.moveObjectTo(
-            Names.Skybox + "Right",
-            cameraPosition.x + SceneController.skyboxPositionDiff,
-            cameraPosition.y,
-            cameraPosition.z
-        );                                              
     }
 
     private animationsStep(delta: any) {
@@ -755,144 +712,25 @@ export class SceneController implements
         delete this.objectsUUIDs[sceneObject.uuid]
     }
 
-    private removeCurrentSkybox() {
-        if (this.currentSkyboxName == null) {
-            return
-        }
-
-        const names = [
-            Names.Skybox + "Front",
-            Names.Skybox + "Back",
-            Names.Skybox + "Left",
-            Names.Skybox + "Right",
-            Names.Skybox + "Top",
-            Names.Skybox + "Bottom",
-        ]
-
-        names.forEach((e) => {
-            this.removeObjectWithName(e)
-        })
-    }
-
     public switchSkyboxIfNeeded(
         name: string
     ): void {
-        debugPrint("switchSkyboxIfNeeded");
-        if (this.currentSkyboxName != null) {
-            if (this.currentSkyboxName != name) {
-                this.removeCurrentSkybox();
-            }
-            else {
-                return
-            }
+
+        if (this.currentSkyboxName == name) {
+            return
         }
-        this.currentSkyboxName = name;
-        this.addPlaneAt(
-            Names.Skybox + "Front",
-            0,
-            0,
-            -SceneController.skyboxPositionDiff,
-            1,
-            1,
-            Paths.skyboxFrontTexturePath(name),
-            0xFFFFFF,
-            true
-        );
+        const urls = [
+            `${Paths.assetsDirectory}/${Paths.skyboxRightTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
+            `${Paths.assetsDirectory}/${Paths.skyboxLeftTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`,
+            `${Paths.assetsDirectory}/${Paths.skyboxTopTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
+            `${Paths.assetsDirectory}/${Paths.skyboxBottomTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`,
+            `${Paths.assetsDirectory}/${Paths.skyboxFrontTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
+            `${Paths.assetsDirectory}/${Paths.skyboxBackTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`
+        ];
 
-        this.addPlaneAt(
-            Names.Skybox + "Back",
-            0,
-            0,
-            SceneController.skyboxPositionDiff,
-            1,
-            1,
-            Paths.skyboxBackTexturePath(name),
-            0xFFFFFF,
-            true
-        );    
+        const textureCube = new THREE.CubeTextureLoader().load( urls );
 
-        this.rotateObjectTo(
-            Names.Skybox + "Back",
-            0,
-            Utils.angleToRadians(180),
-            0            
-        );        
-
-        this.addPlaneAt(
-            Names.Skybox + "Top",
-            0,
-            SceneController.skyboxPositionDiff,
-            0,
-            1,
-            1,
-            Paths.skyboxTopTexturePath(name),
-            0xFFFFFF,
-            true
-        );
-
-        this.rotateObjectTo(
-            Names.Skybox + "Top",
-            Utils.angleToRadians(90),
-            0,
-            0
-        );       
-        
-        this.addPlaneAt(
-            Names.Skybox + "Bottom",
-            0,
-            -SceneController.skyboxPositionDiff,
-            0,
-            1,
-            1,
-            Paths.skyboxBottomTexturePath(name),
-            0xFFFFFF,
-            true
-        );
-
-        this.rotateObjectTo(
-            Names.Skybox + "Bottom",
-            Utils.angleToRadians(90),
-            Utils.angleToRadians(180),
-            Utils.angleToRadians(180)
-        );            
-
-        this.addPlaneAt(
-            Names.Skybox + "Left",
-            -SceneController.skyboxPositionDiff,
-            0,
-            0,
-            1,
-            1,
-            Paths.skyboxLeftTexturePath(name),
-            0xFFFFFF,
-            true
-        );
-
-        this.rotateObjectTo(
-            Names.Skybox + "Left",
-            0,
-            Utils.angleToRadians(90),
-            0
-        );
-
-        this.addPlaneAt(
-            Names.Skybox + "Right",
-            SceneController.skyboxPositionDiff,
-            0,
-            0,
-            1,
-            1,
-            Paths.skyboxRightTexturePath(name),
-            0xFFFFFF,
-            true
-        );
-
-        this.rotateObjectTo(
-            Names.Skybox + "Right",
-            0,
-            Utils.angleToRadians(270),
-            0
-        );
+        this.scene.background = textureCube;
 
     const pmremGenerator = this.pmremGenerator;
 
@@ -904,7 +742,9 @@ export class SceneController implements
         this.scene.environment = environmentMap;
         texture.dispose();
         pmremGenerator.dispose();      
-      });        
+      });    
+      
+      this.currentSkyboxName = name
     }
 
     public addModelAt(
