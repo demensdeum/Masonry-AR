@@ -31,3 +31,7 @@ https://www.phpmyadmin.net
 * Run build_and_deploy.py  
 * Repeat until success  
 * Run game in lastest browser for your platform
+
+# Play
+You can play last version here:
+[https://demensdeum.com/demos/masonry-ar/client/](https://demensdeum.com/demos/masonry-ar/client/)
