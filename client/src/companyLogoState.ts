@@ -1,20 +1,16 @@
 import { InGameState } from "./inGameState.js";
 import { State } from "./state.js";
-import { int } from "./types.js";
 
 export class CompanyLogoState extends State {
 
-    private counter: int = 0
+    private startDate = new Date()
 
     initialize(): void {
-        this.context.sceneController.switchSkyboxIfNeeded(
-            "com.demensdeum.company.logo"
-        )
     }
 
     step(): void {
-        this.counter += 1
-        if (this.counter > 300) {
+        const diffSeconds = Math.abs((new Date().getTime() - this.startDate.getTime()))        
+        if (diffSeconds > 2000) {
             const inGameState = new InGameState(
                 "InGameState",
                 this.context
@@ -23,6 +19,7 @@ export class CompanyLogoState extends State {
               // @ts-ignore
               document.global_gameplay_inGameState = inGameState;
             
+            (document.getElementsByClassName("companyLogoContainer")[0] as HTMLElement).style.display = "none"
             this.context.transitionTo(inGameState)
         }
     }
