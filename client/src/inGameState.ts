@@ -447,7 +447,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             const confirmation = () =>{
                 self.askIfWantToRemoveBuilding(entity)
             }
-            setTimeout(confirmation, 10)
+            // anti-alert <-> OrbitControls stuck for Chrome
+            setTimeout(confirmation, 300)
             return
         }
         else {
