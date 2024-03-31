@@ -38,7 +38,7 @@ https://www.phpmyadmin.net
 * Change credentials in server/src/config.php  
 * Run build_and_deploy.py  
 * Fix/install more tools, change configs/source code  
-* Run build_and_deploy.py  
+* Run build_deploy.py  
 * Repeat until success  
 * Run game in lastest browser for your platform
 
