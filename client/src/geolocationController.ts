@@ -10,10 +10,10 @@ export class GeolocationController implements GeolocationControllerInterface {
         this.delegate = delegate
     }
 
-    public askPermission() {
+    public askOnce() {
         const self = this
         navigator.geolocation.getCurrentPosition((position) => {
-            self.delegate.geolocationControllerGeolocationAccessGranted(
+            self.delegate.geolocationControllerGeolocationDidReceiveGeolocationOnce(
                 this,
                 new GameGeolocationPosition(
                     position.coords.latitude, 

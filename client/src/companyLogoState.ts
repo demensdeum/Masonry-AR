@@ -9,7 +9,13 @@ export class CompanyLogoState extends State {
     }
 
     step(): void {
-        const diffSeconds = Math.abs((new Date().getTime() - this.startDate.getTime()))        
+        // @ts-ignore
+        const companyLogoLoaded = document.global_gameplay_companyLogoLoaded
+        const diffSeconds = Math.abs((new Date().getTime() - this.startDate.getTime()))
+        
+        if (companyLogoLoaded) {
+            //debugger
+        }
         if (diffSeconds > 2000) {
             const inGameState = new InGameState(
                 "InGameState",
@@ -23,6 +29,12 @@ export class CompanyLogoState extends State {
                 (document.getElementsByClassName("companyLogoContainer")[0] as HTMLElement).style.display = "none"
             }
             this.context.transitionTo(inGameState)
+        }
+        else if (
+            (document.getElementsByClassName("companyLogoContainer")[0] as HTMLElement).style.display != "block" &&
+            companyLogoLoaded == true
+        ) {
+            (document.getElementsByClassName("companyLogoContainer")[0] as HTMLElement).style.display = "block"
         }
     }
 

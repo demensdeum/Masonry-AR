@@ -270,6 +270,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     step() {
         this.inGameStateSceneController.step()
+        this.gameplayGuiController.step()
     }
 
     geolocationControllerDidGetPosition(
@@ -305,12 +306,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.authorizeController.authorizeIfNeeded()
     }
 
-    geolocationControllerGeolocationAccessGranted(
+    geolocationControllerGeolocationDidReceiveGeolocationOnce(
         _: GeolocationController,
-        position: GameGeolocationPosition
+        __: GameGeolocationPosition
     ) {
-        this.gameData.playerClientGeolocationPosition = position
-        this.geolocationController.trackPosition()    
+        // this.gameData.playerClientGeolocationPosition = position
+        // this.geolocationController.trackPosition()    
     }
 
     geolocationControllerGeolocationDidReceiveError(
@@ -485,7 +486,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 window.localStorage.setItem("showedStartInfo", "YES")
                 alert("Masonry-AR - это игра в дополненной реальности, потребуется доступ к вашей геолокации")
             }
-            this.geolocationController.askPermission()
+            this.geolocationController.trackPosition()
             this.entitiesTrackingStep()            
         }
         else {

@@ -10,7 +10,7 @@ export class GameData {
     public _name: string = ""
     public playerServerGeolocationPosition: GameGeolocationPosition | null = null
     public playerClientGeolocationPosition: GameGeolocationPosition | null = null    
-    public _balance: int = 0
+    private _balance: int = 0
     public message = "No message"
     public model = "DEFAULT"
     public isZonesViewEnabled = true

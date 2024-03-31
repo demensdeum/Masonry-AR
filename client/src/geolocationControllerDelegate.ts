@@ -7,7 +7,7 @@ export interface GeolocationControllerDelegate {
         position: GameGeolocationPosition
     ): void
 
-    geolocationControllerGeolocationAccessGranted(
+    geolocationControllerGeolocationDidReceiveGeolocationOnce(
         controller: GeolocationControllerInterface,
         position: GameGeolocationPosition
     ): void

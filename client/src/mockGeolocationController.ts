@@ -16,8 +16,8 @@ export class MockGeolocationController implements GeolocationControllerInterface
         this.delegate = delegate
     }
 
-    askPermission(): void {
-        this.delegate.geolocationControllerGeolocationAccessGranted(
+    askOnce(): void {
+        this.delegate.geolocationControllerGeolocationDidReceiveGeolocationOnce(
             this,
             this.position.clone()
         )

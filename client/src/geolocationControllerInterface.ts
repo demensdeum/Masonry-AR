@@ -1,4 +1,4 @@
 export interface GeolocationControllerInterface {
-    askPermission(): void
+    askOnce(): void
     trackPosition(): void
 }
