@@ -19,7 +19,9 @@ export class CompanyLogoState extends State {
               // @ts-ignore
               document.global_gameplay_inGameState = inGameState;
             
-            (document.getElementsByClassName("companyLogoContainer")[0] as HTMLElement).style.display = "none"
+            if ((document.getElementsByClassName("companyLogoContainer")[0] as HTMLElement).style.display == "block") {
+                (document.getElementsByClassName("companyLogoContainer")[0] as HTMLElement).style.display = "none"
+            }
             this.context.transitionTo(inGameState)
         }
     }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
-<title>Masonry-AR</title>
+<title>Масоны-ДР (Masonry-AR)</title>
 <style>
   body {
     background-image: url('./assets/com.demensdeum.main.background.texture.jpg');
@@ -40,6 +40,7 @@
     width: 80%;
   }
   .companyLogoContainer {
+    display: none;    
     position: absolute;
     width: 100%;
     height: 100%;
@@ -81,7 +82,7 @@
 </head>
 <body>
   <div class="companyLogoContainer">
-    <img class="companyLogo" src="./assets/com.demensdeum.company.logo.image.jpg"/>
+    <img class="companyLogo" onload="document.getElementsByClassName('companyLogoContainer')[0].style.display='block';" src="./assets/com.demensdeum.company.logo.image.jpg"/>
   </div>
   <div class = "moveGUI"></div>  
   <canvas class = "webgl"></canvas>
