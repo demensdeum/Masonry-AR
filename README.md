@@ -18,6 +18,7 @@ Key Features:
 https://github.com/mrdoob/three.js  
 https://github.com/phan/phan  
 https://www.python.org  
+https://github.com/lukas-shawford/gltflib  
 https://www.typescriptlang.org  
 https://github.com/liriliri/eruda  
 https://www.gimp.org  

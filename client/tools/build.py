@@ -52,5 +52,7 @@ def run_commands():
             print(f"An error occurred! Exit code: {e.returncode}")
             exit(e.returncode)    
 
+        subprocess.run(['zip', "-r", "assets-src/assetsCompressed.zip", "assets"], check=True)
+
 if __name__ == "__main__":
     run_commands()

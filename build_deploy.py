@@ -5,6 +5,7 @@ import cleanterminus
 import subprocess
 import os
 import sys
+from pathlib import Path
 
 cleanterminus.clear()
 os.chdir("client")
@@ -23,6 +24,14 @@ os.chdir("..")
 cleanterminus.clear()
 print("Deploying...")
 
-shutil.rmtree('/srv/http/Masonry-AR')
-shutil.copytree('client', '/srv/http/Masonry-AR/client', dirs_exist_ok=True)
-shutil.copytree('server/src', '/srv/http/Masonry-AR/server/', dirs_exist_ok=True)
+docker_image_flag_file = Path('/DockerImage')
+
+if docker_image_flag_file.exists():
+    print("Official Docker image, deploying...")
+    shutil.copytree('client', '/var/www/html/Masonry-AR/client', dirs_exist_ok=True)
+    shutil.copytree('server/src', '/var/www/html/Masonry-AR/server/', dirs_exist_ok=True)    
+else:
+    print("Not official docker image, deploying...")
+    shutil.rmtree('/srv/http/Masonry-AR')
+    shutil.copytree('client', '/srv/http/Masonry-AR/client', dirs_exist_ok=True)
+    shutil.copytree('server/src', '/srv/http/Masonry-AR/server/', dirs_exist_ok=True)
