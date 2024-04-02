@@ -7,6 +7,7 @@ import cleanterminus
 import glob
 import os
 import sys
+from pathlib import Path
 
 def cleanDirectory(path):
     files = glob.glob(f"{path}/*.*")
