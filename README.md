@@ -13,6 +13,13 @@ Key Features:
 - Alliance Formation: Collaborate with others to strengthen positions.  
 - Engaging Narrative: Immerse yourself in a rich world of mystery and intrigue.  
   
+# Play
+You can play last version here:
+[https://demensdeum.com/demos/masonry-ar/client/](https://demensdeum.com/demos/masonry-ar/client/)  
+
+# How to Run Locally  
+Docker image is available here:  
+[https://github.com/demensdeum/Masonry-AR-Docker](https://github.com/demensdeum/Masonry-AR-Docker)  
 
 # Tools  
 https://github.com/mrdoob/three.js  
@@ -31,21 +38,3 @@ https://www.blender.org
 https://www.dropbox.com  
 https://github.com/demensdeum/CleanTerminus  
 https://www.phpmyadmin.net  
-
-# How to Run  
-
-* Install all tools on [Arch Linux](https://archlinux.org)  
-* Download client "assets" directory from here: https://www.dropbox.com/scl/fo/v4vqvgt5mgdf9l5eigyng/h?rlkey=o93ppvn5jjx54sxh1nbkcsdex&dl=0  
-* Put "assets" directory into the "client" directory as "assets-src"
-* Create database  
-* Apply sql scripts from server/sql directory
-* Change credentials in server/src/config.php  
-* Run build_and_deploy.py  
-* Fix/install more tools, change configs/source code  
-* Run build_deploy.py  
-* Repeat until success  
-* Run game in lastest browser for your platform
-
-# Play
-You can play last version here:
-[https://demensdeum.com/demos/masonry-ar/client/](https://demensdeum.com/demos/masonry-ar/client/)

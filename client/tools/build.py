@@ -56,7 +56,7 @@ def run_commands():
         docker_image_flag_file = Path('/DockerImage')
 
         if docker_image_flag_file.exists() == False:
-            subprocess.run(['zip', "-r", "assets-src/assetsCompressed.zip", "assets"], check=True)
+            subprocess.run(['zip', "-r", "assets-docker/assetsCompressed.zip", "assets-src"], check=True)
         
 
 if __name__ == "__main__":
