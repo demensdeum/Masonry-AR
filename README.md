@@ -14,7 +14,7 @@ Key Features:
 - Engaging Narrative: Immerse yourself in a rich world of mystery and intrigue.  
   
 # Play
-You can play last version here:
+You can play last version here:  
 [https://demensdeum.com/demos/masonry-ar/client/](https://demensdeum.com/demos/masonry-ar/client/)  
 
 # How to Run Locally  
