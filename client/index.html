@@ -13,12 +13,20 @@
     background-color: transparent;
     display: block;
   }
-  .moveGUI{ 
+  .moveGUI { 
     position: absolute;
     top: 6em;
     right: 8em;
     transform: scale(2.2);
     display: none;
+  }
+  .mapGUI {
+    position: absolute;
+    width: 256px;
+    height: 256px;
+    bottom: 6em;
+    right: 2em;
+    background-color: black;    
   }
   .gameplayGUI {
     display: none;
@@ -50,7 +58,6 @@
     width: 100%;
     position: absolute;
     margin: 0;
-    position: absolute;
     top: 50%;
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);    
@@ -94,6 +101,7 @@
   <div class = "versionGUI">
     <p id="guiVersionText"><Version></p>
   </div>
+  <div class = "mapGUI" id = "mapGUI"></div>
   <script>
     if (window.location.protocol === 'http:') {
       var newUrl = window.location.href.replace('http:', 'https:')
@@ -102,7 +110,18 @@
   </script>
   <script type="module" src="./build/main.js"></script>
   <script src="build/eruda/eruda.js"></script>
+  <script src="https://api-maps.yandex.ru/2.0-stable/?apikey=9b7f7697-ce6a-49b2-a09c-2b78d9075878&load=package.standard&lang=ru-RU" type="text/javascript"></script>
   <script>
     eruda.init();   
+
+        // Ensure Yandex Maps API is loaded before initializing the map
+        ymaps.ready(init);
+
+        function init() {
+            var map = new ymaps.Map("mapGUI", {
+                center: [55.76, 37.64],
+                zoom: 7
+            });
+        }
   </script>    
 </body>
