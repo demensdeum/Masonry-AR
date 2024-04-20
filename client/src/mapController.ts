@@ -1,11 +1,12 @@
 import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
-import { debugPrint } from "./runtime.js"
+import { Entity } from "./entity.js"
 
 export class MapController {
 
     private mapElementName: string
     // @ts-ignore
     private map?: any
+    private entitiesPlacemarks: any[] = []
 
     constructor(
         mapElementName: string
@@ -33,15 +34,39 @@ export class MapController {
         // @ts-ignore
         this.map = new ymaps.Map(this.mapElementName, {
             center: [55.76, 37.64],
-            zoom: 7
+            zoom: 9
         });
+        this.map.options.restrictMapArea = true;
         (document.getElementsByClassName(this.mapElementName)[0] as HTMLElement).style.display = "block"
     }
 
     public setPlayerLocationAndCenter(
         location: GameGeolocationPosition
     ) {
-        debugPrint(location)
+        this.map.setCenter([location.latitude, location.longitude], 18)
+    }
+
+    public showEntities(
+        entities: Entity[]
+    )
+    {
+        const self = this
+        this.entitiesPlacemarks.forEach(e => {
+          self.map.geoObjects.remove(e)
+        })
+
+        entities.forEach(e => {
+            // @ts-ignore
+            const entityPlacemark = new ymaps.Placemark(
+                [
+                e.position.latitude,
+                e.position.longitude
+            ], {
+                hintContent: "Что-то на игровой карте"
+            })               
+            self.entitiesPlacemarks.push(entityPlacemark)
+            self.map.geoObjects.add(entityPlacemark)
+        })
     }
 
 }

@@ -289,6 +289,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
 
         debugPrint(`gps!: ${position.latitude} - ${position.longitude}`)
+        this.mapController.setPlayerLocationAndCenter(position)
         this.inGameStateSceneController.setCurrentPlayerGameGeolocation(position)
     }
 
@@ -384,6 +385,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.entitiesTrackingStep()
 
         this.lastBuildingAnimationObjectUUID = "NONE"
+        this.mapController.showEntities(entities)
     }
 
     entitiesControllerDidCatchEntity(

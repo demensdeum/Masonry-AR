@@ -23,12 +23,14 @@
   .mapGUI {
     display: none;
     position: absolute;
-    aspect-ratio: 1 / 1;
-    width: 15%;
+    width: 312px;
+    height: 312px;
     bottom: 6em;
     right: 2em;
-    background-color: transparent;    
+    background-color: transparent;   
+    opacity: 0.69; 
   }
+  
   .gameplayGUI {
     display: none;
     font-family: "Arial", sans-serif;
@@ -111,7 +113,7 @@
   </script>
   <script type="module" src="./build/main.js"></script>
   <script src="build/eruda/eruda.js"></script>
-  <script src="https://api-maps.yandex.ru/2.0-stable/?apikey=9b7f7697-ce6a-49b2-a09c-2b78d9075878&load=package.standard&lang=ru-RU" type="text/javascript"></script>
+  <script src="https://api-maps.yandex.ru/2.1/?apikey=9b7f7697-ce6a-49b2-a09c-2b78d9075878&load=package.standard&lang=ru-RU" type="text/javascript"></script>
   <script>
     eruda.init()
     ymaps.ready(()=>{
