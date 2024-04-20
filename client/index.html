@@ -21,12 +21,13 @@
     display: none;
   }
   .mapGUI {
+    display: none;
     position: absolute;
-    width: 256px;
-    height: 256px;
+    aspect-ratio: 1 / 1;
+    width: 15%;
     bottom: 6em;
     right: 2em;
-    background-color: black;    
+    background-color: transparent;    
   }
   .gameplayGUI {
     display: none;
@@ -89,7 +90,7 @@
 </head>
 <body>
   <div class="companyLogoContainer">
-    <img class="companyLogo" onload="document.global_gameplay_companyLogoLoaded = true" src="./assets/com.demensdeum.company.logo.image.jpg"/>
+    <img class="companyLogo" onload="document.global_gameplay_companyLogoLoaded = true" onmousedown="if (event.preventDefault) event.preventDefault()" src="./assets/com.demensdeum.company.logo.image.jpg"/>
   </div>
   <div class = "moveGUI"></div>  
   <canvas class = "webgl"></canvas>
@@ -112,16 +113,9 @@
   <script src="build/eruda/eruda.js"></script>
   <script src="https://api-maps.yandex.ru/2.0-stable/?apikey=9b7f7697-ce6a-49b2-a09c-2b78d9075878&load=package.standard&lang=ru-RU" type="text/javascript"></script>
   <script>
-    eruda.init();   
-
-        // Ensure Yandex Maps API is loaded before initializing the map
-        ymaps.ready(init);
-
-        function init() {
-            var map = new ymaps.Map("mapGUI", {
-                center: [55.76, 37.64],
-                zoom: 7
-            });
-        }
+    eruda.init()
+    ymaps.ready(()=>{
+      document.global_yandexMapsInitialized = true
+    })
   </script>    
 </body>

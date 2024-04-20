@@ -29,6 +29,7 @@ import { InGameStateSceneController } from "./inGameStateSceneController.js"
 import { MapScrollController } from "./mapScrollController.js"
 import { InGameStateSceneControllerDelegate } from "./inGameStateSceneControllerDelegate.js"
 import { GameplayGuiController } from "./gameplayGuiController.js"
+import { MapController } from "./mapController.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,
@@ -39,6 +40,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                                                     InGameStateSceneControllerDelegate {
     name = "InGameState"
     
+    private mapController = new MapController("mapGUI")
     private mapScrollController!: MapScrollController
     private buildingStatusController = new BuildingStatusController(this)
     private geolocationController!: GeolocationControllerInterface
@@ -179,6 +181,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         (document.getElementsByClassName("gameplayGUI")[0] as HTMLElement).style.display = "block";
 
         this.context.sceneController.lockOrbitControls()
+
+        this.mapController.initialize()
     }
 
     inGameStateControllerDidMoveCamera(
