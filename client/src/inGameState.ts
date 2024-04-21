@@ -27,7 +27,7 @@ import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 import { InGameStateSceneController } from "./inGameStateSceneController.js"
 import { MapScrollController } from "./mapScrollController.js"
-import { GreenFieldMapScrollController } from "./greenFieldMapScrollController.js"
+import { YadMapScrollController } from "./yadMapScrollController.js"
 import { InGameStateSceneControllerDelegate } from "./inGameStateSceneControllerDelegate.js"
 import { GameplayGuiController } from "./gameplayGuiController.js"
 import { MapController } from "./mapController.js"
@@ -90,7 +90,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         )
         this.switchHeroModel(this.gameData.model)
 
-        this.mapScrollController = new GreenFieldMapScrollController(
+        this.mapScrollController = new YadMapScrollController(
             this.context.sceneController
         )
         this.mapScrollController.initialize()
