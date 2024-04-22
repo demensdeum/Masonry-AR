@@ -9,6 +9,12 @@
     margin: 0;
     overflow: hidden;
   }
+  #css-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+  }
   canvas {
     background-color: transparent;
     display: block;
@@ -95,8 +101,8 @@
     <img class="companyLogo" onload="document.global_gameplay_companyLogoLoaded = true" onmousedown="if (event.preventDefault) event.preventDefault()" src="./assets/com.demensdeum.company.logo.image.jpg"/>
   </div>
   <div class = "moveGUI"></div> 
-  <div id="css-canvas"></div>
   <canvas class = "webgl"></canvas>
+  <div id="css-canvas" style="pointer-events: none;"></div>
   <div class = "gameplayGUI">
     <p><img class="guiButton" src="./assets/com.demensdeum.gui.order.button.texture.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_inGameState.switchOrder()"/></p>
     <p><img class="guiButton" src="./assets/com.demensdeum.gui.build.button.texture.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_inGameState.build()"/></p>    
@@ -105,7 +111,7 @@
   <div class = "versionGUI">
     <p id="guiVersionText"><Version></p>
   </div>
-  <div class = "mapGUI" id = "mapGUI"></div>
+  <!---<div class = "mapGUI" id = "mapGUI"></div>-->
   <script>
     if (window.location.protocol === 'http:') {
       var newUrl = window.location.href.replace('http:', 'https:')

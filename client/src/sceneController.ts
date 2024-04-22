@@ -34,6 +34,8 @@ import { ObjectsPickerController } from "./objectsPickerController.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 import { AnimationContainer } from "./animationContainer.js"
+import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js"
+import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js"
 
 const gui = new dat.GUI({ autoPlace: false });
 var moveGUIElement = document.querySelector('.moveGUI');
@@ -59,9 +61,10 @@ export class SceneController implements
 
     private stepCounter: int = 0
     
-    private scene: THREE.Scene;
-    private camera: THREE.PerspectiveCamera;
-    private renderer: THREE.WebGLRenderer;
+    private scene: THREE.Scene
+    private camera: THREE.PerspectiveCamera
+    private renderer: THREE.WebGLRenderer
+    private cssRenderer: CSS3DRenderer
     private texturesToLoad: THREE.MeshStandardMaterial[] = [];
 
     private textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
@@ -153,12 +156,19 @@ export class SceneController implements
 
     this.objects[Names.Camera] = cameraSceneObject;    
 
-      this.renderer = new THREE.WebGLRenderer({ 
+    this.renderer = new THREE.WebGLRenderer({ 
         canvas: canvas, 
         antialias: true
-    })   
+    })
+
+    this.cssRenderer = new CSS3DRenderer()
+    this.cssRenderer.domElement.style.position = "absolute"
+    this.cssRenderer.domElement.style.top = "0"
+    document.querySelector("#css-canvas")?.appendChild(this.cssRenderer.domElement)
     
-      this.renderer.setSize(this.windowWidth(), this.windowHeight());
+      this.renderer.setSize(this.windowWidth(), this.windowHeight())
+        this.cssRenderer.setSize(this.windowWidth(), this.windowHeight())
+
       if (this.highQuality) {
         this.renderer.setPixelRatio(window.devicePixelRatio)
       }
@@ -182,8 +192,9 @@ export class SceneController implements
 
       document.body.appendChild(this.renderer.domElement);      
       
-      const camera = this.camera;
-      const renderer = this.renderer;
+      const camera = this.camera
+      const renderer = this.renderer
+      const cssRenderer = this.cssRenderer
 
       const self = this
 
@@ -192,6 +203,7 @@ export class SceneController implements
         camera.aspect = self.windowWidth() / self.windowHeight()
         camera.updateProjectionMatrix()
         renderer.setSize(self.windowWidth(), self.windowHeight())
+        cssRenderer.setSize(self.windowWidth(), self.windowHeight())
       }      
 
       window.addEventListener("resize", onWindowResize, false);
@@ -581,6 +593,76 @@ export class SceneController implements
         })
     }
 
+    public addCssPlaneObject(
+        id: string,
+        width: int,
+        height: int,
+        receiveShadow: boolean = true,
+        castShadow: boolean = false
+    )
+    {
+        debugPrint(width)
+        debugPrint(height)
+        debugPrint(receiveShadow)
+        debugPrint(castShadow)
+
+        const element = document.createElement("div")
+        element.id = id
+        element.style.opacity = "0.8"
+        element.style.background = "green"
+        element.style.width = "1024px"
+        element.style.height = "1024px"
+        element.style.boxSizing = "border-box"
+    
+        const css3dObject = new CSS3DObject(element);
+        css3dObject.rotation.x = Utils.angleToRadians(270)
+        css3dObject.position.y = -500
+        this.scene.add(css3dObject) 
+        
+    
+        // var material = new THREE.MeshStandardMaterial({
+        //     opacity	: 0.5,
+        //     transparent: true,
+        //     color	: new THREE.Color(0xFF0000),
+        //     // blending: THREE.NoBlending,
+        //     side	: THREE.DoubleSide,
+        // })
+
+        // const geometry = new THREE.PlaneGeometry(
+        //     width,
+        //     height
+        // )
+
+        // const mesh = new THREE.Mesh(
+        //     geometry,
+        //     material
+        // )
+
+        // mesh.receiveShadow = receiveShadow
+        // mesh.castShadow = castShadow
+        // container.add(mesh)
+        //container.add(css3dObject)
+
+        // container.position.z = -0.5
+        // container.rotation.x = Utils.angleToRadians(90)
+
+        //this.scene.add(container) 
+
+        //@ts-ignore 
+        ymaps.ready(()=>{
+            alert("yes")
+            //@ts-ignore
+            var map = new ymaps.Map(id, {
+                center: [
+                    55.76,
+                    37.64
+                ],
+                zoom: 9
+            })    
+        })
+    
+    }
+
     private animationsStep(delta: any) {
         Object.keys(this.animationContainers).forEach((animationContainerName) => {
             const animationContainer = this.animationContainers[animationContainerName]
@@ -604,7 +686,8 @@ export class SceneController implements
     }    
 
     private render() {
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.camera)
+        this.cssRenderer.render(this.scene, this.camera)
         this.debugControls.update()
     }
 

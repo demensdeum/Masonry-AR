@@ -1,7 +1,7 @@
 import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { Entity } from "./entity.js"
 
-export class MapController {
+export class MiniMapController {
 
     private mapElementName: string
     // @ts-ignore
@@ -16,6 +16,7 @@ export class MapController {
     }
 
     public initialize() {
+        return
         // @ts-ignore
         if (!document.global_yandexMapsInitialized) {
             const self = this
@@ -31,6 +32,7 @@ export class MapController {
     }    
     
     private initializeYadMap() {
+        return
         // @ts-ignore
         this.map = new ymaps.Map(this.mapElementName, {
             center: [55.76, 37.64],
@@ -43,6 +45,7 @@ export class MapController {
     public setPlayerLocationAndCenter(
         location: GameGeolocationPosition
     ) {
+        return
         this.map.setCenter([location.latitude, location.longitude], 18)
     }
 
@@ -50,6 +53,7 @@ export class MapController {
         entities: Entity[]
     )
     {
+        return
         const self = this
         this.entitiesPlacemarks.forEach(e => {
           self.map.geoObjects.remove(e)

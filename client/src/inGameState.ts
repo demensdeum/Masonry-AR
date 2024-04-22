@@ -30,7 +30,7 @@ import { MapScrollController } from "./mapScrollController.js"
 import { YadMapScrollController } from "./yadMapScrollController.js"
 import { InGameStateSceneControllerDelegate } from "./inGameStateSceneControllerDelegate.js"
 import { GameplayGuiController } from "./gameplayGuiController.js"
-import { MapController } from "./mapController.js"
+import { MiniMapController } from "./miniMapController.js"
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,
@@ -41,7 +41,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                                                     InGameStateSceneControllerDelegate {
     name = "InGameState"
     
-    private mapController = new MapController("mapGUI")
+    private mapController = new MiniMapController("map")
     private mapScrollController!: MapScrollController
     private buildingStatusController = new BuildingStatusController(this)
     private geolocationController!: GeolocationControllerInterface
