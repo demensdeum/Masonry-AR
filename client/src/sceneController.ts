@@ -616,7 +616,8 @@ export class SceneController implements
     
         const css3dObject = new CSS3DObject(element);
         css3dObject.rotation.x = Utils.angleToRadians(270)
-        css3dObject.position.y = -500
+        css3dObject.position.y = -200
+        css3dObject.position.z = -185
         this.scene.add(css3dObject) 
         
     
@@ -648,18 +649,19 @@ export class SceneController implements
 
         //this.scene.add(container) 
 
-        //@ts-ignore 
-        ymaps.ready(()=>{
-            alert("yes")
-            //@ts-ignore
-            var map = new ymaps.Map(id, {
-                center: [
-                    55.76,
-                    37.64
-                ],
-                zoom: 9
-            })    
-        })
+        // //@ts-ignore 
+        // ymaps.ready(()=>{
+        //     alert("yes")
+        //     //@ts-ignore
+        //     const map = new ymaps.Map(id, {
+        //         center: [
+        //             55.76,
+        //             37.64
+        //         ],
+        //         zoom: 9
+        //     })
+        //     map.behaviors.disable("scrollZoom")
+        // })
     
     }
 
