@@ -3,6 +3,7 @@ import { State } from "./state.js";
 
 export class CompanyLogoState extends State {
 
+    private readonly switchMillisecondsTimeout = 100
     private startDate = new Date()
 
     initialize(): void {
@@ -11,12 +12,12 @@ export class CompanyLogoState extends State {
     step(): void {
         // @ts-ignore
         const companyLogoLoaded = document.global_gameplay_companyLogoLoaded
-        const diffSeconds = Math.abs((new Date().getTime() - this.startDate.getTime()))
+        const diffMilliseconds = Math.abs((new Date().getTime() - this.startDate.getTime()))
         
         if (companyLogoLoaded) {
             //debugger
         }
-        if (diffSeconds > 2000) {
+        if (diffMilliseconds > this.switchMillisecondsTimeout) {
             const inGameState = new InGameState(
                 "InGameState",
                 this.context

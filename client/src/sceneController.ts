@@ -131,10 +131,10 @@ export class SceneController implements
             Paths.texturePath(
                 "com.demensdeum.loading"
             )
-        );
+        )
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xFFFFFF);
+    this.scene.background = new THREE.Color(0xFF0000);
    
     this.camera = new THREE.PerspectiveCamera(
         75,
@@ -156,10 +156,15 @@ export class SceneController implements
 
     this.objects[Names.Camera] = cameraSceneObject;    
 
-    this.renderer = new THREE.WebGLRenderer({ 
-        canvas: canvas, 
-        antialias: true
+    this.renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true
     })
+    this.renderer.domElement.style.position = 'absolute'
+    this.renderer.domElement.style.top = "0"
+    this.renderer.domElement.style.zIndex = "1"
+    this.renderer.setSize(this.windowWidth(), this.windowHeight())
 
     this.cssRenderer = new CSS3DRenderer()
     this.cssRenderer.domElement.style.position = "absolute"
@@ -606,63 +611,45 @@ export class SceneController implements
         debugPrint(receiveShadow)
         debugPrint(castShadow)
 
-        const element = document.createElement("div")
-        element.id = id
-        element.style.opacity = "0.8"
-        element.style.background = "green"
-        element.style.width = "1024px"
-        element.style.height = "1024px"
-        element.style.boxSizing = "border-box"
-    
-        const css3dObject = new CSS3DObject(element);
-        css3dObject.rotation.x = Utils.angleToRadians(270)
-        css3dObject.position.y = -200
-        css3dObject.position.z = -185
-        this.scene.add(css3dObject) 
-        
-    
-        // var material = new THREE.MeshStandardMaterial({
-        //     opacity	: 0.5,
-        //     transparent: true,
-        //     color	: new THREE.Color(0xFF0000),
-        //     // blending: THREE.NoBlending,
-        //     side	: THREE.DoubleSide,
-        // })
+        const div = document.createElement( 'div' )
+        div.style.width = '480px'
+        div.style.height = '360px'
+        div.style.backgroundColor = '#000'
+        div.style.opacity = "0.75"
 
-        // const geometry = new THREE.PlaneGeometry(
-        //     width,
-        //     height
-        // )
+        const iframe = document.createElement( 'iframe' )
+        iframe.style.width = '480px'
+        iframe.style.height = '360px'
+        iframe.style.border = '0px'
+        //iframe.style.pointerEvents = 'none'
+        id = "y6120QOlsfU"
+        iframe.src = [ 'https://www.youtube.com/embed/', id, '?rel=0' ].join( '' );
+        div.appendChild( iframe );
 
-        // const mesh = new THREE.Mesh(
-        //     geometry,
-        //     material
-        // )
+        const object = new CSS3DObject(div)
+        debugPrint(object)
 
-        // mesh.receiveShadow = receiveShadow
-        // mesh.castShadow = castShadow
-        // container.add(mesh)
-        //container.add(css3dObject)
+        object.scale.x = 0.01
+        object.scale.y = 0.01
+        object.scale.z = 0.01
 
-        // container.position.z = -0.5
-        // container.rotation.x = Utils.angleToRadians(90)
+        const obj3D = new THREE.Object3D
+        obj3D.add(object)
 
-        //this.scene.add(container) 
+        obj3D.rotation.x = Utils.angleToRadians(270)
 
-        // //@ts-ignore 
-        // ymaps.ready(()=>{
-        //     alert("yes")
-        //     //@ts-ignore
-        //     const map = new ymaps.Map(id, {
-        //         center: [
-        //             55.76,
-        //             37.64
-        //         ],
-        //         zoom: 9
-        //     })
-        //     map.behaviors.disable("scrollZoom")
-        // })
-    
+        const material = new THREE.MeshPhongMaterial({
+            opacity: 0.15,
+            color: new THREE.Color(0x111111),
+            blending: THREE.NoBlending
+        });
+        const geometry = new THREE.PlaneGeometry(4, 2);
+        const mesh = new THREE.Mesh(geometry,material );
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+        obj3D.add(mesh)
+
+        this.scene.add(obj3D)
     }
 
     private animationsStep(delta: any) {
@@ -688,7 +675,7 @@ export class SceneController implements
     }    
 
     private render() {
-        this.renderer.render(this.scene, this.camera)
+        this.renderer.render(this.scene, this.camera)        
         this.cssRenderer.render(this.scene, this.camera)
         this.debugControls.update()
     }
@@ -805,7 +792,6 @@ export class SceneController implements
     public switchSkyboxIfNeeded(
         name: string
     ): void {
-
         if (this.currentSkyboxName == name) {
             return
         }

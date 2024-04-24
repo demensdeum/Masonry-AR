@@ -3,6 +3,7 @@ import { Entity } from "./entity.js"
 
 export class MiniMapController {
 
+    private isEnabled: boolean = false
     // @ts-ignore
     private mapElementName: string
     // @ts-ignore
@@ -20,6 +21,9 @@ export class MiniMapController {
     }
 
     public initialize() {
+        if (this.isEnabled == false) {
+            return
+        }
         // @ts-ignore
         if (!document.global_yandexMapsInitialized) {
             const self = this
@@ -37,6 +41,9 @@ export class MiniMapController {
     }    
     
     private initializeYadMap() {
+        if (this.isEnabled == false) {
+            return
+        }
         //debugger
         // @ts-ignore
         document.global_miniMapController.map = new ymaps.Map(document.global_miniMapController.mapElementName, {
@@ -49,6 +56,10 @@ export class MiniMapController {
     public setPlayerLocationAndCenter(
         location: GameGeolocationPosition
     ) {
+        if (this.isEnabled == false) {
+            return
+        }
+
         this.map.setCenter([location.latitude, location.longitude], 18)
     }
 
@@ -56,6 +67,10 @@ export class MiniMapController {
         entities: Entity[]
     )
     {
+        if (this.isEnabled == false) {
+            return
+        }
+
         const self = this
         this.entitiesPlacemarks.forEach(e => {
           self.map.geoObjects.remove(e)
