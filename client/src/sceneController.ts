@@ -612,18 +612,18 @@ export class SceneController implements
         debugPrint(castShadow)
 
         const div = document.createElement( 'div' )
-        div.style.width = '480px'
-        div.style.height = '360px'
+        div.style.width = '800px'
+        div.style.height = '600px'
         div.style.backgroundColor = '#000'
         div.style.opacity = "0.75"
 
         const iframe = document.createElement( 'iframe' )
-        iframe.style.width = '480px'
-        iframe.style.height = '360px'
+        iframe.style.width = '800px'
+        iframe.style.height = '600px'
         iframe.style.border = '0px'
         //iframe.style.pointerEvents = 'none'
-        id = "y6120QOlsfU"
-        iframe.src = [ 'https://www.youtube.com/embed/', id, '?rel=0' ].join( '' );
+        id = "ZyhrYis509A"
+        iframe.src = [ 'https://www.youtube.com/embed/', id, '?rel=0&controls=0&loop=1&autoplay=1&mute=1' ].join( '' );
         div.appendChild( iframe );
 
         const object = new CSS3DObject(div)
@@ -639,11 +639,11 @@ export class SceneController implements
         obj3D.rotation.x = Utils.angleToRadians(270)
 
         const material = new THREE.MeshPhongMaterial({
-            opacity: 0.15,
+            opacity: 0.00,
             color: new THREE.Color(0x111111),
             blending: THREE.NoBlending
         });
-        const geometry = new THREE.PlaneGeometry(4, 2);
+        const geometry = new THREE.PlaneGeometry(8, 4);
         const mesh = new THREE.Mesh(geometry,material );
         mesh.castShadow = true
         mesh.receiveShadow = true
