@@ -137,7 +137,6 @@ export class SceneController implements
         )
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xFF0000);
    
     this.camera = new THREE.PerspectiveCamera(
         75,

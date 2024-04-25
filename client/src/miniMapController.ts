@@ -13,9 +13,6 @@ export class MiniMapController {
     )
     {
         this.mapElementName = mapElementName
-
-        // @ts-ignore
-        document.global_miniMapController = this
     }
 
     public initialize() {
@@ -24,27 +21,22 @@ export class MiniMapController {
             const self = this
             // @ts-ignore
             ymaps.ready(()=>{
-                setTimeout(self.initializeYadMap, 1000)
-                // @ts-ignore
-                //self.initializeYadMap()
+                self.initializeYadMap()
             })
         }
         else {
-            setTimeout(this.initializeYadMap, 1000)
-            //this.initializeYadMap()
+            this.initializeYadMap()
         }
     }    
     
     private initializeYadMap() {
-        //debugger
         // @ts-ignore
-        document.global_miniMapController.map = new ymaps.Map(document.global_miniMapController.mapElementName, {
+        this.map = new ymaps.Map(this.mapElementName, {
             center: [55.76, 37.64],
             zoom: 9,
             controls: []
         },
         {suppressMapOpenBlock: true});
-        //(document.getElementsByClassName(this.mapElementName)[0] as HTMLElement).style.display = "block"
     }
 
     public setPlayerLocationAndCenter(
