@@ -36,6 +36,7 @@ import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 import { AnimationContainer } from "./animationContainer.js"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js"
+import { GameVector3 } from "./gameVector3.js"
 
 const gui = new dat.GUI({ autoPlace: false });
 var moveGUIElement = document.querySelector('.moveGUI');
@@ -100,6 +101,8 @@ export class SceneController implements
 
     private highQuality: boolean = false
     private shadowsEnabled: boolean = true
+
+    private cssObjects: { [key: string]: THREE.Object3D } = {};
 
     private debugControls: OrbitControls
 
@@ -599,57 +602,49 @@ export class SceneController implements
     }
 
     public addCssPlaneObject(
-        id: string,
-        width: int,
-        height: int,
-        receiveShadow: boolean = true,
-        castShadow: boolean = false
+        args: {
+            name: string,
+            div: HTMLElement,
+            planeSize: {
+                width: float,
+                height: float
+            }
+            rotation: GameVector3,
+            scale: GameVector3,
+            shadows: {
+                receiveShadow: boolean, 
+                castShadow: boolean
+            }
+        }
     )
     {
-        debugPrint(width)
-        debugPrint(height)
-        debugPrint(receiveShadow)
-        debugPrint(castShadow)
+        const cssObject = new CSS3DObject(args.div)
 
-        const div = document.createElement( 'div' )
-        div.style.width = '800px'
-        div.style.height = '600px'
-        div.style.backgroundColor = '#000'
-        div.style.opacity = "0.75"
+        cssObject.scale.x = args.scale.x
+        cssObject.scale.y = args.scale.y
+        cssObject.scale.z = args.scale.z
 
-        const iframe = document.createElement( 'iframe' )
-        iframe.style.width = '800px'
-        iframe.style.height = '600px'
-        iframe.style.border = '0px'
-        //iframe.style.pointerEvents = 'none'
-        id = "ZyhrYis509A"
-        iframe.src = [ 'https://www.youtube.com/embed/', id, '?rel=0&controls=0&loop=1&autoplay=1&mute=1' ].join( '' );
-        div.appendChild( iframe );
+        const root = new THREE.Object3D
+        root.add(cssObject)
 
-        const object = new CSS3DObject(div)
-        debugPrint(object)
+        root.rotation.x = args.rotation.x
+        root.rotation.y = args.rotation.y
+        root.rotation.z = args.rotation.z
 
-        object.scale.x = 0.01
-        object.scale.y = 0.01
-        object.scale.z = 0.01
-
-        const obj3D = new THREE.Object3D
-        obj3D.add(object)
-
-        obj3D.rotation.x = Utils.angleToRadians(270)
-
-        const material = new THREE.MeshPhongMaterial({
-            opacity: 0.00,
-            color: new THREE.Color(0x111111),
+        const material = new THREE.MeshStandardMaterial({
+            opacity: 0.0,
+            color: new THREE.Color(0x000000),
             blending: THREE.NoBlending
-        });
-        const geometry = new THREE.PlaneGeometry(8, 4);
-        const mesh = new THREE.Mesh(geometry,material );
-        mesh.castShadow = true
-        mesh.receiveShadow = true
-        obj3D.add(mesh)
+        })
+        const geometry = new THREE.PlaneGeometry(args.planeSize.width, args.planeSize.height);
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.receiveShadow = args.shadows.receiveShadow
+        mesh.castShadow = args.shadows.castShadow
+        root.add(mesh)
 
-        this.scene.add(obj3D)
+        this.cssObjects[args.name] = root
+
+        this.scene.add(root)
     }
 
     private animationsStep(delta: any) {
@@ -771,6 +766,11 @@ export class SceneController implements
             gui.remove(gui.__controllers[i]);
         }
         Object.keys(this.objects).map(k => {
+            delete this.commands[k]
+        })
+        Object.keys(this.cssObjects).map(k => {
+            const object = this.cssObjects[k]
+            this.scene.remove(object)
             delete this.commands[k]
         })
     }
