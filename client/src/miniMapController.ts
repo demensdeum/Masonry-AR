@@ -40,8 +40,10 @@ export class MiniMapController {
         // @ts-ignore
         document.global_miniMapController.map = new ymaps.Map(document.global_miniMapController.mapElementName, {
             center: [55.76, 37.64],
-            zoom: 9
-        });
+            zoom: 9,
+            controls: []
+        },
+        {suppressMapOpenBlock: true});
         //(document.getElementsByClassName(this.mapElementName)[0] as HTMLElement).style.display = "block"
     }
 

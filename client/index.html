@@ -81,7 +81,7 @@
     font-weight: bold;
     background-color: transparent;
     position: absolute;
-    bottom: 0;
+    top: 0;
     right: 0;
     padding: 10px;
     text-align: left;
@@ -89,6 +89,12 @@
     color: white;
     text-shadow: 1px 1px 1px black;
     z-index: 3;
+  }
+  .yandexCopyrightGUI {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: 4;
   }
 </style>
 <script type="importmap">
@@ -106,8 +112,7 @@
   <div class="companyLogoContainer">
     <img class="companyLogo" onload="document.global_gameplay_companyLogoLoaded = true" onmousedown="if (event.preventDefault) event.preventDefault()" src="./assets/com.demensdeum.company.logo.image.jpg"/>
   </div>
-  <div class = "moveGUI"></div> 
-  <!--<div id="css-canvas" style="pointer-events: none;"></div>-->
+  <div class = "moveGUI"></div>
   <div id="css-canvas" style="pointer-events: none;"></div>
   <canvas class = "webgl"></canvas>
   <div class = "gameplayGUI">
@@ -115,10 +120,12 @@
     <p><img class="guiButton" src="./assets/com.demensdeum.gui.build.button.texture.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_inGameState.build()"/></p>    
     <p id="guiBalanceText">0 ₳</p>   
   </div>
+  <div class = "yandexCopyrightGUI">
+    <p><img src="./assets/ru.yandex.logo.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="window.open('https://yandex.ru/maps', '_blank')"/></p>
+  </div>
   <div class = "versionGUI">
     <p id="guiVersionText"><Version></p>
   </div>
-  <!---<div class = "mapGUI" id = "mapGUI"></div>-->
   <script>
     if (window.location.protocol === 'http:') {
       var newUrl = window.location.href.replace('http:', 'https:')

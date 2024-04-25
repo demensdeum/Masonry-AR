@@ -632,7 +632,7 @@ export class SceneController implements
         root.rotation.z = args.rotation.z
 
         const material = new THREE.MeshStandardMaterial({
-            opacity: 0.0,
+            opacity: 0.25,
             color: new THREE.Color(0x000000),
             blending: THREE.NoBlending
         })
