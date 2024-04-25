@@ -85,8 +85,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             return
         }
         this.context.sceneController.delegate = this
+
         this.context.sceneController.switchSkyboxIfNeeded(
-            "com.demensdeum.blue.field"
+            "com.demensdeum.white.box"
         )
         this.switchHeroModel(this.gameData.model)
 
@@ -167,9 +168,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         )        
 
         this.context.sceneController.setFog(
-            0xb3ffcb,
-            8,
-            32
+            0xFFFFFF,
+            3,
+            8
         )
 
         this.inGameStateSceneController = new InGameStateSceneController(

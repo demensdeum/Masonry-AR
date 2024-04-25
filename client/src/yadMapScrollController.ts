@@ -19,16 +19,16 @@ export class YadMapScrollController implements MapScrollController {
     initialize(): void {
         const div = document.createElement('div')
         div.id = "map"
-        div.style.width = '1600px'
-        div.style.height = '1600px'
+        div.style.width = '2048px'
+        div.style.height = '2048px'
 
         this.sceneController.addCssPlaneObject(
             {
                 name:"map",
                 div: div,
                 planeSize: {
-                    width: 8,
-                    height: 8
+                    width: 12,
+                    height: 12
                 },
                 rotation: new GameVector3(
                     Utils.angleToRadians(270),
@@ -36,9 +36,9 @@ export class YadMapScrollController implements MapScrollController {
                     0
                 ),
                 scale: new GameVector3(
-                    0.005,
-                    0.005,
-                    0.005
+                    0.01,
+                    0.01,
+                    0.01
                 ),
                 shadows: {
                     receiveShadow: true,

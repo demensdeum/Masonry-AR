@@ -2,10 +2,8 @@ import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { Entity } from "./entity.js"
 
 export class MiniMapController {
-    // @ts-ignore
     private mapElementName: string
-    // @ts-ignore
-    private map?: any
+    private map?: any = null
     private entitiesPlacemarks: any[] = []
 
     constructor(
@@ -21,14 +19,39 @@ export class MiniMapController {
             const self = this
             // @ts-ignore
             ymaps.ready(()=>{
-                self.initializeYadMap()
+                self.injectYadMap()
             })
         }
         else {
-            this.initializeYadMap()
+            this.injectYadMap()
         }
     }    
     
+    private injectYadMap() {
+        const handleMapAppearance = (mutationsList: any, observer: any) => {
+            for (let mutation of mutationsList) {
+                if (mutation.type != 'childList') {
+                    continue
+                }
+                for (let node of mutation.addedNodes) {
+                    if (node.id == this.mapElementName) {
+                        this.initializeYadMap();
+                        observer.disconnect();
+                        return
+                    }
+                }
+            }
+        }
+
+        const mapElement = document.getElementById("map");
+        if (mapElement) {
+            this.initializeYadMap()
+        } else {
+            const observer = new MutationObserver(handleMapAppearance);
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    }
+
     private initializeYadMap() {
         // @ts-ignore
         this.map = new ymaps.Map(this.mapElementName, {
@@ -36,19 +59,25 @@ export class MiniMapController {
             zoom: 9,
             controls: []
         },
-        {suppressMapOpenBlock: true});
+        {suppressMapOpenBlock: true});        
     }
 
     public setPlayerLocationAndCenter(
         location: GameGeolocationPosition
     ) {
-        this.map.setCenter([location.latitude, location.longitude], 18)
+        if (this.map == null) {
+            return
+        }
+        this.map.setCenter([location.latitude, location.longitude], 16.5)
     }
 
     public showEntities(
         entities: Entity[]
     )
     {
+        if (this.map == null) {
+            return
+        }
         const self = this
         this.entitiesPlacemarks.forEach(e => {
           self.map.geoObjects.remove(e)
@@ -67,5 +96,4 @@ export class MiniMapController {
             self.map.geoObjects.add(entityPlacemark)
         })
     }
-
 }
