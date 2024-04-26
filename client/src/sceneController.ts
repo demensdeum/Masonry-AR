@@ -789,37 +789,56 @@ export class SceneController implements
     }
 
     public switchSkyboxIfNeeded(
-        name: string
+        args: {
+            name: string,
+            environmentOnly: boolean
+        }
     ): void {
-        if (this.currentSkyboxName == name) {
+        if (this.currentSkyboxName == args.name) {
             return
         }
-        const urls = [
-            `${Paths.assetsDirectory}/${Paths.skyboxLeftTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
-            `${Paths.assetsDirectory}/${Paths.skyboxRightTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`,
-            `${Paths.assetsDirectory}/${Paths.skyboxTopTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
-            `${Paths.assetsDirectory}/${Paths.skyboxBottomTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`,
-            `${Paths.assetsDirectory}/${Paths.skyboxBackTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
-            `${Paths.assetsDirectory}/${Paths.skyboxFrontTexturePath(name)}${Paths.textureSuffix}${Paths.textureExtension}`
-        ];
 
-        const textureCube = new THREE.CubeTextureLoader().load( urls );
 
-        this.scene.background = textureCube;
+        if (args.environmentOnly == false) {
+            const urls = [
+                `${Paths.assetsDirectory}/${Paths.skyboxLeftTexturePath(args.name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
+                `${Paths.assetsDirectory}/${Paths.skyboxRightTexturePath(args.name)}${Paths.textureSuffix}${Paths.textureExtension}`,
+                `${Paths.assetsDirectory}/${Paths.skyboxTopTexturePath(args.name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
+                `${Paths.assetsDirectory}/${Paths.skyboxBottomTexturePath(args.name)}${Paths.textureSuffix}${Paths.textureExtension}`,
+                `${Paths.assetsDirectory}/${Paths.skyboxBackTexturePath(args.name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
+                `${Paths.assetsDirectory}/${Paths.skyboxFrontTexturePath(args.name)}${Paths.textureSuffix}${Paths.textureExtension}`
+            ];
+    
+            const textureCube = new THREE.CubeTextureLoader().load( urls );            
+            this.scene.background = textureCube
+        }
 
     const pmremGenerator = this.pmremGenerator;
 
       new RGBELoader()
       .setDataType(THREE.HalfFloatType)
       .setPath("./" + Paths.assetsDirectory + "/")  
-      .load(Paths.environmentPath(name), (texture) => {
+      .load(Paths.environmentPath(args.name), (texture) => {
         var environmentMap = pmremGenerator.fromEquirectangular(texture).texture;
         this.scene.environment = environmentMap;
         texture.dispose();
         pmremGenerator.dispose();      
       });    
       
-      this.currentSkyboxName = name
+      this.currentSkyboxName = args.name
+    }
+
+    public setBackgroundColor(
+        red: float,
+        green: float,
+        blue: float
+    )
+    {
+        this.scene.background = new THREE.Color(
+            red,
+            green,
+            blue
+        )
     }
 
     public addModelAt(

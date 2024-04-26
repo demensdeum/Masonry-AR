@@ -3,7 +3,7 @@ import { State } from "./state.js";
 
 export class CompanyLogoState extends State {
 
-    private readonly switchMillisecondsTimeout = 100
+    private readonly switchMillisecondsTimeout = 1069
     private startDate = new Date()
 
     initialize(): void {
