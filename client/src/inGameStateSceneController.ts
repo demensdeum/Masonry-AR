@@ -12,7 +12,7 @@ import { InGameStateSceneControllerDelegate } from "./inGameStateSceneController
 
 export class InGameStateSceneController {
 
-    static geolocationScale = 1000
+    static geolocationScale = 5000
     private sceneController: SceneController
     private renderingPlayerGameGeolocation?: GameGeolocationPosition
     private actualPlayerGameGeolocation?: GameGeolocationPosition

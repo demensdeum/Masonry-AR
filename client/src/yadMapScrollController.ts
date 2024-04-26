@@ -21,14 +21,15 @@ export class YadMapScrollController implements MapScrollController {
         div.id = "map"
         div.style.width = '2048px'
         div.style.height = '2048px'
+        div.style.background = 'radial-gradient(circle at center, transparent, white)'
 
         this.sceneController.addCssPlaneObject(
             {
                 name:"map",
                 div: div,
                 planeSize: {
-                    width: 12,
-                    height: 12
+                    width: 20.4,
+                    height: 20.4
                 },
                 rotation: new GameVector3(
                     Utils.angleToRadians(270),

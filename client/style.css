@@ -11,6 +11,7 @@ body {
     height: 100%;
     position: absolute;
     top: 0; left: 0;
+    background-color: white;
 }
 canvas {
     z-index: 0;
@@ -26,14 +27,14 @@ canvas {
     display: none;
 }
 .mapGUI {
-display: none;
-position: absolute;
-width: 312px;
-height: 312px;
-bottom: 6em;
-right: 2em;
-background-color: transparent;   
-opacity: 0.69; 
+    display: none;
+    position: absolute;
+    width: 312px;
+    height: 312px;
+    bottom: 6em;
+    right: 2em;
+    background-color: transparent;   
+    opacity: 0.69; 
 }
 
 .gameplayGUI {

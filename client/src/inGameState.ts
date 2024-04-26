@@ -92,11 +92,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 environmentOnly: true
             }
         )
-        this.context.sceneController.setBackgroundColor(
-                1,
-                1,
-                1
-        )
         this.switchHeroModel(this.gameData.model)
 
         this.mapScrollController = new YadMapScrollController(
@@ -177,8 +172,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.context.sceneController.setFog(
             0xFFFFFF,
-            3,
-            8
+            4,
+            10
         )
 
         this.inGameStateSceneController = new InGameStateSceneController(

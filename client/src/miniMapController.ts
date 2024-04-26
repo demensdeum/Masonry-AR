@@ -1,10 +1,14 @@
 import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { Entity } from "./entity.js"
+import { float } from "./types.js"
 
 export class MiniMapController {
+    private readonly initialZoom: float = 9
+    private readonly cameraZoom: float = 19
     private mapElementName: string
     private map?: any = null
     private entitiesPlacemarks: any[] = []
+    private readonly shouldShowEntities: boolean = false
 
     constructor(
         mapElementName: string
@@ -56,7 +60,7 @@ export class MiniMapController {
         // @ts-ignore
         this.map = new ymaps.Map(this.mapElementName, {
             center: [55.76, 37.64],
-            zoom: 9,
+            zoom: this.initialZoom,
             controls: []
         },
         {suppressMapOpenBlock: true});        
@@ -68,13 +72,22 @@ export class MiniMapController {
         if (this.map == null) {
             return
         }
-        this.map.setCenter([location.latitude, location.longitude], 16.5)
+        this.map.setCenter(
+            [
+                location.latitude,
+                location.longitude
+            ], 
+            this.cameraZoom
+        )
     }
 
     public showEntities(
         entities: Entity[]
     )
     {
+        if (this.shouldShowEntities == false) {
+            return
+        }
         if (this.map == null) {
             return
         }

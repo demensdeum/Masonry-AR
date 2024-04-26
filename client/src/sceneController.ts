@@ -798,7 +798,6 @@ export class SceneController implements
             return
         }
 
-
         if (args.environmentOnly == false) {
             const urls = [
                 `${Paths.assetsDirectory}/${Paths.skyboxLeftTexturePath(args.name)}${Paths.textureSuffix}${Paths.textureExtension}`, 
