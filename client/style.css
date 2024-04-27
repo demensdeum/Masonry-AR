@@ -87,6 +87,7 @@ canvas {
     z-index: 3;
 }
 .yandexCopyrightGUI {
+    display: none;
     bottom: 0;
     right: 0;
     position: absolute;
