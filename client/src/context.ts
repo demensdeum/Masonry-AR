@@ -9,22 +9,21 @@ import { GameSettings } from './gameSettings.js';
 import { debugPrint } from './runtime.js';
 
 export class Context {
-  public isRunning: boolean = false;
-  public sceneController: SceneController;
-  public translator: Translator;
-  public gameData: GameData;
+  public isRunning: boolean = false
+  public sceneController: SceneController
+  public translator = new Translator()
+  public gameData: GameData
 
-  readonly canvas?: HTMLCanvasElement | null = document.querySelector("canvas");
-  private state: State;
-  private debugEnabled: boolean;
-  public soundPlayer: SoundPlayer = new SoundPlayer(0.7);
+  readonly canvas?: HTMLCanvasElement | null = document.querySelector("canvas")
+  private state: State
+  private debugEnabled: boolean
+  public soundPlayer: SoundPlayer = new SoundPlayer(0.7)
 
   constructor(
     debugEnabled: boolean
   ) {
       this.debugEnabled = debugEnabled; 
       this.gameData = new GameData();
-      this.translator = new Translator("ru");
       this.state = new IdleState(
         "Idle State",
         this

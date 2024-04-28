@@ -1,34 +1,19 @@
+import { localizedStrings } from "./localizedStrings.js"
+
 export class Translator {
 
-    private locale: string = "ru"
+    public locale: string = "en"
 
-    private readonly dictionary: { [key: string]: { [key: string]: string } } = {
-        "en" : {
-            "Score" : "Score",
-            "Speed" : "Speed",
-            "Message" : "Message",
-            "Music cube!" : "Music cube!",
-            "Speed boost!" : "Speed boost!",
-            "Time" : "Time",
-            "Game Started!" : "Game Started!"
-        },
-        "ru" : {
-            "Score" : "Очки",
-            "Speed" : "Скорость",
-            "Message" : "Сообщение",
-            "Music cube!" : "Музыкальный куб!",
-            "Speed boost!" : "Ускорение!",
-            "Time" : "Время",
-            "Game Started!" : "Игра началась!"
-        }
-    };
-
-    constructor(locale: string) {
-        this.locale = locale;
-    }
+    private readonly dictionary = localizedStrings
 
     public translatedStringForKey(key: string): string {
-        const output = this.dictionary[this.locale][key];
-        return output;
+        if (!(this.locale in this.dictionary)) {
+            return `No locale: ${this.locale} - key: ${key}`
+        }
+        if (!(key in this.dictionary[this.locale])) {
+            return `No key: ${key} - locale: ${this.locale}`
+        }
+        const output = this.dictionary[this.locale][key]
+        return output
     }
 }

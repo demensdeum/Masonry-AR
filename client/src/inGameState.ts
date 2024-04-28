@@ -31,6 +31,7 @@ import { YadMapScrollController } from "./yadMapScrollController.js"
 import { InGameStateSceneControllerDelegate } from "./inGameStateSceneControllerDelegate.js"
 import { GameplayGuiController } from "./gameplayGuiController.js"
 import { MiniMapController } from "./miniMapController.js"
+declare function _t(key: string): string;
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     ServerInfoControllerDelegate,

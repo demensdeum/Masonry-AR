@@ -1,4 +1,5 @@
 {
     ".half()": " * 0.5",
-    "_t": "this.context.translator.translatedStringForKey"
+    "_t": "this.context.translator.translatedStringForKey",
+    "declare function this.context.translator.translatedStringForKey": "declare function _t"
 }
