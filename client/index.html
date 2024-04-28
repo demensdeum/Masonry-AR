@@ -28,9 +28,9 @@
     </table>
   </div>
   <div class = "localeSelectorState">
-    <div onclick="document.global_gameplay_localeSelectorState.didSelectRussian()">Русский</div>
+    <div onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_localeSelectorState.didSelectRussian()">Русский</div>
     <div style="width: 10%"></div>
-    <div onclick="document.global_gameplay_localeSelectorState.didSelectEnglish()">English</div>
+    <div onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_localeSelectorState.didSelectEnglish()">English</div>
   </div>
   <div class = "moveGUI"></div>
   <div id="css-canvas" style="pointer-events: none;"></div>

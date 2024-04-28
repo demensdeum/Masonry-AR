@@ -7,7 +7,7 @@ $heroUUID = "";
 
 $insertEnabled = true;
 $minEntitesPerSector = 3;
-$eyeChance = 8;
+$eyeChance = 12;
 $polling_timeout_seconds = 3;
 
 if (!isset($_COOKIE["privateHeroUUID"])) {

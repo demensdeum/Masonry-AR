@@ -24,11 +24,10 @@ export class CompanyLogoState extends State {
             )
             // @ts-ignore
             document.global_gameplay_localeSelectorState = localeSelectorState
-            
+
             this.context.transitionTo(localeSelectorState)
         }
         else if (companyLogoLoaded == true) {
-            debugger
             Utils.showElement({name: "companyLogoContainer"});
         }
     }
