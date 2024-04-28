@@ -111,7 +111,7 @@ if ($result->num_rows > 0) {
 
         $response = array(
             'code' => 8,
-            'message' => "Entities fetch error: too early ($formatted_update_date / $formatted_three_seconds_ago_date) ! wait 3 seconds!}",
+            'message' => "Entities fetch error: too early ($formatted_update_date / $formatted_three_seconds_ago_date) ! wait 3 seconds! Check for multiple instances of client!}",
             'entities' => []
         );    
         echo json_encode($response, JSON_UNESCAPED_UNICODE); 

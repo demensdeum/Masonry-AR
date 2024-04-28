@@ -1,8 +1,8 @@
 export const localizedStrings: { [key: string]: { [key: string]: string } } = {
     "en" : {
-        "hello" : "Hello!"
+        "OWN_BUILDING_MESSAGE" : "BUILDING_NAME building of your order ORDER_NAME. Rename?"
     },
     "ru" : {
-        "hello" : "Привет"
+        "OWN_BUILDING_MESSAGE" : "BUILDING_NAME здание вашего ордена ORDER_NAME. Переименовать?"
     }
 };

@@ -414,7 +414,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     askIfWantToRemoveBuilding(entity: Entity) {
         const ownerName = this.ownerNameEnabled ? ` - построено ${entity.ownerName}` : ""
         if (this.gameData.order == entity.order) {
-            if (confirm(`Это здание ${entity.name} вашего ордена ${entity.order}${ownerName}. Переименовать?`)) {
+            if (confirm(_t("OWN_BUILDING_MESSAGE").replace("BUILDING_NAME", entity.name).replace("ORDER_NAME", entity.order))) {
                 this.renameBuilding(entity)
             }
             return
