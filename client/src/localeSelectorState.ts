@@ -13,12 +13,12 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
     private startDate = new Date()    
 
     initialize(): void {
-        // const savedLocalization = window.localStorage.getItem("savedLocalization")
-        // if (savedLocalization != null) {
-        //     this.context.translator.locale = savedLocalization
-        //     this.saveLocaleAndGoToInGameState()
-        //     return
-        // }
+        const savedLocalization = window.localStorage.getItem("savedLocalization")
+        if (savedLocalization != null) {
+            this.context.translator.locale = savedLocalization
+            this.saveLocaleAndGoToInGameState()
+            return
+        }
         this.context.sceneController.delegate = this
         this.context.sceneController.switchSkyboxIfNeeded(
             {
