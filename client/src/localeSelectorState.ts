@@ -9,7 +9,7 @@ import { debugPrint } from "./runtime.js";
 declare function _t(key: string): string;
 
 export class LocaleSelectorState extends State implements SceneControllerDelegate {
-    private readonly switchMillisecondsTimeout = 8000
+    private readonly switchMillisecondsTimeout = 30000
     private startDate = new Date()    
 
     initialize(): void {

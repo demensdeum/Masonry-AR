@@ -66,6 +66,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     initialize(): void {
         debugPrint(this.gameplayGuiController)
+        Utils.showElement({name: "yandexCopyrightGUI"})
         if (this.dataFetchType == "MOCK") {
             this.geolocationController = new MockGeolocationController(this)
             const mockingEntitiesController = new MockEntitiesController(this)
