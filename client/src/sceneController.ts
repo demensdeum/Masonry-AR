@@ -772,6 +772,8 @@ export class SceneController implements
             this.scene.remove(object)
             delete this.commands[k]
         })
+
+        this.scene.background = null
     }
 
     private removeObjectWithName(name: string) {

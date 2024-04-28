@@ -22,6 +22,9 @@ export class CompanyLogoState extends State {
                 "Locale Selector State",
                 this.context
             )
+            // @ts-ignore
+            document.global_gameplay_localeSelectorState = localeSelectorState
+            
             this.context.transitionTo(localeSelectorState)
         }
         else if (companyLogoLoaded == true) {
