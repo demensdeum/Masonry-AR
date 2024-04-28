@@ -16,7 +16,16 @@
 </head>
 <body>
   <div class="companyLogoContainer">
-    <img class="companyLogo" onload="document.global_gameplay_companyLogoLoaded = true" onmousedown="if (event.preventDefault) event.preventDefault()" src="./assets/com.demensdeum.company.logo.image.jpg"/>
+    <table style="width: 100%; height: 100%;">
+    <tr>
+      <td style="width: 5%;"></td>
+      <td>
+        <img class="companyLogo" onload="document.global_gameplay_companyLogoLoaded = true" onmousedown="if (event.preventDefault) event.preventDefault()" src="./assets/com.demensdeum.company.logo.texture.svg"/>
+      </td>
+      <td style="width: 5%;"></td>
+    </tr>
+    
+    </table>
   </div>
   <div class = "moveGUI"></div>
   <div id="css-canvas" style="pointer-events: none;"></div>

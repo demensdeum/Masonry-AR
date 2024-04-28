@@ -1,4 +1,23 @@
 export class Utils {
+    public static showElement(
+        args: {
+            name: string
+        }
+    ) {
+        if ((document.getElementsByClassName(args.name)[0] as HTMLElement).style.display != "block") {
+            (document.getElementsByClassName(args.name)[0] as HTMLElement).style.display = "block"
+        }
+    }
+
+    public static hideElement(
+        args: {
+            name: string
+        }
+    ) {
+        if ((document.getElementsByClassName(args.name)[0] as HTMLElement).style.display != "none") {
+            (document.getElementsByClassName(args.name)[0] as HTMLElement).style.display = "none"
+        }
+    }
 
     public static generateUUID() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
