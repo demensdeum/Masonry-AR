@@ -71,7 +71,7 @@ if (isset($_GET['uuid'])) {
         } else {
             $response = array(
                 'code' => 1,
-                'message' => "Entity $uuid not foundd!",
+                'message' => "Entity $uuid not found!",
                 'entities' => []
             );
         }
