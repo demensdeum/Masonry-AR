@@ -33,10 +33,18 @@ export class EntitiesController implements EntitiesControllerInterface {
 
             const entities = result.entities
 
-            this.delegate.entitiesControllerDidFetchEntities(
-                this,
-                entities
-            )
+            if (result.code == RequestResultCodes.Success) {
+                this.delegate.entitiesControllerDidFetchEntities(
+                    this,
+                    entities
+                )
+            }
+            else {
+                this.delegate.entitiesControllerDidNotFetchEntities(
+                    this,
+                    result.message
+                )                
+            }
 
         } catch (error) {
             console.error("Error fetching entities:", error);
@@ -65,7 +73,7 @@ export class EntitiesController implements EntitiesControllerInterface {
                 )    
             }
             else {
-                this.delegate.entitiesControllerDidNotBuildEntity(
+                this.delegate.entitiesControllerDidNotBuildEntityError(
                     this,
                     result.message
                 )
@@ -99,7 +107,7 @@ export class EntitiesController implements EntitiesControllerInterface {
                 )    
             }
             else {
-                this.delegate.entitiesControllerDidNotDestroyEntity(
+                this.delegate.entitiesControllerDidNotDestroyEntityError(
                     this,
                     entity,
                     result.message

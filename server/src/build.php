@@ -123,7 +123,7 @@ if ($result->num_rows > 0) {
     if ($count > 0) {
         $response = array(
             'code' => 10,
-            'message' => "There is building in this area",
+            'message' => "CANT_BUILD_THERE_IS_BUILDING_NEARBY",
             'entities' => []
         );    
         echo json_encode($response, JSON_UNESCAPED_UNICODE);

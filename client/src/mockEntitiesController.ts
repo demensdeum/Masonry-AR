@@ -80,7 +80,7 @@ export class MockEntitiesController implements EntitiesControllerInterface {
 
     async build(): Promise<void> {
         if (this.isBuildingOnSceneSet) {
-            this.delegate.entitiesControllerDidNotBuildEntity(
+            this.delegate.entitiesControllerDidNotBuildEntityError(
                 this,
                 "There is building in this area already!"
             )

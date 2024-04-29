@@ -206,7 +206,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     private build() {
         if (this.gameData.isLocationResolvedOnce() == false) {
-            alert("Строить нельзя пока не будут определены ваши координаты!")
+            alert(_t("CANT_BUILD_NO_CLIENT_COORDINATES"))
             return
         }
         if (this.gameData.geolocationPositionIsInSync() == false) {
@@ -250,10 +250,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
     }
 
-    public buildButtonPressed() {
-        alert("BUILD!!!!!")
-    }
-
     private showBuildingAnimation() {
         if (this.lastBuildingAnimationObjectUUID != "NONE") {
             debugPrint("Can't present another building animation! Already presenting one!")
@@ -292,7 +288,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
             window.localStorage.setItem("gameplayStartInfo", "YES")
-            alert("Ваши координаты определены. Для перемещения в игре ходите с устройством в реальной жизни, собирайте масонские знаки, и стройте здания за свой орден. Приятной игры!")
+            alert(_t("Ваши координаты определены. Для перемещения в игре ходите с устройством в реальной жизни, собирайте масонские знаки, стройте здания за свой орден. Приятной игры!"))
         }
 
         debugPrint(`gps!: ${position.latitude} - ${position.longitude}`)
@@ -321,9 +317,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     geolocationControllerGeolocationDidReceiveGeolocationOnce(
         _: GeolocationController,
         __: GameGeolocationPosition
-    ) {
-        // this.gameData.playerClientGeolocationPosition = position
-        // this.geolocationController.trackPosition()    
+    ) {  
     }
 
     geolocationControllerGeolocationDidReceiveError(
@@ -432,6 +426,19 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.buildingStatusController.rename(entity, name)
     }
 
+    entitiesControllerDidNotFetchEntities(
+        _: EntitiesControllerInterface,
+        message: string
+    ): void {
+        if (message == "TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR") {
+            alert(_t("TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR"))
+            window.location.assign("https://demensdeum.com")
+        }
+        else {
+            alert(_t(message))
+        }
+    }
+
     entitiesControllerDidDestroyEntity(
         _: EntitiesController,
         entity: Entity
@@ -440,7 +447,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         //this.removeEntity(entity)
     }
 
-    entitiesControllerDidNotDestroyEntity(
+    entitiesControllerDidNotDestroyEntityError(
         _: EntitiesController, 
         __: Entity, 
         message: string
@@ -521,11 +528,11 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         debugPrint("Build success")
     }
 
-    entitiesControllerDidNotBuildEntity(
+    entitiesControllerDidNotBuildEntityError(
         _: EntitiesController,
         message: string
     ): void {
-        alert(message)
+        alert(_t(message))
     }
 
     heroStatusControllerDidChange(
@@ -554,6 +561,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: BuildingStatusController, 
         string: string
     ) {
-        alert(string)
+        alert(_t(string))
     }
 }

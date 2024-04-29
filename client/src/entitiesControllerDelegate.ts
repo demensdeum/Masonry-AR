@@ -8,6 +8,11 @@ export interface EntitiesControllerDelegate {
         entities: Entity[]
     ): void
 
+    entitiesControllerDidNotFetchEntities(
+        controller: EntitiesControllerInterface,
+        message: string
+    ): void      
+
     entitiesControllerDidCatchEntity(
         controller: EntitiesControllerInterface,
         entity: Entity
@@ -24,7 +29,7 @@ export interface EntitiesControllerDelegate {
         entity: Entity
     ): void
 
-    entitiesControllerDidNotBuildEntity(
+    entitiesControllerDidNotBuildEntityError(
         controller: EntitiesControllerInterface,
         message: string
     ): void    
@@ -34,7 +39,7 @@ export interface EntitiesControllerDelegate {
         entity: Entity
     ): void
 
-    entitiesControllerDidNotDestroyEntity(
+    entitiesControllerDidNotDestroyEntityError(
         controller: EntitiesControllerInterface,
         entity: Entity,
         message: string
