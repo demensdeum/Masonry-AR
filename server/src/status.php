@@ -1,5 +1,5 @@
 <?php
-echo "Konichiwa!<br>";
+echo "こんにちは!<br>";
 
 include("config.php");
 if (dbConnect()) {
