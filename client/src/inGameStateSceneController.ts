@@ -67,6 +67,10 @@ export class InGameStateSceneController {
                 this,
                 heroEntity.order
             )            
+            this.delegate.inGameStateControllerDidReceiveHeroModel(
+                this,
+                heroEntity.model
+            )
         }
 
         const addedEntities = entities.filter((e) => { return (e.uuid in this.uuidToPair) == false })
@@ -116,6 +120,7 @@ export class InGameStateSceneController {
     }
 
     private modelNameFromEntity(entity: Entity) {
+        debugger
         if (entity.model == "DEFAULT") {
             const type = entity.type
             if (type == "hero") {

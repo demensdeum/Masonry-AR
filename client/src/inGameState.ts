@@ -348,6 +348,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.gameData.order = order
     }
 
+    inGameStateControllerDidReceiveHeroModel(
+        _: InGameStateSceneController, 
+        model: string
+    ): void {
+        this.switchHeroModel(model)
+    }
+
     private switchHeroModel(model: string) {
         if (this.heroInserted == true) {
             this.context.sceneController.removeSceneObjectWithName("hero")

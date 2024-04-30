@@ -23,4 +23,9 @@ export interface InGameStateSceneControllerDelegate {
         inGameStateSceneController: InGameStateSceneController,
         order: string
     ): void    
+
+    inGameStateControllerDidReceiveHeroModel(
+        inGameStateSceneController: InGameStateSceneController,
+        model: string
+    ): void
 }
