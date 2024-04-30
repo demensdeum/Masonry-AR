@@ -352,6 +352,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: InGameStateSceneController, 
         model: string
     ): void {
+        if (this.gameData.model == model) {
+            return
+        }
+        this.gameData.model = model
         this.switchHeroModel(model)
     }
 

@@ -120,7 +120,6 @@ export class InGameStateSceneController {
     }
 
     private modelNameFromEntity(entity: Entity) {
-        debugger
         if (entity.model == "DEFAULT") {
             const type = entity.type
             if (type == "hero") {
