@@ -443,7 +443,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     ): void {
         if (message == "TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR") {
             alert(_t("TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR"))
-            window.location.assign("https://demensdeum.com")
+            window.location.assign("https://demensdeum.com/masonry-ar-wiki-ru/")
         }
         else {
             alert(_t(message))
