@@ -52,9 +52,9 @@ export class YadMapScrollController implements MapScrollController {
         )
     }
 
-    scroll(offsetX: number, offsetY: number): void {
-        debugPrint(offsetX)
-        debugPrint(offsetY)
+    scroll(_: number, __: number): void {
+        // debugPrint(offsetX)
+        // debugPrint(offsetY)
     }
 
 }
