@@ -288,7 +288,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
             window.localStorage.setItem("gameplayStartInfo", "YES")
-            alert(_t("Ваши координаты определены. Для перемещения в игре ходите с устройством в реальной жизни, собирайте масонские знаки, стройте здания за свой орден. Приятной игры!"))
+            alert(_t("LOCATION_GOT_WELCOME_MESSAGE"))
         }
 
         debugPrint(`gps!: ${position.latitude} - ${position.longitude}`)
@@ -504,7 +504,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             this.inGameStateSceneController.heroEntityUUID = heroUUID
             if (window.localStorage.getItem("showedStartInfo") != "YES") {
                 window.localStorage.setItem("showedStartInfo", "YES")
-                alert("Masonry-AR - это игра в дополненной реальности, потребуется доступ к вашей геолокации")
+                alert(_t("WELCOME"))
             }
             this.geolocationController.trackPosition()
             this.entitiesTrackingStep()            
@@ -532,7 +532,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: EntitiesController,
         message: string
     ): void {
-        alert(_t(message))
+        
+        alert(message.replace("BUILD_ERROR_NOT_ENOUGH_MONEY", _t("BUILD_ERROR_NOT_ENOUGH_MONEY")))
     }
 
     heroStatusControllerDidChange(

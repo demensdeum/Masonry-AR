@@ -8,7 +8,7 @@ $build_enabled = true;
 $conn = dbConnect();
 $heroUUID = "";
 
-$buildPrice = 1000;
+$buildPrice = 5000;
 
 if ($build_enabled == false) {
     $response = array(
@@ -70,7 +70,7 @@ if ($result->num_rows > 0) {
     if ($balance < $buildPrice) {
         $response = array(
             'code' => 7,
-            'message' => "Build error: not enough money: $balance < $buildPrice",
+            'message' => "BUILD_ERROR_NOT_ENOUGH_MONEY: $balance < $buildPrice",
             'entities' => []
         );    
         echo json_encode($response, JSON_UNESCAPED_UNICODE); 

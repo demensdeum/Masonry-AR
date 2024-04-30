@@ -33,7 +33,7 @@
     <div onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_localeSelectorState.didSelectEnglish()">English</div>
   </div>
   <div class = "moveGUI"></div>
-  <div id="css-canvas" style="pointer-events: none;"></div>
+  <div id="css-canvas" onmousedown="if (event.preventDefault) event.preventDefault()" style="pointer-events: none;"></div>
   <canvas class = "webgl"></canvas>
   <div class = "gameplayGUI">
     <p><img class="guiButton" src="./assets/com.demensdeum.gui.order.button.texture.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_inGameState.switchOrder()"/></p>

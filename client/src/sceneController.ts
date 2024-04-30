@@ -224,7 +224,7 @@ export class SceneController implements
     }
 
     public lockOrbitControls() {
-        this.debugControls.maxPolarAngle = Math.PI / 2 - Utils.angleToRadians(48)
+        this.debugControls.maxPolarAngle = Math.PI / 2 - Utils.angleToRadians(50)
         this.debugControls.minDistance = 2.8
         this.debugControls.maxDistance = 3.4
         this.debugControls.enablePan = false  

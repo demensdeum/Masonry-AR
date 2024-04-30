@@ -22,6 +22,7 @@ export class YadMapScrollController implements MapScrollController {
         div.style.width = '2048px'
         div.style.height = '2048px'
         div.style.background = 'radial-gradient(circle at center, transparent, white)';
+        div.style.userSelect = "none";
 
         (document.querySelector("#css-canvas") as HTMLElement).style.backgroundColor = 'white';
 
