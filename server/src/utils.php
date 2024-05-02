@@ -23,27 +23,28 @@ function checkInsertOrUpdateRecord(
     if (!$stmt_select) {
         die("Error preparing statement: " . $conn->error);
     }
-    
+
     $stmt_select->bind_param("s", $uuid);
     $stmt_select->execute();
-    $result = $stmt_select->get_result();
-    if (!$result) {
-        die("Error getting result: " . $stmt_select->error);
-    }
+    
+    $count = null;
 
+    // Bind result variable
+    $stmt_select->bind_result($count);
+    
+    // Fetch the result
+    $stmt_select->fetch();
+    
+    // Close the statement
     $stmt_select->close();
 
-    $row = $result->fetch_assoc();
-    if ($row !== null && isset($row['count'])) {
-        $count = $row['count'];
-
+    if ($count !== null) {
         if ($count > 0) {
             $onExistsFunction($uuid, $conn);
         } else {
             $insertFunction($uuid, $conn);
         }    
-    }
-    else {
+    } else {
         $response = array(
             'code' => -1,
             'message' => "Utils: checkInsertOrUpdateRecord row is null!",

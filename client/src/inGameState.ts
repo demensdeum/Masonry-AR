@@ -464,7 +464,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         __: Entity, 
         message: string
     ): void {
-        alert(message);
+        alert(_t(message));
     }
 
     sceneControllerDidPickSceneObjectWithName(
