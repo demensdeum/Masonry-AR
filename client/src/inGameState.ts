@@ -55,7 +55,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly buildingEnabled = true
     private readonly orderChangeEnabled = true
     private readonly entitiesTrackingStepTimeout = 3000
-    private static currentClientVersion = 5
+    private static currentClientVersion = 6
     public static readonly versionDate = `$PREPROCESSOR_CURRENT_DATE (${this.currentClientVersion})`
     private heroInserted = false
     private ownerNameEnabled = false

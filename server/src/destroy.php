@@ -76,6 +76,29 @@ if (isset($_GET['uuid'])) {
             $deleteSql = "DELETE FROM entities WHERE uuid = '$uuid'";
             $conn->query($deleteSql);
 
+            $incrementDestroyedBuildingsCounter = function($uuid, $conn) {
+                $sql_update = "UPDATE destroyed_buildings_counter SET counter = counter + 1 WHERE destroyer_uuid = ?";
+                $sql_update = $conn->prepare($sql_update);
+                $sql_update->bind_param("s", $uuid);
+                $sql_update->execute();                
+            };
+
+            $insertDestroyedBuildingsCounter = function($uuid, $conn) {
+                $sql_insert = "INSERT INTO destroyed_buildings_counter (destroyer_uuid, counter) VALUES (?, 1)";
+                $stmt_insert = $conn->prepare($sql_insert);
+                $stmt_insert->bind_param("s", $uuid);
+                $stmt_insert->execute();
+            };
+
+            checkInsertOrUpdateRecord(
+                $heroUUID,
+                "destroyer_uuid",
+                $conn,
+                "destroyed_buildings_counter",
+                $incrementDestroyedBuildingsCounter,
+                $insertDestroyedBuildingsCounter            
+            );
+
             $response = array(
                 'code' => 0,
                 'message' => "Entity $uuid caught!",
