@@ -486,7 +486,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
         else if (entity?.type == "walkChallenge") {
             if (confirm(_t("WALK_CHALLENGE_MESSAGE"))) {
-                this.entitiesController.destroy(entity)
+                this.entitiesController.catch(entity)
             }
         }
         else {
