@@ -131,6 +131,9 @@ export class InGameStateSceneController {
             else if (type == "eye") {
                 return "com.demensdeum.eye"
             }
+            else if (type == "walkChallenge") {
+                return "com.demensdeum.pig"
+            }
             else {
                 return "com.demensdeum.hero"
             }

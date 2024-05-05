@@ -480,9 +480,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             const confirmation = () =>{
                 self.askIfWantToRemoveBuilding(entity)
             }
-            // anti-alert <-> OrbitControls stuck for Chrome
+            // anti-alert <-> OrbitControls stuck on Chrome
             setTimeout(confirmation, 300)
             return
+        }
+        else if (entity?.type == "walkChallenge") {
+            if (confirm(_t("WALK_CHALLENGE_MESSAGE"))) {
+                this.entitiesController.destroy(entity)
+            }
         }
         else {
             debugPrint(`Unknown entity type tap: ${entity?.type}`)

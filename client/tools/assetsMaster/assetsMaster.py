@@ -67,6 +67,7 @@ def compress_files(source_dir, output_dir):
         print(extension)
         if extension in extension_to_compressor \
             and "ru.yandex.logo.svg" not in source_file \
+            and "com.demensdeum.pig.model.glb" not in source_file \
             and "com.demensdeum.gui.build.button.texture.svg" not in source_file \
             and "com.demensdeum.gui.order.button.texture.svg" not in source_file \
             and "com.demensdeum.company.logo.texture.svg" not in source_file:

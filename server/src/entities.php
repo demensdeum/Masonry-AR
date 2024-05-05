@@ -7,8 +7,9 @@ $heroUUID = "";
 
 $insertEnabled = true;
 $minEntitesPerSector = 3;
-$eyeChance = 26;
+$entitiesChance = 4;
 $polling_timeout_seconds = 3;
+$walkChallengeChance = 4;
 
 if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
@@ -171,16 +172,20 @@ if ($insertEnabled) {
     $count = $rowCheck['count'];
 
     if ($count < $minEntitesPerSector) {
-        if (mt_rand(0, $eyeChance) == 0) {     
+        if (mt_rand(0, $entitiesChance) == 0) {     
             $randomRecords = mt_rand(1, $minEntitesPerSector);
             for ($i = 0; $i < $randomRecords; $i++) {
                 $uuid = generateUUID();
                 $balance = mt_rand(1, 3) * 100;
                 $entityLatitude = $eyesMinimalEntityLatitude + mt_rand(0, $eyesDistance * 2) / 10000;
                 $entityLongitude = $eyesMinimalEntityLongitude + mt_rand(0, $eyesDistance * 2) / 10000;
+                $entity_type = "eye";
+                if (mt_rand(0, $walkChallengeChance) == 0) {
+                    $entity_type = "walkChallenge";
+                }
                 $sqlInsert = "INSERT INTO entities 
                 (uuid, type, balance, latitude, longitude) 
-                VALUES ('$uuid', 'eye', $balance, $entityLatitude, $entityLongitude)";
+                VALUES ('$uuid', '". $entity_type . "', $balance, $entityLatitude, $entityLongitude)";
                 $conn->query($sqlInsert);
             }
         }
