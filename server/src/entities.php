@@ -7,7 +7,7 @@ $heroUUID = "";
 
 $insertEnabled = true;
 $minEntitesPerSector = 3;
-$entitiesChance = 4;
+$entitiesChance = 26;
 $polling_timeout_seconds = 3;
 $walkChallengeChance = 4;
 
