@@ -38,7 +38,7 @@ if (isset($_GET['uuid'])) {
 
     if (validateUUID($heroUUID)) {
 
-        $sql = "SELECT * FROM entities WHERE uuid = '$uuid' AND type = 'eye'";
+        $sql = "SELECT * FROM entities WHERE uuid = '$uuid' AND type IN ('eye', 'walkChallenge')";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {

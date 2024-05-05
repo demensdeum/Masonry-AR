@@ -426,7 +426,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             return
         }
         else if (confirm(`Хотите уничтожить здание масонского ордена ${entity.order}${ownerName} ?`)) {
-            this.entitiesController.destroy(entity)
+            this.entitiesController.catch(entity)
             return
         }
     }
