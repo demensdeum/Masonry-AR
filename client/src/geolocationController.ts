@@ -24,7 +24,7 @@ export class GeolocationController implements GeolocationControllerInterface {
     }
 
     public trackPosition() {
-        const self = this
+        const self = this        
         navigator.geolocation.watchPosition((position) => {
             self.delegate.geolocationControllerDidGetPosition(
                 self,
@@ -33,7 +33,20 @@ export class GeolocationController implements GeolocationControllerInterface {
                     position.coords.longitude
                 )
             )
-          }
-        )
+          },
+          (error) => {
+            if (error.code == error.PERMISSION_DENIED) {
+                self.delegate.geolocationControllerGeolocationPermissionDenied(
+                    self
+                )
+            }
+            else {
+                self.delegate.geolocationControllerGeolocationDidReceiveError(
+                    self,
+                    `${error.code}: ${error.message}`
+                )
+            }
+          }          
+        )        
     }
 }

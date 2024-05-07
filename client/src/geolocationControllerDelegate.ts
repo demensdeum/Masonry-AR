@@ -16,4 +16,8 @@ export interface GeolocationControllerDelegate {
         controller: GeolocationControllerInterface,
         error: string
     ): void
+
+    geolocationControllerGeolocationPermissionDenied(
+        controller: GeolocationControllerInterface
+    ): void
 }

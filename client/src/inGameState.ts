@@ -325,6 +325,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     ) {  
     }
 
+    geolocationControllerGeolocationPermissionDenied(_: GeolocationControllerInterface) {
+        alert(_t("GEOLOCATION_ACCESS_DENIED"))
+    }
+
     geolocationControllerGeolocationDidReceiveError(
         _: GeolocationController, 
         error: string
@@ -546,10 +550,19 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             this.inGameStateSceneController.heroEntityUUID = heroUUID
             if (window.localStorage.getItem("showedStartInfo") != "YES") {
                 window.localStorage.setItem("showedStartInfo", "YES")
-                alert(_t("WELCOME"))
+                if (confirm(_t("WELCOME"))) {
+                    this.geolocationController.trackPosition()
+                    this.entitiesTrackingStep()                    
+                }
+                else {
+                    const url = this.context.translator.locale == "ru" ? "https://demensdeum.com/masonry-ar-wiki-ru/" : "https://demensdeum.com/masonry-ar-wiki-en/"
+                    window.location.assign(url)
+                }
             }
-            this.geolocationController.trackPosition()
-            this.entitiesTrackingStep()            
+            else {
+                this.geolocationController.trackPosition()
+                this.entitiesTrackingStep()                  
+            }
         }
         else {
             alert("No heroUUID in cookie!")

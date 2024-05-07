@@ -9,7 +9,8 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "BUILD_ERROR_NOT_ENOUGH_MONEY" : "Can't build, not enough money",
         "WALK_CHALLENGE_MESSAGE" : "Hello, mason! I'm Boar, a fierce representative of the swine family, and I challenge you to walk five kilometers! Do you think you can handle it? Snort louder if you dare!",
         "WALK_CHALLENGE_COUNTER" : "Oink! DISTANCE_VALUES m. Give up?",
-        "WALK_CHALLENGE_FINISHED" : "Your legs are strong mason! Oink!"
+        "WALK_CHALLENGE_FINISHED" : "Your legs are strong mason! Oink!",
+        "GEOLOCATION_ACCESS_DENIED" : "Geolocation access denied! Enable it to play!"
     },
     "ru" : {
         "WELCOME" : "Масоны-ДР - игра в дополненной реальности, потребуется доступ к вашей геолокации.\nИгра использует куки, и всячески следит за вами во славу Великого ложа.\nНажимая ОК вы соглашаетесь с этим.",        
@@ -21,6 +22,7 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "BUILD_ERROR_NOT_ENOUGH_MONEY" : "Не могу построить, недостаточно денег",
         "WALK_CHALLENGE_MESSAGE" : "Здравствуй, масон! Я - Боров, свирепый представитель свинейшего рода, и я бросаю тебе вызов: пройти пять километров! Думаешь, сможешь? Хрюкни громче, если смелость позволяет!",
         "WALK_CHALLENGE_COUNTER" : "Хрю! DISTANCE_VALUES м. Сдаешься?",
-        "WALK_CHALLENGE_FINISHED" : "У тебя сильные ноги, масон!"
+        "WALK_CHALLENGE_FINISHED" : "У тебя сильные ноги, масон!",
+        "GEOLOCATION_ACCESS_DENIED" : "Запрещен доступ к геолокации! Включите чтобы играть!"
     }
 };
