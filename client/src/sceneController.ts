@@ -2,6 +2,7 @@ import * as THREE from "three"
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
 import { RGBELoader }  from 'three/examples/jsm/loaders/RGBELoader.js'
 import { Utils } from "./utils.js"
 import { SceneObject } from "./sceneObject.js"
@@ -901,6 +902,9 @@ export class SceneController implements
         sceneController.addSceneObject(sceneObject);
 
         const modelLoader = new GLTFLoader();
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('three/examples/jsm/libs/draco/');
+        modelLoader.setDRACOLoader(dracoLoader);        
         const modelPath = Paths.modelPath(modelName);
 
         const self = this
