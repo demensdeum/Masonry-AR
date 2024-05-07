@@ -10,6 +10,7 @@ $minEntitesPerSector = 3;
 $entitiesChance = 26;
 $polling_timeout_seconds = 3;
 $walkChallengeChance = 4;
+$treasureChestChance = 4;
 
 if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
@@ -180,12 +181,16 @@ if ($insertEnabled) {
                 $entityLatitude = $eyesMinimalEntityLatitude + mt_rand(0, $eyesDistance * 2) / 10000;
                 $entityLongitude = $eyesMinimalEntityLongitude + mt_rand(0, $eyesDistance * 2) / 10000;
                 $entity_type = "eye";
+                $model = "DEFAULT";
                 if (mt_rand(0, $walkChallengeChance) == 0) {
                     $entity_type = "walkChallenge";
                 }
+                elseif (mt_rand(0, $treasureChestChance) == 0) {
+                    $model = "com.demensdeum.treasure.chest";
+                }
                 $sqlInsert = "INSERT INTO entities 
-                (uuid, type, balance, latitude, longitude) 
-                VALUES ('$uuid', '". $entity_type . "', $balance, $entityLatitude, $entityLongitude)";
+                (uuid, type, balance, latitude, longitude, model) 
+                VALUES ('$uuid', '". $entity_type . "', $balance, $entityLatitude, $entityLongitude, '". $model ."')";
                 $conn->query($sqlInsert);
             }
         }

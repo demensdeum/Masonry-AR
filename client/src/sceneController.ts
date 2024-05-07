@@ -909,9 +909,7 @@ export class SceneController implements
 
         const self = this
 
-        modelLoader.load(
-          modelPath,
-          function (container) {
+        const onModelLoaded = (container: any) => {
             if ((sceneObject.uuid in self.objectsUUIDs) == false) {
                 debugPrint(`Don't add model for object name ${sceneObject.name}, because it's removed`)
                 return
@@ -933,7 +931,7 @@ export class SceneController implements
             sceneObject.threeObject = model
             sceneObject.animations = container.animations
 
-            model.traverse(entity => {
+            model.traverse((entity: any) => {
                 if ((<THREE.Mesh> entity).isMesh) {
                     const mesh = (<THREE.Mesh> entity)
                     if (self.shadowsEnabled) {
@@ -961,6 +959,21 @@ export class SceneController implements
             debugPrint(`Model load success: ${modelPath}`)
             successCallback();
           }
+
+          const onModelLoadingProgess = (_: any) => {
+
+          }
+
+          const onModelLoadError = (error: any) => {
+            debugger
+            debugPrint(`Model loading error: ${error}`)
+          }
+
+        modelLoader.load(
+          modelPath,
+          onModelLoaded,
+          onModelLoadingProgess,
+          onModelLoadError
         )
     }
 

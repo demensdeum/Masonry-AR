@@ -49,7 +49,7 @@ def compress_files(source_dir, output_dir):
 
     extension_to_compressor = {
         ".png" : [".jpg", png_to_jpg],
-        ".glb" : [".glb", compress_glb]
+        #".glb" : [".glb", compress_glb] it's bad
     }
 
     source_size = 0
