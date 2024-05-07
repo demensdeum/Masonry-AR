@@ -280,7 +280,7 @@ export class InGameStateSceneController {
                 this.sceneController.rotateObjectTo(
                     "hero",
                     0,
-                    Utils.angleToRadians(90) + rotationY,
+                    Utils.degreesToRadians(90) + rotationY,
                     0
                 )
                 this.sceneController.objectPlayAnimation(
@@ -339,7 +339,7 @@ export class InGameStateSceneController {
                 self.sceneController.rotateObjectTo(
                     e.sceneObjectUUID,
                     0,
-                    Utils.angleToRadians(90) + rotationY,
+                    Utils.degreesToRadians(90) + rotationY,
                     0
                 )
             }

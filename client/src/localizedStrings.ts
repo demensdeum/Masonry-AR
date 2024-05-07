@@ -7,7 +7,9 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "CANT_BUILD_THERE_IS_BUILDING_NEARBY": "You cannot build as there is already a building nearby.",
         "TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR": "Multiple sessions detected. There could be one gaming session. Closing game...",
         "BUILD_ERROR_NOT_ENOUGH_MONEY" : "Can't build, not enough money",
-        "WALK_CHALLENGE_MESSAGE" : "Hello, mason! I'm Boar, a fierce representative of the swine family, and I challenge you to walk five kilometers! Do you think you can handle it? Snort louder if you dare!"
+        "WALK_CHALLENGE_MESSAGE" : "Hello, mason! I'm Boar, a fierce representative of the swine family, and I challenge you to walk five kilometers! Do you think you can handle it? Snort louder if you dare!",
+        "WALK_CHALLENGE_COUNTER" : "Oink! DISTANCE_VALUES m. Give up?",
+        "WALK_CHALLENGE_FINISHED" : "Your legs are strong mason! Oink!"
     },
     "ru" : {
         "WELCOME" : "Масоны-ДР - игра в дополненной реальности, потребуется доступ к вашей геолокации.\nИгра использует куки, и всячески следит за вами во славу Великого ложа.\nНажимая ОК вы соглашаетесь с этим.",        
@@ -17,6 +19,8 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "CANT_BUILD_THERE_IS_BUILDING_NEARBY": "Нельзя строить, т.к. уже есть здание поблизости.",
         "TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR": "Несколько игровых сессий за одного пользователя детектировано. Только одну можно! Закрываю игру...",
         "BUILD_ERROR_NOT_ENOUGH_MONEY" : "Не могу построить, недостаточно денег",
-        "WALK_CHALLENGE_MESSAGE" : "Здравствуй, масон! Я - Боров, свирепый представитель свинейшего рода, и я бросаю тебе вызов: пройти пять километров! Думаешь, сможешь? Хрюкни громче, если смелость позволяет!"
+        "WALK_CHALLENGE_MESSAGE" : "Здравствуй, масон! Я - Боров, свирепый представитель свинейшего рода, и я бросаю тебе вызов: пройти пять километров! Думаешь, сможешь? Хрюкни громче, если смелость позволяет!",
+        "WALK_CHALLENGE_COUNTER" : "Хрю! DISTANCE_VALUES м. Сдаешься?",
+        "WALK_CHALLENGE_FINISHED" : "У тебя сильные ноги, масон!"
     }
 };

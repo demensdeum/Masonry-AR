@@ -1,5 +1,8 @@
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
+import { float } from "./types.js"
+
 export class Utils {
-    public static showElement(
+    public static showHtmlElement(
         args: {
             name: string
         }
@@ -9,7 +12,7 @@ export class Utils {
         }
     }
 
-    public static hideElement(
+    public static hideHtmlElement(
         args: {
             name: string
         }
@@ -19,7 +22,7 @@ export class Utils {
         }
     }
 
-    public static showFlexElement(
+    public static showHtmlFlexElement(
         args: {
             name: string
         }
@@ -36,7 +39,7 @@ export class Utils {
         });
       }
 
-    public static angleToRadians(angle: number) {
+    public static degreesToRadians(angle: number) {
         return angle * Math.PI / 180;
     }
 
@@ -113,5 +116,24 @@ export class Utils {
         }
     
         return null;
+    }   
+
+    public static distanceBetweenPositions(positionA: GameGeolocationPosition, positionB: GameGeolocationPosition): float {
+        const earthRadius = 6371000
+        const lat1 = positionA.latitude
+        const lon1 = positionA.longitude
+        const lat2 = positionB.latitude
+        const lon2 = positionB.longitude
+
+        const dLat = this.degreesToRadians(lat2 - lat1)
+        const dLon = this.degreesToRadians(lon2 - lon1)
+
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(this.degreesToRadians(lat1)) * Math.cos(this.degreesToRadians(lat2)) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+        const distance = earthRadius * c
+        return Math.round(distance)
     }    
 }

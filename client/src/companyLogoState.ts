@@ -16,7 +16,7 @@ export class CompanyLogoState extends State {
         const diffMilliseconds = Math.abs((new Date().getTime() - this.startDate.getTime()))
         
         if (diffMilliseconds > this.switchMillisecondsTimeout) {
-            Utils.hideElement({name:"companyLogoContainer"})
+            Utils.hideHtmlElement({name:"companyLogoContainer"})
 
             const localeSelectorState = new LocaleSelectorState(
                 "Locale Selector State",
@@ -28,7 +28,7 @@ export class CompanyLogoState extends State {
             this.context.transitionTo(localeSelectorState)
         }
         else if (companyLogoLoaded == true) {
-            Utils.showElement({name: "companyLogoContainer"});
+            Utils.showHtmlElement({name: "companyLogoContainer"});
         }
     }
 

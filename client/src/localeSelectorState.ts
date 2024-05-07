@@ -33,7 +33,7 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
             -0.35,
             -1.23,
             0,
-            Utils.angleToRadians(120),
+            Utils.degreesToRadians(120),
             0,
             true,
             new DecorControls(
@@ -55,7 +55,7 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
             -0.35,
             -1.23,
             0,
-            Utils.angleToRadians(200),
+            Utils.degreesToRadians(200),
             0,
             true,
             new DecorControls(
@@ -70,7 +70,7 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
             )
         )
 
-        Utils.showFlexElement(
+        Utils.showHtmlFlexElement(
             {name: "localeSelectorState"}
         )
     }
@@ -100,7 +100,7 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
             this.context.translator.locale
         )
 
-        Utils.hideElement(
+        Utils.hideHtmlElement(
             {name: "localeSelectorState"}
         )
 

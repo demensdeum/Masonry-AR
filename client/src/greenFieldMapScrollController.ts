@@ -47,7 +47,7 @@ export class GreenFieldMapScrollController implements MapScrollController {
                 )
                 this.sceneController.rotateObjectTo(
                     this.planeName(x, y),
-                    Utils.angleToRadians(90),
+                    Utils.degreesToRadians(90),
                     0,
                     0
                 )

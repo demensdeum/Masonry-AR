@@ -35,7 +35,7 @@ export class YadMapScrollController implements MapScrollController {
                     height: 20.4
                 },
                 rotation: new GameVector3(
-                    Utils.angleToRadians(270),
+                    Utils.degreesToRadians(270),
                     0,
                     0
                 ),

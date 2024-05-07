@@ -31,6 +31,7 @@ import { YadMapScrollController } from "./yadMapScrollController.js"
 import { InGameStateSceneControllerDelegate } from "./inGameStateSceneControllerDelegate.js"
 import { GameplayGuiController } from "./gameplayGuiController.js"
 import { MiniMapController } from "./miniMapController.js"
+import { WalkChallengeController } from "./walkChallengeController.js"
 declare function _t(key: string): string;
 
 export class InGameState extends State implements GeolocationControllerDelegate,
@@ -50,6 +51,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private authorizeController = new AuthorizeController(this)
     private serverInfoController = new ServerInfoController(this)
     private heroStatusController = new HeroStatusController(this)
+    private walkChallengeController = new WalkChallengeController()
     private gameData = new GameData()
     private readonly cameraLockEnabled = false
     private readonly buildingEnabled = true
@@ -66,7 +68,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     initialize(): void {
         debugPrint(this.gameplayGuiController)
-        Utils.showElement({name: "yandexCopyrightGUI"})
+        Utils.showHtmlElement({name: "yandexCopyrightGUI"})
         if (this.dataFetchType == "MOCK") {
             this.geolocationController = new MockGeolocationController(this)
             const mockingEntitiesController = new MockEntitiesController(this)
@@ -103,7 +105,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
         this.context.sceneController.rotateObjectTo(
             Names.Camera,
-            Utils.angleToRadians(-55),
+            Utils.degreesToRadians(-55),
             0,
             0
         )        
@@ -284,6 +286,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: GeolocationController,
         position: GameGeolocationPosition
     ) {
+        if (this.walkChallengeController.isStarted()) {
+            this.walkChallengeController.add(position)
+        }
         this.gameData.playerClientGeolocationPosition = position.clone()
 
         if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
@@ -456,7 +461,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         entity: Entity
     ): void {
         this.inGameStateSceneController.remove([entity])
-        //this.removeEntity(entity)
     }
 
     entitiesControllerDidNotDestroyEntityError(
@@ -485,8 +489,29 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             return
         }
         else if (entity?.type == "walkChallenge") {
-            if (confirm(_t("WALK_CHALLENGE_MESSAGE"))) {
-                this.entitiesController.catch(entity)
+            const geolocationPosition = this.gameData.playerClientGeolocationPosition
+            if (geolocationPosition == null) {
+                alert("NO GEOLOCATION IN WALK CHALLENGE HUH?? CRITICAL ERROOR!!!!")
+                return
+            }
+            if (this.walkChallengeController.isNotStarted()) {
+                if (confirm(_t("WALK_CHALLENGE_MESSAGE"))) {
+                    this.walkChallengeController.start(geolocationPosition)
+                }
+            }
+            else {
+                const distance = this.walkChallengeController.distance()
+                if (distance < 5000) {
+                    const distanceValues = `${distance} / 5000`
+                    if (confirm(_t("WALK_CHALLENGE_COUNTER").replace("DISTANCE_VALUES", distanceValues))) {
+                        this.walkChallengeController.clear()
+                    }
+                }
+                else {
+                    alert(_t("WALK_CHALLENGE_FINISHED"))
+                    this.entitiesController.catch(entity)
+                    this.walkChallengeController.clear()
+                }
             }
         }
         else {

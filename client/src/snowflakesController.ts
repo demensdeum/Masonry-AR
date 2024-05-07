@@ -56,7 +56,7 @@ export class SnowflakesController implements WeatherController {
                             this.position.y = 1 + Utils.randomFloat(7);
                             this.position.z = startZ + Utils.randomInt(55);
                             
-                            const euler = new THREE.Euler(Utils.angleToRadians(90), 0, 0, 'YXZ' );
+                            const euler = new THREE.Euler(Utils.degreesToRadians(90), 0, 0, 'YXZ' );
                             const quaternion = new THREE.Quaternion();
                             quaternion.setFromEuler(euler);
 
