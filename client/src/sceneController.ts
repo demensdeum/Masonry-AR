@@ -903,7 +903,7 @@ export class SceneController implements
 
         const modelLoader = new GLTFLoader();
         const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('three/examples/jsm/libs/draco/');
+        dracoLoader.setDecoderPath('build/three/examples/jsm/libs/draco/');
         modelLoader.setDRACOLoader(dracoLoader);        
         const modelPath = Paths.modelPath(modelName);
 
