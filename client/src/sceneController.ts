@@ -866,28 +866,29 @@ export class SceneController implements
             boxSize, 
             boxSize, 
             boxSize
-        );
+        )
 
         const boxMaterial = new THREE.MeshStandardMaterial({
              color: color,
              map: this.loadingPlaceholderTexture,
              transparent: true,             
              opacity: 0.7
-        });     
+        })
 
         const box = new THREE.Mesh(
             boxGeometry,
             boxMaterial
-        );
-        box.position.x = x;
-        box.position.y = y;
-        box.position.z = z;
+        )
 
-        box.rotation.x = rX;
-        box.rotation.y = rY;
-        box.rotation.z = rZ;
+        box.position.x = x
+        box.position.y = y
+        box.position.z = z
 
-        const sceneController = this;
+        box.rotation.x = rX
+        box.rotation.y = rY
+        box.rotation.z = rZ
+
+        const sceneController = this
 
         const sceneObject = new SceneObject(
             name,
@@ -898,14 +899,14 @@ export class SceneController implements
             isMovable,
             controls,
             new Date().getTime()
-        );
-        sceneController.addSceneObject(sceneObject);
+        )
+        sceneController.addSceneObject(sceneObject)
 
-        const modelLoader = new GLTFLoader();
-        const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('build/three/examples/jsm/libs/draco/');
-        modelLoader.setDRACOLoader(dracoLoader);        
-        const modelPath = Paths.modelPath(modelName);
+        const modelLoader = new GLTFLoader()
+        const dracoLoader = new DRACOLoader()
+        dracoLoader.setDecoderPath('build/three/examples/jsm/libs/draco/')
+        modelLoader.setDRACOLoader(dracoLoader)
+        const modelPath = Paths.modelPath(modelName)
 
         const self = this
 
