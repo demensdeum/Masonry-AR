@@ -493,6 +493,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             return
         }
         else if (entity?.type == "walkChallenge") {
+            this.entitiesController.catch(entity)            
             const geolocationPosition = this.gameData.playerClientGeolocationPosition
             if (geolocationPosition == null) {
                 alert("NO GEOLOCATION IN WALK CHALLENGE HUH?? CRITICAL ERROOR!!!!")
@@ -513,7 +514,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 }
                 else {
                     alert(_t("WALK_CHALLENGE_FINISHED"))
-                    this.entitiesController.catch(entity)
                     this.walkChallengeController.clear()
                 }
             }
