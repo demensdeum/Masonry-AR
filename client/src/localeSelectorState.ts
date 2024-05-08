@@ -2,10 +2,10 @@ import { State } from "./state.js";
 import { DecorControls } from "./decorControls.js";
 import { SceneObjectCommandIdle } from "./sceneObjectCommandIdle.js";
 import { Utils } from "./utils.js";
-import { InGameState } from "./inGameState.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js";
 import { SceneController } from "./sceneController.js";
 import { debugPrint } from "./runtime.js";
+import { MainMenuState } from "./mainMenuState.js";
 declare function _t(key: string): string;
 
 export class LocaleSelectorState extends State implements SceneControllerDelegate {
@@ -104,17 +104,17 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
             {name: "localeSelectorState"}
         )
 
-        const inGameState = new InGameState(
-            "InGameState",
+        this.context.sceneController.removeAllSceneObjectsExceptCamera()
+
+        const mainMenuState = new MainMenuState(
+            "MainMenuState",
             this.context
-          )
-        
-          this.context.sceneController.removeAllSceneObjectsExceptCamera()
+        )
 
         // @ts-ignore
-        document.global_gameplay_inGameState = inGameState;
-        
-        this.context.transitionTo(inGameState)
+        document.global_gameplay_mainMenuState = mainMenuState
+
+        this.context.transitionTo(mainMenuState)
     }
 
     sceneControllerDidPickSceneObjectWithName(_: SceneController, name: string): void {

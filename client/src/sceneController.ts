@@ -35,6 +35,7 @@ import { ObjectsPickerController } from "./objectsPickerController.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 import { AnimationContainer } from "./animationContainer.js"
+import { CSS2DObject, CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer.js"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js"
 import { GameVector3 } from "./gameVector3.js"
@@ -66,7 +67,8 @@ export class SceneController implements
     private scene: THREE.Scene
     private camera: THREE.PerspectiveCamera
     private renderer: THREE.WebGLRenderer
-    private cssRenderer: CSS3DRenderer
+    private css2DRenderer: CSS2DRenderer
+    private css3DRenderer: CSS3DRenderer
     private texturesToLoad: THREE.MeshStandardMaterial[] = [];
 
     private textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
@@ -106,6 +108,8 @@ export class SceneController implements
     private cssObjects: { [key: string]: THREE.Object3D } = {};
 
     private debugControls: OrbitControls
+
+    private renderers: any[] = []
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -164,18 +168,66 @@ export class SceneController implements
         antialias: true,
         alpha: true
     })
-    this.renderer.domElement.style.position = 'absolute'
-    this.renderer.domElement.style.top = "0"
-    this.renderer.domElement.style.zIndex = "1"
-    this.renderer.setSize(this.windowWidth(), this.windowHeight())
 
-    this.cssRenderer = new CSS3DRenderer()
-    this.cssRenderer.domElement.style.position = "absolute"
-    this.cssRenderer.domElement.style.top = "0"
-    document.querySelector("#css-canvas")?.appendChild(this.cssRenderer.domElement)
+    this.renderer.domElement.style.position = 'absolute'
+    this.renderer.domElement.style.top = '0'
+    this.renderer.domElement.style.zIndex = '1'
+
+    this.css2DRenderer = new CSS2DRenderer()
+    this.css2DRenderer.domElement.className = "2d"
+    this.css2DRenderer.domElement.style.position = 'absolute'
+    this.css2DRenderer.domElement.style.top = '0'    
+    this.css2DRenderer.domElement.style.zIndex = '2'
+    document.body.appendChild(this.css2DRenderer.domElement)
+
+    const playButtonDiv = document.createElement('div')
+    playButtonDiv.onclick = () => {
+        Utils.hideHtmlElement({name: "2d"})
+        self.css2DRenderer.domElement.style.display = 'none'
+        self.scene.remove(wikiButtonObject)
+        self.scene.remove(playButtonObject)
+        // @ts-ignore
+        document.global_gameplay_mainMenuState.playButtonDidPress()
+    }
+    playButtonDiv.textContent = "PLAY"
+    playButtonDiv.style.color = "white"
+    playButtonDiv.style.backgroundColor = 'transparent'  
+    playButtonDiv.style.fontSize = "30px"
+    playButtonDiv.style.padding = "22px"    
+
+    const playButtonObject = new CSS2DObject(playButtonDiv)
+    playButtonObject.position.set(-0.3, 0.5, -1 )
+    playButtonObject.center.set(0, 0)
+    this.scene.add(playButtonObject)
+
+    const wikiButtonDiv = document.createElement('div')
+    wikiButtonDiv.onclick = () => {
+        const url = "https://demensdeum.com/masonry-ar-wiki-ru/"
+        window.location.assign(url)
+    }
+    wikiButtonDiv.textContent = "WIKI"
+    wikiButtonDiv.style.color = "white"
+    wikiButtonDiv.style.backgroundColor = 'transparent'  
+    wikiButtonDiv.style.fontSize = "30px"
+    wikiButtonDiv.style.padding = "22px"
     
-      this.renderer.setSize(this.windowWidth(), this.windowHeight())
-        this.cssRenderer.setSize(this.windowWidth(), this.windowHeight())
+    const wikiButtonObject = new CSS2DObject(wikiButtonDiv)
+    wikiButtonObject.position.set(-0.3, 0.35, -1 )
+    wikiButtonObject.center.set(0, 0)
+    this.scene.add(wikiButtonObject)
+
+    this.css3DRenderer = new CSS3DRenderer()
+    this.css3DRenderer.domElement.style.position = "absolute"
+    this.css3DRenderer.domElement.style.top = "0"
+    document.querySelector("#css-canvas")?.appendChild(this.css3DRenderer.domElement)
+    
+    this.renderers.push(this.renderer)
+    this.renderers.push(this.css2DRenderer)
+    this.renderers.push(this.css3DRenderer)
+
+    this.renderers.forEach((renderer)=>{
+        renderer.setSize(this.windowWidth(), this.windowHeight())
+    })
 
       if (this.highQuality) {
         this.renderer.setPixelRatio(window.devicePixelRatio)
@@ -202,7 +254,6 @@ export class SceneController implements
       
       const camera = this.camera
       const renderer = this.renderer
-      const cssRenderer = this.cssRenderer
 
       const self = this
 
@@ -210,8 +261,9 @@ export class SceneController implements
         debugPrint("onWindowResize")
         camera.aspect = self.windowWidth() / self.windowHeight()
         camera.updateProjectionMatrix()
-        renderer.setSize(self.windowWidth(), self.windowHeight())
-        cssRenderer.setSize(self.windowWidth(), self.windowHeight())
+        this.renderers.forEach((renderer) => {
+            renderer.setSize(self.windowWidth(), self.windowHeight())
+        })
       }      
 
       window.addEventListener("resize", onWindowResize, false);
@@ -670,8 +722,9 @@ export class SceneController implements
     }    
 
     private render() {
-        this.renderer.render(this.scene, this.camera)        
-        this.cssRenderer.render(this.scene, this.camera)
+        this.renderers.forEach((renderer) => {
+            renderer.render(this.scene, this.camera)
+        })
         this.debugControls.update()
     }
 
@@ -760,6 +813,7 @@ export class SceneController implements
             this.removeObjectWithName(k)
         });
         
+        this.scene.background = null
         this.currentSkyboxName = null
 
         for (const i in gui.__controllers) {
