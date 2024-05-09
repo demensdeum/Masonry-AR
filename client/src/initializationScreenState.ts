@@ -1,22 +1,39 @@
-import { Context } from "./context.js";
-import { DecorControls } from "./decorControls.js";
-import { SceneObjectCommandIdle } from "./sceneObjectCommandIdle.js";
+import { Context } from "./context.js"
+import { AuthorizeController } from "./authorizeController.js"
+import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js"
+import { ServerInfoController } from "./serverInfoController.js"
+import { ServerInfoControllerDelegate } from "./serverInfoControllerDelegate.js"
+import { DecorControls } from "./decorControls.js"
+import { SceneObjectCommandIdle } from "./sceneObjectCommandIdle.js"
 import { State } from "./state.js"
-import { GeolocationController } from "./geolocationController.js";
-import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js";
-import { GameGeolocationPosition } from "./gameGeolocationPosition.js";
-import { GeolocationControllerInterface } from "./geolocationControllerInterface.js";
+import { GeolocationController } from "./geolocationController.js"
+import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js"
+import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
+import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 import { InGameState } from "./inGameState.js"
+import { ServerInfoEntry } from "./serverInfoEntry.js"
+import { Constants } from "./constants.js"
+import { Utils } from "./utils.js"
+import { MockGeolocationController } from "./mockGeolocationController.js"
+import { debugPrint } from "./runtime.js"
+import { DataFetchType } from "./dataFetchType.js"
 declare function _t(key: string): string;
 
 export class InitializationScreenState implements State,
+                                         ServerInfoControllerDelegate,
+                                         AuthorizeControllerDelegate,
                                          GeolocationControllerDelegate {
     public name: string
     context: Context
 
-    private geolocationController = new GeolocationController(this)
+    private readonly authorizeController = new AuthorizeController(this)
+    private readonly serverInfoController = new ServerInfoController(this)  
+    private readonly geolocationController: GeolocationControllerInterface
+    private readonly dataFetchType: DataFetchType = DataFetchType.DEFAULT
 
     private trackCheckStarted = false
+    private outputPositon?: GameGeolocationPosition
+    private outputHeroUUID = "NONE"
 
     constructor(
         name: string,
@@ -25,6 +42,18 @@ export class InitializationScreenState implements State,
     {
         this.name = name
         this.context = context
+
+        switch (this.dataFetchType) {
+            case DataFetchType.DEFAULT:
+                this.geolocationController = new GeolocationController(this)
+                break
+            case DataFetchType.MOCK:
+                this.geolocationController = new MockGeolocationController(this)
+                break
+            case DataFetchType.MOCK_GEOLOCATION_ONLY:
+                this.geolocationController = new MockGeolocationController(this)
+                break
+        }
     }
 
     initialize(): void {
@@ -66,32 +95,29 @@ export class InitializationScreenState implements State,
         if (window.localStorage.getItem("showedStartInfo") != "YES") {
             window.localStorage.setItem("showedStartInfo", "YES")
             if (confirm(_t("WELCOME"))) {
-                this.geolocationController.trackPosition()
+                this.serverInfoController.fetch()
+                return
             }
             else {
-                const url = this.context.translator.locale == "ru" ? "https://demensdeum.com/masonry-ar-wiki-ru/" : "https://demensdeum.com/masonry-ar-wiki-en/"
-                window.location.assign(url)
+                this.gotoWiki()
+                return
             }
         }
         else if (this.trackCheckStarted != true) {
             this.trackCheckStarted = true
-            this.geolocationController.trackPosition()
+            this.serverInfoController.fetch()
+            return
         }
     }
 
+    private gotoWiki() {
+        const url = this.context.translator.locale == "ru" ? "https://demensdeum.com/masonry-ar-wiki-ru/" : "https://demensdeum.com/masonry-ar-wiki-en/"
+        window.location.assign(url)        
+    }
+
     geolocationControllerDidGetPosition(_: GeolocationControllerInterface, position: GameGeolocationPosition): void {
-        this.context.sceneController.removeAllSceneObjectsExceptCamera()
-
-        const inGameState = new InGameState(
-            "InGameState",
-            this.context,
-            this.geolocationController,
-            position
-        )
-
-        // @ts-ignore
-        document.global_gameplay_inGameState = inGameState
-        this.context.transitionTo(inGameState)        
+        this.outputPositon = position
+        this.authorizeController.authorizeIfNeeded()       
     }
 
     geolocationControllerGeolocationDidReceiveError(_: GeolocationControllerInterface, error: string): void {
@@ -103,5 +129,69 @@ export class InitializationScreenState implements State,
 
     geolocationControllerGeolocationPermissionDenied(_: GeolocationControllerInterface): void {
         alert(_t("GEOLOCATION_ACCESS_DENIED"))
+    }
+
+    serverInfoControllerDidFetchInfo(
+        _: ServerInfoController,
+        entries: ServerInfoEntry[]
+    ) {
+        const minimalClientVersion = entries.filter((a) => { return a.key == "minimal_client_version" })[0]?.value
+
+        if (!minimalClientVersion) {
+            alert("Server info get error, minimal_client_version is null")
+            this.gotoWiki()
+            return
+        }
+        if (parseInt(minimalClientVersion) > Constants.currentClientVersion) {
+            alert(_t(`CLIENT_IS_TOO_OLD: ${Constants.currentClientVersion} / ${minimalClientVersion}`))
+            this.gotoWiki()
+            return
+        }
+
+        this.geolocationController.trackPosition()
+    }
+
+    authorizeControllerDidAuthorize(
+        _: AuthorizeController
+    ) {
+        const heroUUID = Utils.getCookieValue("heroUUID")
+        if (heroUUID) {
+            this.outputHeroUUID = heroUUID
+            debugPrint(this.outputHeroUUID)
+
+            this.context.sceneController.removeAllSceneObjectsExceptCamera()
+    
+            if (this.outputPositon) {
+                const inGameState = new InGameState(
+                    {
+                        name: "InGameState",
+                        context: this.context,
+                        dataFetchType: this.dataFetchType,
+                        heroUUIDEntity: heroUUID,
+                        geolocationController: this.geolocationController,
+                        geolocationPosition: this.outputPositon
+                    }
+                )
+        
+                // @ts-ignore
+                document.global_gameplay_inGameState = inGameState
+                this.context.transitionTo(inGameState)
+                return          
+            }
+            else {
+                return
+            }
+        }
+        else {
+            alert("No heroUUID in cookie!")
+            return
+        }
+    }
+
+    authorizeControllerDidReceiveError(
+        _: AuthorizeController,
+        message: string
+    ) {
+        alert(`AuthorizeController error: ${message}`)
     }
 }

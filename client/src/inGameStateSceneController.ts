@@ -19,14 +19,16 @@ export class InGameStateSceneController {
     private uuidToPair: { [key: string]: InGameStateSceneControllerStateItem} = {}
     private delegate: InGameStateSceneControllerDelegate
 
-    public heroEntityUUID = "NONE"
+    public heroEntityUUID
     private readonly cameraSpeed = 0.000002
     private readonly entitiesSpeed = 0.000002
 
     constructor(
+        heroEntityUUID: string,
         sceneController: SceneController,
         delegate: InGameStateSceneControllerDelegate
     ) {
+        this.heroEntityUUID = heroEntityUUID
         this.sceneController = sceneController
         this.delegate = delegate
     }
@@ -54,6 +56,7 @@ export class InGameStateSceneController {
         debugPrint(`handle entity: ${entities}`)
 
         const heroEntity = entities.find(e => { return e.uuid == this.heroEntityUUID })
+
         if (heroEntity != null) {
             this.delegate.inGameStateControllerDidReceiveName(
                 this,

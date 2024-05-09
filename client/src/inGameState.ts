@@ -1,11 +1,9 @@
 import { State } from "./state.js"
 import { debugPrint, raiseCriticalError } from "./runtime.js"
-import { MockGeolocationController } from "./mockGeolocationController.js"
 import { GeolocationController } from "./geolocationController.js"
 import { GeolocationControllerDelegate } from "./geolocationControllerDelegate.js"
 import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
 import { EntitiesController } from "./entitiesController.js"
-import { MockEntitiesController } from "./mockEntitiesController.js"
 import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"
 import { Entity } from "./entity.js"
 import { DecorControls } from "./decorControls.js"
@@ -15,14 +13,9 @@ import { Utils } from "./utils.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 import { SceneController } from "./sceneController.js"
 import { GameData } from "./gameData.js"
-import { AuthorizeController } from "./authorizeController.js"
-import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js"
 import { HeroStatusControllerDelegate } from "./heroStatusControllerDelegate.js"
 import { HeroStatusController } from "./heroStatusController.js"
 import { BuildingStatusController } from "./buildingStatusController.js"
-import { ServerInfoController } from "./serverInfoController.js"
-import { ServerInfoControllerDelegate } from "./serverInfoControllerDelegate.js"
-import { ServerInfoEntry } from "./serverInfoEntry.js"
 import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
 import { GeolocationControllerInterface } from "./geolocationControllerInterface.js"
 import { InGameStateSceneController } from "./inGameStateSceneController.js"
@@ -33,24 +26,23 @@ import { GameplayGuiController } from "./gameplayGuiController.js"
 import { MiniMapController } from "./miniMapController.js"
 import { WalkChallengeController } from "./walkChallengeController.js"
 import { Context } from "./context.js"
+import { Constants } from "./constants.js"
+import { MockEntitiesController } from "./mockEntitiesController.js"
+import { DataFetchType } from "./dataFetchType.js"
 declare function _t(key: string): string;
 
 export class InGameState extends State implements GeolocationControllerDelegate,
-                                                    ServerInfoControllerDelegate,
-                                                    AuthorizeControllerDelegate,
                                                     EntitiesControllerDelegate,
                                                     SceneControllerDelegate,
                                                     HeroStatusControllerDelegate,
                                                     InGameStateSceneControllerDelegate {
     
     public name: string
-    private mapController = new MiniMapController("map")
+    private mapController: MiniMapController
     private mapScrollController!: MapScrollController
     private buildingStatusController = new BuildingStatusController(this)
     private geolocationController: GeolocationControllerInterface
     private entitiesController!: EntitiesControllerInterface
-    private authorizeController = new AuthorizeController(this)
-    private serverInfoController = new ServerInfoController(this)
     private heroStatusController = new HeroStatusController(this)
     private walkChallengeController = new WalkChallengeController()
     private gameData = new GameData()
@@ -58,50 +50,57 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private readonly buildingEnabled = true
     private readonly orderChangeEnabled = true
     private readonly entitiesTrackingStepTimeout = 3000
-    private static currentClientVersion = 6
-    public static readonly versionDate = `$PREPROCESSOR_CURRENT_DATE (${this.currentClientVersion})`
+    public static readonly versionDate = `$PREPROCESSOR_CURRENT_DATE (${Constants.currentClientVersion})`
     private heroInserted = false
     private ownerNameEnabled = false
     private lastBuildingAnimationObjectUUID = "NONE"
-    private dataFetchType = "DEFAULT"
     private inGameStateSceneController!: InGameStateSceneController
     private gameplayGuiController = new GameplayGuiController(this.gameData)
     private startingGeolocationPosition: GameGeolocationPosition
+    private heroEntityUUID: string
 
     constructor(
-        name: string,
-        context: Context,
-        geolocationController: GeolocationController,
-        geolocationPosition: GameGeolocationPosition
+        args: {
+            name: string,
+            context: Context,
+            dataFetchType: DataFetchType,
+            heroUUIDEntity: string,
+            geolocationController: GeolocationControllerInterface,
+            geolocationPosition: GameGeolocationPosition
+        }
     )
     {
         super(
-            name,
-            context
+            args.name,
+            args.context
         )
-        this.name = name
-        this.context = context
-        geolocationController.reassign({delegate: this})
-        this.geolocationController = geolocationController
-        this.startingGeolocationPosition = geolocationPosition
+        this.name = args.name
+        this.context = args.context
+        this.geolocationController = args.geolocationController
+        if (this.geolocationController instanceof GeolocationController) {
+            this.geolocationController.reassign({delegate: this})
+        }
+        this.geolocationController = args.geolocationController
+        this.startingGeolocationPosition = args.geolocationPosition
+        this.heroEntityUUID = args.heroUUIDEntity
+        this.mapController = new MiniMapController(this.startingGeolocationPosition, "map")
+
+        switch (args.dataFetchType) {
+            case DataFetchType.DEFAULT:
+                this.entitiesController = new EntitiesController(this)
+                break
+            case DataFetchType.MOCK:
+                this.entitiesController = new MockEntitiesController(this)
+                break
+            case DataFetchType.MOCK_GEOLOCATION_ONLY:
+                this.entitiesController = new EntitiesController(this)
+                break
+        }        
     }
 
     initialize(): void {
         debugPrint(this.gameplayGuiController)
         Utils.showHtmlElement({name: "yandexCopyrightGUI"})
-        if (this.dataFetchType == "MOCK") {
-            this.geolocationController = new MockGeolocationController(this)
-            const mockingEntitiesController = new MockEntitiesController(this)
-            mockingEntitiesController.dataSource = this
-            this.entitiesController = mockingEntitiesController
-        }
-        else if (this.dataFetchType == "MOCK-GEOLOCATION") {
-            this.geolocationController = new MockGeolocationController(this)
-            this.entitiesController = new EntitiesController(this)
-        }
-        else if (this.dataFetchType == "DEFAULT") {
-            this.entitiesController = new EntitiesController(this)
-        }
 
         const canvas = this.context.canvas
         if (canvas == null) {
@@ -173,7 +172,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
 
         this.gameData.message = "Authorization"
-        this.serverInfoController.fetch()
 
         if (this.cameraLockEnabled) {
             this.context.sceneController.addText(
@@ -200,6 +198,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         )
 
         this.inGameStateSceneController = new InGameStateSceneController(
+            this.heroEntityUUID,
             this.context.sceneController,
             this
         )
@@ -211,6 +210,8 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.context.sceneController.lockOrbitControls()
 
         this.mapController.initialize()
+        this.entitiesTrackingStep()
+        this.geolocationControllerDidGetPosition(this.geolocationController, this.startingGeolocationPosition)
     }
 
     inGameStateControllerDidMoveCamera(
@@ -320,23 +321,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.inGameStateSceneController.setCurrentPlayerGameGeolocation(position)
     }
 
-    serverInfoControllerDidFetchInfo(
-        _: ServerInfoController,
-        entries: ServerInfoEntry[]
-    ) {
-        const minimalClientVersion = entries.filter((a) => { return a.key == "minimal_client_version" })[0]?.value
-
-        if (!minimalClientVersion) {
-            alert("Server info get error, minimal_client_version is null")
-            return
-        }
-        if (parseInt(minimalClientVersion) > InGameState.currentClientVersion) {
-            alert(`Client is too old: ${InGameState.currentClientVersion} / ${minimalClientVersion}`)
-            return
-        }
-
-        this.authorizeController.authorizeIfNeeded()
-    }
 
     geolocationControllerGeolocationDidReceiveGeolocationOnce(
         _: GeolocationController,
@@ -547,6 +531,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         const position = this.gameData.playerClientGeolocationPosition
         if (position != null) {
             const self = this
+            debugPrint("entitiesTrackingStep => no this.gameData.playerServerGeolocationPosition, waiting")
             setTimeout(()=>{
                 this.gameData.playerServerGeolocationPosition = position
                 self.entitiesController.getEntities(position)
@@ -558,34 +543,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 self.entitiesTrackingStep()
             }, self.entitiesTrackingStepTimeout)
         }
-    }
-
-    authorizeControllerDidAuthorize(
-        _: AuthorizeController
-    ) {
-        const heroUUID = Utils.getCookieValue("heroUUID")
-        if (heroUUID) {
-            this.gameData.heroUUID = heroUUID
-            this.inGameStateSceneController.heroEntityUUID = heroUUID
-            if ((this.geolocationController instanceof GeolocationController) == false) {
-                this.geolocationController.trackPosition()
-            }
-            this.geolocationControllerDidGetPosition(
-                this.geolocationController,
-                this.startingGeolocationPosition
-            )
-            this.entitiesTrackingStep()
-        }
-        else {
-            alert("No heroUUID in cookie!")
-        }
-    }
-
-    authorizeControllerDidReceiveError(
-        _: AuthorizeController,
-        message: string
-    ) {
-        alert(`AuthorizeController error: ${message}`)
     }
 
     entitiesControllerDidBuildEntity(

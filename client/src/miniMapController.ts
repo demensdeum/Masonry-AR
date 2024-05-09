@@ -3,7 +3,7 @@ import { Entity } from "./entity.js"
 import { float } from "./types.js"
 
 export class MiniMapController {
-    private readonly initialZoom: float = 9
+    private readonly startPosition: GameGeolocationPosition
     private readonly cameraZoom: float = 19
     private mapElementName: string
     private map?: any = null
@@ -11,9 +11,11 @@ export class MiniMapController {
     private readonly shouldShowEntities: boolean = false
 
     constructor(
+        startPosition: GameGeolocationPosition,
         mapElementName: string
     )
     {
+        this.startPosition = startPosition
         this.mapElementName = mapElementName
     }
 
@@ -59,8 +61,8 @@ export class MiniMapController {
     private initializeYadMap() {
         // @ts-ignore
         this.map = new ymaps.Map(this.mapElementName, {
-            center: [55.76, 37.64],
-            zoom: this.initialZoom,
+            center: [this.startPosition.latitude, this.startPosition.longitude],
+            zoom: this.cameraZoom,
             controls: []
         },
         {suppressMapOpenBlock: true});        
