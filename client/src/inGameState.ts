@@ -32,6 +32,7 @@ import { InGameStateSceneControllerDelegate } from "./inGameStateSceneController
 import { GameplayGuiController } from "./gameplayGuiController.js"
 import { MiniMapController } from "./miniMapController.js"
 import { WalkChallengeController } from "./walkChallengeController.js"
+import { Context } from "./context.js"
 declare function _t(key: string): string;
 
 export class InGameState extends State implements GeolocationControllerDelegate,
@@ -41,12 +42,12 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                                                     SceneControllerDelegate,
                                                     HeroStatusControllerDelegate,
                                                     InGameStateSceneControllerDelegate {
-    name = "InGameState"
     
+    public name: string
     private mapController = new MiniMapController("map")
     private mapScrollController!: MapScrollController
     private buildingStatusController = new BuildingStatusController(this)
-    private geolocationController!: GeolocationControllerInterface
+    private geolocationController: GeolocationControllerInterface
     private entitiesController!: EntitiesControllerInterface
     private authorizeController = new AuthorizeController(this)
     private serverInfoController = new ServerInfoController(this)
@@ -65,6 +66,25 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     private dataFetchType = "DEFAULT"
     private inGameStateSceneController!: InGameStateSceneController
     private gameplayGuiController = new GameplayGuiController(this.gameData)
+    private startingGeolocationPosition: GameGeolocationPosition
+
+    constructor(
+        name: string,
+        context: Context,
+        geolocationController: GeolocationController,
+        geolocationPosition: GameGeolocationPosition
+    )
+    {
+        super(
+            name,
+            context
+        )
+        this.name = name
+        this.context = context
+        geolocationController.reassign({delegate: this})
+        this.geolocationController = geolocationController
+        this.startingGeolocationPosition = geolocationPosition
+    }
 
     initialize(): void {
         debugPrint(this.gameplayGuiController)
@@ -80,7 +100,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             this.entitiesController = new EntitiesController(this)
         }
         else if (this.dataFetchType == "DEFAULT") {
-            this.geolocationController = new GeolocationController(this)
             this.entitiesController = new EntitiesController(this)
         }
 
@@ -283,7 +302,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     geolocationControllerDidGetPosition(
-        _: GeolocationController,
+        _: GeolocationControllerInterface,
         position: GameGeolocationPosition
     ) {
         if (this.walkChallengeController.isStarted()) {
@@ -548,21 +567,14 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         if (heroUUID) {
             this.gameData.heroUUID = heroUUID
             this.inGameStateSceneController.heroEntityUUID = heroUUID
-            if (window.localStorage.getItem("showedStartInfo") != "YES") {
-                window.localStorage.setItem("showedStartInfo", "YES")
-                if (confirm(_t("WELCOME"))) {
-                    this.geolocationController.trackPosition()
-                    this.entitiesTrackingStep()                    
-                }
-                else {
-                    const url = this.context.translator.locale == "ru" ? "https://demensdeum.com/masonry-ar-wiki-ru/" : "https://demensdeum.com/masonry-ar-wiki-en/"
-                    window.location.assign(url)
-                }
-            }
-            else {
+            if ((this.geolocationController instanceof GeolocationController) == false) {
                 this.geolocationController.trackPosition()
-                this.entitiesTrackingStep()                  
             }
+            this.geolocationControllerDidGetPosition(
+                this.geolocationController,
+                this.startingGeolocationPosition
+            )
+            this.entitiesTrackingStep()
         }
         else {
             alert("No heroUUID in cookie!")

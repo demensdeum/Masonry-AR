@@ -10,6 +10,10 @@ export class GeolocationController implements GeolocationControllerInterface {
         this.delegate = delegate
     }
 
+    public reassign(args: {delegate: GeolocationControllerDelegate}) {
+        this.delegate = args.delegate
+    }
+
     public askOnce() {
         const self = this
         navigator.geolocation.getCurrentPosition((position) => {
