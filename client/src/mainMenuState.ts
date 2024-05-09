@@ -1,7 +1,7 @@
 import { State } from "./state.js"
 import { Utils } from "./utils.js"
 import { Context } from "./context.js"
-import { LegalScreenState } from "./legalScreenState.js"
+import { InitializationScreenState } from "./initializationScreenState.js"
 
 export class MainMenuState implements State {
     public name: string
@@ -40,12 +40,12 @@ export class MainMenuState implements State {
         Utils.hideHtmlElement({name:"2d"})
         this.context.sceneController.removeAllSceneObjectsExceptCamera();
         
-        const legalScreenState = new LegalScreenState(
-            "legalScreenState",
+        const initializationScreenState = new InitializationScreenState(
+            "initializationScreenState",
             this.context
         )
 
-        this.context.transitionTo(legalScreenState)
+        this.context.transitionTo(initializationScreenState)
     }
 
 }

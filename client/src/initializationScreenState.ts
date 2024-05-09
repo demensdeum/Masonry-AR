@@ -9,7 +9,7 @@ import { GeolocationControllerInterface } from "./geolocationControllerInterface
 import { InGameState } from "./inGameState.js"
 declare function _t(key: string): string;
 
-export class LegalScreenState implements State,
+export class InitializationScreenState implements State,
                                          GeolocationControllerDelegate {
     public name: string
     context: Context
