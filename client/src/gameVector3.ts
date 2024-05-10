@@ -5,6 +5,34 @@ export class GameVector3 {
     public y: float
     public z: float
 
+    static zero() {
+        return new GameVector3(
+            0,
+            0,
+            0
+        )
+    }
+
+    static zeroBut(
+        {
+            x = 0, 
+            y = 0, 
+            z = 0
+        }: 
+        {
+            x?: float;
+            y?: float;
+            z?: float
+        }
+    )
+    {
+        return new GameVector3(
+            x,
+            y,
+            z
+        )
+    }
+
     constructor(
         x: float,
         y: float,

@@ -8,7 +8,6 @@ export class CompanyLogoState extends State {
     private startDate = new Date()
 
     initialize(): void {
-        Utils.hideHtmlElement({name: "2d"})
     }
 
     step(): void {

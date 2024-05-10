@@ -24,7 +24,7 @@ body {
 
 canvas {
     -webkit-touch-callout: none;
-    z-index: 0;
+    z-index: 1;
     position: absolute;
     background-color: transparent;
     display: block;
@@ -37,6 +37,7 @@ canvas {
     right: 8em;
     transform: scale(2.2);
     display: none;
+    z-index: 2;
 }
 
 .gameplayGUI {
@@ -57,7 +58,7 @@ canvas {
     color: white;
     text-shadow: 1px 1px 1px black;
     width: 15%;
-    z-index: 2;
+    z-index: 3;
 }
 
 .guiButton {
@@ -91,7 +92,7 @@ canvas {
     width: 100%;
     height: 100%;
     background-color: #222222;
-    z-index: 5;
+    z-index: 4;
 }
 
 .companyLogo {
@@ -115,7 +116,7 @@ canvas {
     opacity: 0.85;
     color: white;
     text-shadow: 1px 1px 1px black;
-    z-index: 3;
+    z-index: 5;
 }
 
 .yandexCopyrightGUI {
@@ -124,5 +125,5 @@ canvas {
     bottom: 0;
     right: 0;
     position: absolute;
-    z-index: 4;
+    z-index: 6;
 }

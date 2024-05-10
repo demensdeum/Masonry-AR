@@ -212,6 +212,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.mapController.initialize()
         this.entitiesTrackingStep()
         this.geolocationControllerDidGetPosition(this.geolocationController, this.startingGeolocationPosition)
+        Utils.moveCssLayerBack()
     }
 
     inGameStateControllerDidMoveCamera(

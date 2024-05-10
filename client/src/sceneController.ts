@@ -35,7 +35,6 @@ import { ObjectsPickerController } from "./objectsPickerController.js"
 import { ObjectsPickerControllerDelegate } from "./objectsPickerControllerDelegate.js"
 import { SceneControllerDelegate } from "./sceneControllerDelegate.js"
 import { AnimationContainer } from "./animationContainer.js"
-import { CSS2DObject, CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer.js"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js"
 import { GameVector3 } from "./gameVector3.js"
@@ -67,7 +66,6 @@ export class SceneController implements
     private scene: THREE.Scene
     private camera: THREE.PerspectiveCamera
     private renderer: THREE.WebGLRenderer
-    private css2DRenderer: CSS2DRenderer
     private css3DRenderer: CSS3DRenderer
     private texturesToLoad: THREE.MeshStandardMaterial[] = [];
 
@@ -105,7 +103,7 @@ export class SceneController implements
     private highQuality: boolean = false
     private shadowsEnabled: boolean = true
 
-    private cssObjects: { [key: string]: THREE.Object3D } = {};
+    private cssObjects3D: { [key: string]: THREE.Object3D } = {};
 
     private debugControls: OrbitControls
 
@@ -171,58 +169,12 @@ export class SceneController implements
 
     this.renderer.domElement.style.position = 'absolute'
     this.renderer.domElement.style.top = '0'
-    this.renderer.domElement.style.zIndex = '1'
-
-    this.css2DRenderer = new CSS2DRenderer()
-    this.css2DRenderer.domElement.className = "2d"
-    this.css2DRenderer.domElement.style.position = 'absolute'
-    this.css2DRenderer.domElement.style.top = '0'    
-    this.css2DRenderer.domElement.style.zIndex = '2'
-    document.body.appendChild(this.css2DRenderer.domElement)
-
-    const playButtonDiv = document.createElement('div')
-    playButtonDiv.onclick = () => {
-        Utils.hideHtmlElement({name: "2d"})
-        self.css2DRenderer.domElement.style.display = 'none'
-        self.scene.remove(wikiButtonObject)
-        self.scene.remove(playButtonObject)
-        // @ts-ignore
-        document.global_gameplay_mainMenuState.playButtonDidPress()
-    }
-    playButtonDiv.textContent = "PLAY"
-    playButtonDiv.style.color = "white"
-    playButtonDiv.style.backgroundColor = 'transparent'  
-    playButtonDiv.style.fontSize = "30px"
-    playButtonDiv.style.padding = "22px"    
-
-    const playButtonObject = new CSS2DObject(playButtonDiv)
-    playButtonObject.position.set(-0.3, 0.5, -1 )
-    playButtonObject.center.set(0, 0)
-    this.scene.add(playButtonObject)
-
-    const wikiButtonDiv = document.createElement('div')
-    wikiButtonDiv.onclick = () => {
-        const url = "https://demensdeum.com/masonry-ar-wiki-ru/"
-        window.location.assign(url)
-    }
-    wikiButtonDiv.textContent = "WIKI"
-    wikiButtonDiv.style.color = "white"
-    wikiButtonDiv.style.backgroundColor = 'transparent'  
-    wikiButtonDiv.style.fontSize = "30px"
-    wikiButtonDiv.style.padding = "22px"
-    
-    const wikiButtonObject = new CSS2DObject(wikiButtonDiv)
-    wikiButtonObject.position.set(-0.3, 0.35, -1 )
-    wikiButtonObject.center.set(0, 0)
-    this.scene.add(wikiButtonObject)
 
     this.css3DRenderer = new CSS3DRenderer()
     this.css3DRenderer.domElement.style.position = "absolute"
-    this.css3DRenderer.domElement.style.top = "0"
     document.querySelector("#css-canvas")?.appendChild(this.css3DRenderer.domElement)
     
     this.renderers.push(this.renderer)
-    this.renderers.push(this.css2DRenderer)
     this.renderers.push(this.css3DRenderer)
 
     this.renderers.forEach((renderer)=>{
@@ -661,6 +613,7 @@ export class SceneController implements
                 width: float,
                 height: float
             }
+            position: GameVector3,
             rotation: GameVector3,
             scale: GameVector3,
             shadows: {
@@ -671,6 +624,10 @@ export class SceneController implements
     )
     {
         const cssObject = new CSS3DObject(args.div)
+
+        cssObject.position.x = args.position.x
+        cssObject.position.y = args.position.y
+        cssObject.position.z = args.position.z
 
         cssObject.scale.x = args.scale.x
         cssObject.scale.y = args.scale.y
@@ -694,7 +651,7 @@ export class SceneController implements
         mesh.castShadow = args.shadows.castShadow
         root.add(mesh)
 
-        this.cssObjects[args.name] = root
+        this.cssObjects3D[args.name] = root
 
         this.scene.add(root)
     }
@@ -822,9 +779,20 @@ export class SceneController implements
         Object.keys(this.objects).map(k => {
             delete this.commands[k]
         })
-        Object.keys(this.cssObjects).map(k => {
-            const object = this.cssObjects[k]
+        debugger
+        Object.keys(this.cssObjects3D).map(k => {
+            const object = this.cssObjects3D[k]
+            var cssObjectsForDeletion: any[] = []
+            object.traverse((child: any) => {
+                if (child.isCSS3DObject) {
+                    cssObjectsForDeletion.push(child)
+                }
+            })
+            cssObjectsForDeletion.forEach((victim) => {
+                object.remove(victim)
+            })
             this.scene.remove(object)
+            delete this.cssObjects3D[k]
             delete this.commands[k]
         })
 
