@@ -14,7 +14,8 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "WANT_TO_DESTROY_BUILDING" : "Do you want to destroy building of ORDER_NAME OWNER_NAME ?",
         "CLIENT_IS_TOO_OLD" : "Client is too old! Clear cache and reload!",
         "PLAY_BUTTON" : "PLAY",
-        "WIKI_BUTTON" : "WIKI"
+        "WIKI_BUTTON" : "WIKI",
+        "GET_GEOLOCATION" : "Getting Geolocation..."
     },
     "ru" : {
         "WELCOME" : "Масоны-ДР - игра в дополненной реальности, потребуется доступ к вашей геолокации.\nИгра использует куки, и всячески следит за вами во славу Великого ложа.\nРазработчик не несет ответственность за последствия игры.\nНажимая ОК вы соглашаетесь с этим.",        
@@ -31,6 +32,7 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "WANT_TO_DESTROY_BUILDING" : "Хотите уничтожить здание масонского ордена ORDER_NAME OWNER_NAME ?",
         "CLIENT_IS_TOO_OLD" : "Клиент слишком старый! Почистите кэш и перезагрузите страницу!",
         "PLAY_BUTTON" : "ИГРАТЬ",
-        "WIKI_BUTTON" : "ВИКИ"        
+        "WIKI_BUTTON" : "ВИКИ",
+        "GET_GEOLOCATION" : "Получение геолокации..."        
     }
 };

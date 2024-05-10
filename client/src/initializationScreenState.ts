@@ -17,6 +17,7 @@ import { Utils } from "./utils.js"
 import { MockGeolocationController } from "./mockGeolocationController.js"
 import { debugPrint } from "./runtime.js"
 import { DataFetchType } from "./dataFetchType.js"
+import { GameVector3 } from "./gameVector3.js"
 declare function _t(key: string): string;
 
 export class InitializationScreenState implements State,
@@ -89,6 +90,39 @@ export class InitializationScreenState implements State,
             "kokeshi",
             "Плоскость.004|Scene"
         )
+
+        const wikiButtonDiv = document.createElement('div')
+        wikiButtonDiv.textContent = _t("GET_GEOLOCATION")
+        wikiButtonDiv.style.color = "white"
+        wikiButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'  
+        wikiButtonDiv.style.fontSize = "30px"
+        wikiButtonDiv.style.padding = "22px"    
+
+        this.context.sceneController.addCssPlaneObject(
+            {
+                name: "wikiButton",
+                div: wikiButtonDiv,
+                planeSize: {
+                    width: 2,
+                    height: 2
+                },
+                position: new GameVector3(
+                        0,
+                        0,
+                        -5
+                ),
+                rotation: GameVector3.zero(),
+                scale: new GameVector3(
+                    0.01,
+                    0.01,
+                    0.01
+                ),
+                shadows: {
+                    receiveShadow: false,
+                    castShadow: false
+                }
+            }
+        )              
     }
 
     step(): void {
