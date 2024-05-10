@@ -2,6 +2,7 @@ import { EntitiesRequestResult } from "./entitiesRequestResult.js";
 import { RequestResultCodes } from "./requestResultCodes.js";
 import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js";
 import { debugPrint } from "./runtime.js";
+import { Constants } from "./constants.js";
 
 export class AuthorizeController {
     private delegate: AuthorizeControllerDelegate
@@ -12,7 +13,7 @@ export class AuthorizeController {
     }
 
     public async authorizeIfNeeded() {
-        const url = `../server/authorize.php`;
+        const url = `${Constants.apiPath}/server/authorize.php`;
         if (this.isAuthorized) {
             debugPrint(`this.constructor.name: no need to authorize! Already authorized!`)
             return

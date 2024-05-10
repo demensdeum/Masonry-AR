@@ -5,6 +5,7 @@ import { EntitiesControllerDelegate } from "./entitiesControllerDelegate.js"
 import { EntitiesRequestResult } from "./entitiesRequestResult.js"
 import { debugPrint } from "./runtime.js"
 import { EntitiesControllerInterface } from "./entitiesControllerInterface.js"
+import { Constants } from "./constants.js"
 
 export class EntitiesController implements EntitiesControllerInterface {
 
@@ -18,7 +19,7 @@ export class EntitiesController implements EntitiesControllerInterface {
     }
 
     public async getEntities(position: GameGeolocationPosition): Promise<void> {
-        const url = `../server/entities.php?latitude=${position.latitude}&longitude=${position.longitude}`;
+        const url = `${Constants.apiPath}/server/entities.php?latitude=${position.latitude}&longitude=${position.longitude}`;
 
         try {
             const response = await fetch(url)
@@ -52,7 +53,7 @@ export class EntitiesController implements EntitiesControllerInterface {
     }
 
     public async build(): Promise<void> {
-        const url = `../server/build.php`;
+        const url = `${Constants.apiPath}/server/build.php`;
 
         try {
             const response = await fetch(url)
@@ -85,7 +86,7 @@ export class EntitiesController implements EntitiesControllerInterface {
     }
 
     public async destroy(entity: Entity): Promise<void> {
-        const url = `../server/destroy.php?uuid=${entity.uuid}`;
+        const url = `${Constants.apiPath}/server/destroy.php?uuid=${entity.uuid}`;
 
         debugPrint(`destroy: ${entity.uuid}`)
 
@@ -120,7 +121,7 @@ export class EntitiesController implements EntitiesControllerInterface {
     }
 
     public async catch(entity: Entity): Promise<void> {
-        const url = `../server/catchEntity.php?uuid=${entity.uuid}`;
+        const url = `${Constants.apiPath}/server/catchEntity.php?uuid=${entity.uuid}`;
 
         debugPrint(`catch: ${entity.uuid}`)
 

@@ -2,6 +2,7 @@ import { HeroStatusControllerDelegate } from "./heroStatusControllerDelegate.js"
 import { debugPrint } from "./runtime.js";
 import { EntitiesRequestResult } from "./entitiesRequestResult.js";
 import { RequestResultCodes } from "./requestResultCodes.js";
+import { Constants } from "./constants.js";
 
 export class HeroStatusController {
 
@@ -16,7 +17,7 @@ export class HeroStatusController {
 
     public async set(order: string) {
 
-        const url = `../server/setOrder.php?order=${order}`
+        const url = `${Constants.apiPath}/server/setOrder.php?order=${order}`
 
         debugPrint(`set order: ${order}`)
 

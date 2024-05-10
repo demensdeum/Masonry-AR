@@ -3,6 +3,7 @@ import { debugPrint } from "./runtime.js";
 import { EntitiesRequestResult } from "./entitiesRequestResult.js";
 import { RequestResultCodes } from "./requestResultCodes.js";
 import { Entity } from "./entity.js";
+import { Constants } from "./constants.js";
 
 export class BuildingStatusController {
 
@@ -17,7 +18,7 @@ export class BuildingStatusController {
 
     public async rename(entity: Entity, name: string) {
 
-        const url = `../server/setBuildingName.php?uuid=${entity.uuid}&name=${name}`
+        const url = `${Constants.apiPath}/server/setBuildingName.php?uuid=${entity.uuid}&name=${name}`
 
         debugPrint(`rename building: ${entity.uuid} to name: ${name}`)
 

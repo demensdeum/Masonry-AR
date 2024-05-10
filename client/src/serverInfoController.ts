@@ -1,5 +1,6 @@
 import { ServerInfoRequestResult } from "./serverInfoRequestResult.js"
 import { ServerInfoControllerDelegate } from "./serverInfoControllerDelegate.js"
+import { Constants } from "./constants.js"
 
 export class ServerInfoController {
 
@@ -13,7 +14,7 @@ export class ServerInfoController {
     }
 
     public async fetch() {
-        const url = `../server/info.php`;
+        const url = `${Constants.apiPath}/server/info.php`;
 
         try {
             const response = await fetch(url)
