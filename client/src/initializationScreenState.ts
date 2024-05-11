@@ -18,6 +18,7 @@ import { MockGeolocationController } from "./mockGeolocationController.js"
 import { debugPrint } from "./runtime.js"
 import { DataFetchType } from "./dataFetchType.js"
 import { GameVector3 } from "./gameVector3.js"
+import { GameUtils } from "./gameUtils.js"
 declare function _t(key: string): string;
 
 export class InitializationScreenState implements State,
@@ -133,7 +134,7 @@ export class InitializationScreenState implements State,
                 return
             }
             else {
-                this.gotoWiki()
+                GameUtils.gotoWiki({locale: this.context.translator.locale})
                 return
             }
         }
@@ -142,11 +143,6 @@ export class InitializationScreenState implements State,
             this.serverInfoController.fetch()
             return
         }
-    }
-
-    private gotoWiki() {
-        const url = this.context.translator.locale == "ru" ? "https://demensdeum.com/masonry-ar-wiki-ru/" : "https://demensdeum.com/masonry-ar-wiki-en/"
-        window.location.assign(url)        
     }
 
     geolocationControllerDidGetPosition(_: GeolocationControllerInterface, position: GameGeolocationPosition): void {
@@ -163,6 +159,7 @@ export class InitializationScreenState implements State,
 
     geolocationControllerGeolocationPermissionDenied(_: GeolocationControllerInterface): void {
         alert(_t("GEOLOCATION_ACCESS_DENIED"))
+        GameUtils.gotoWiki({locale: this.context.translator.locale})
     }
 
     serverInfoControllerDidFetchInfo(
@@ -173,12 +170,12 @@ export class InitializationScreenState implements State,
 
         if (!minimalClientVersion) {
             alert("Server info get error, minimal_client_version is null")
-            this.gotoWiki()
+            GameUtils.gotoWiki({locale: this.context.translator.locale})
             return
         }
         if (parseInt(minimalClientVersion) > Constants.currentClientVersion) {
             alert(_t(`CLIENT_IS_TOO_OLD: ${Constants.currentClientVersion} / ${minimalClientVersion}`))
-            this.gotoWiki()
+            GameUtils.gotoWiki({locale: this.context.translator.locale})
             return
         }
 
@@ -218,6 +215,7 @@ export class InitializationScreenState implements State,
         }
         else {
             alert("No heroUUID in cookie!")
+            GameUtils.gotoWiki({locale:this.context.translator.locale})
             return
         }
     }
@@ -227,5 +225,6 @@ export class InitializationScreenState implements State,
         message: string
     ) {
         alert(`AuthorizeController error: ${message}`)
+        GameUtils.gotoWiki({locale:this.context.translator.locale})
     }
 }

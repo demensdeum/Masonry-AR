@@ -29,6 +29,7 @@ import { Context } from "./context.js"
 import { Constants } from "./constants.js"
 import { MockEntitiesController } from "./mockEntitiesController.js"
 import { DataFetchType } from "./dataFetchType.js"
+import { GameUtils } from "./gameUtils.js"
 declare function _t(key: string): string;
 
 export class InGameState extends State implements GeolocationControllerDelegate,
@@ -331,6 +332,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     geolocationControllerGeolocationPermissionDenied(_: GeolocationControllerInterface) {
         alert(_t("GEOLOCATION_ACCESS_DENIED"))
+        GameUtils.gotoWiki({locale: this.context.translator.locale})
     }
 
     geolocationControllerGeolocationDidReceiveError(

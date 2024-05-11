@@ -3,10 +3,11 @@ import { RequestResultCodes } from "./requestResultCodes.js";
 import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js";
 import { debugPrint } from "./runtime.js";
 import { Constants } from "./constants.js";
+import { AuthorizeControllerState } from "./authorizeControllerState.js";
 
 export class AuthorizeController {
     private delegate: AuthorizeControllerDelegate
-    private isAuthorized = false
+    private state: AuthorizeControllerState = AuthorizeControllerState.Idle
 
     constructor(delegate: AuthorizeControllerDelegate) {
         this.delegate = delegate
@@ -14,15 +15,18 @@ export class AuthorizeController {
 
     public async authorizeIfNeeded() {
         const url = `${Constants.apiPath}/server/authorize.php`;
-        if (this.isAuthorized) {
-            debugPrint(`this.constructor.name: no need to authorize! Already authorized!`)
+        if (this.state != AuthorizeControllerState.Idle) {
+            debugPrint(`Can't run authorize! Because state is: ${this.state}`)
             return
         }
+
+        this.state = AuthorizeControllerState.Authorizing
 
         try {
             const response = await fetch(url)
 
             if (!response.ok) {
+                this.state = AuthorizeControllerState.Error
                 throw new Error(`Error: ${response.status} - ${response.statusText}`)
             }
 
@@ -31,12 +35,13 @@ export class AuthorizeController {
             const result = EntitiesRequestResult.fromJson(jsonData)
 
             if (result.code == RequestResultCodes.Success) {
-                this.isAuthorized = true
+                this.state = AuthorizeControllerState.Authorized
                 this.delegate.authorizeControllerDidAuthorize(
                     this
                 )
             }
             else {
+                this.state = AuthorizeControllerState.Error
                 this.delegate.authorizeControllerDidReceiveError(
                     this,
                     result.message
@@ -44,6 +49,7 @@ export class AuthorizeController {
             }
 
         } catch (error) {
+            this.state = AuthorizeControllerState.Error
             console.error("Error authorizing:", error);
         }
     }
