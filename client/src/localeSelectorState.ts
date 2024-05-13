@@ -6,6 +6,7 @@ import { SceneControllerDelegate } from "./sceneControllerDelegate.js";
 import { SceneController } from "./sceneController.js";
 import { debugPrint } from "./runtime.js";
 import { MainMenuState } from "./mainMenuState.js";
+import { GameVector3 } from "./gameVector3.js";
 declare function _t(key: string): string;
 
 export class LocaleSelectorState extends State implements SceneControllerDelegate {
@@ -70,9 +71,75 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
             )
         )
 
-        Utils.showHtmlFlexElement(
-            {name: "localeSelectorState"}
+        const russianButtonDiv = document.createElement('div')
+        russianButtonDiv.textContent = "Русский"
+        russianButtonDiv.style.color = "white"
+        russianButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'  
+        russianButtonDiv.style.fontSize = "30px"
+        russianButtonDiv.style.padding = "22px"    
+        russianButtonDiv.onclick = () => { this.didSelectRussian() }
+
+        this.context.sceneController.addCssPlaneObject(
+            {
+                name: "russianButton",
+                div: russianButtonDiv,
+                planeSize: {
+                    width: 2,
+                    height: 2
+                },
+                position: new GameVector3(
+                        -0.8,
+                        -2.35,
+                        -5
+                ),
+                rotation: GameVector3.zero(),
+                scale: new GameVector3(
+                    0.01,
+                    0.01,
+                    0.01
+                ),
+                shadows: {
+                    receiveShadow: false,
+                    castShadow: false
+                }
+            }
+        )  
+        
+        const englishButtonDiv = document.createElement('div')
+        englishButtonDiv.textContent = "English"
+        englishButtonDiv.style.color = "white"
+        englishButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'  
+        englishButtonDiv.style.fontSize = "30px"
+        englishButtonDiv.style.padding = "22px"    
+        englishButtonDiv.onclick = () => { this.didSelectEnglish() }
+
+        this.context.sceneController.addCssPlaneObject(
+            {
+                name: "russianButton",
+                div: englishButtonDiv,
+                planeSize: {
+                    width: 2,
+                    height: 2
+                },
+                position: new GameVector3(
+                        1.2,
+                        -2.35,
+                        -5
+                ),
+                rotation: GameVector3.zero(),
+                scale: new GameVector3(
+                    0.01,
+                    0.01,
+                    0.01
+                ),
+                shadows: {
+                    receiveShadow: false,
+                    castShadow: false
+                }
+            }
         )
+
+        Utils.moveCssLayerFront()
     }
 
     public didSelectRussian() {
@@ -98,10 +165,6 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
         window.localStorage.setItem(
             "savedLocalization", 
             this.context.translator.locale
-        )
-
-        Utils.hideHtmlElement(
-            {name: "localeSelectorState"}
         )
 
         this.context.sceneController.removeAllSceneObjectsExceptCamera()
