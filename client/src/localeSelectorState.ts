@@ -115,7 +115,7 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
 
         this.context.sceneController.addCssPlaneObject(
             {
-                name: "russianButton",
+                name: "englishButton",
                 div: englishButtonDiv,
                 planeSize: {
                     width: 2,

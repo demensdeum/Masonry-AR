@@ -651,6 +651,10 @@ export class SceneController implements
         mesh.castShadow = args.shadows.castShadow
         root.add(mesh)
 
+        if (args.name in this.cssObjects3D) {
+            raiseCriticalError(`Duplicate cssObjects3D name ${args.name}!`)
+            debugger
+        }
         this.cssObjects3D[args.name] = root
 
         this.scene.add(root)
@@ -779,7 +783,6 @@ export class SceneController implements
         Object.keys(this.objects).map(k => {
             delete this.commands[k]
         })
-        debugger
         Object.keys(this.cssObjects3D).map(k => {
             const object = this.cssObjects3D[k]
             var cssObjectsForDeletion: any[] = []
