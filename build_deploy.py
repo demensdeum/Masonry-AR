@@ -32,6 +32,10 @@ if docker_image_flag_file.exists():
     shutil.copytree('server/src', '/var/www/html/Masonry-AR/server/', dirs_exist_ok=True)    
 else:
     print("Not official docker image, deploying...")
-    shutil.rmtree('/srv/http/Masonry-AR')
-    shutil.copytree('client', '/srv/http/Masonry-AR/client', dirs_exist_ok=True)
+    try:
+        shutil.rmtree('/srv/http/Masonry-AR')
+    except:
+        pass
+    shutil.copytree('client', '/srv/http/Masonry-AR/client/0', dirs_exist_ok=True)
+    shutil.copyfile('client/tools/cacheBuster/index.php', '/srv/http/Masonry-AR/client/index.php')
     shutil.copytree('server/src', '/srv/http/Masonry-AR/server/', dirs_exist_ok=True)
