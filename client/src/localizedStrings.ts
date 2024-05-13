@@ -33,6 +33,6 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "CLIENT_IS_TOO_OLD" : "Клиент слишком старый! Почистите кэш и перезагрузите страницу!",
         "PLAY_BUTTON" : "ИГРАТЬ",
         "WIKI_BUTTON" : "ВИКИ",
-        "GET_GEOLOCATION" : "Получение геолокации..."        
+        "GET_GEOLOCATION" : "Получение геолокации..."      
     }
 };

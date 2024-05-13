@@ -710,6 +710,8 @@ export class SceneController implements
 
         Utils.moveCssLayerFront()
 
+        const alertName = `alertWindow-${Utils.generateUUID()}`
+
         const wikiButtonDiv = document.createElement('div')
         wikiButtonDiv.style.color = "white"
         wikiButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
@@ -731,8 +733,13 @@ export class SceneController implements
         okButton.style.border = "none"
         okButton.style.cursor = "pointer"
         
+        const closeWindow = () => {
+            this.removeCssObjectWithName(alertName)
+        }
+
         // Add event listener to the OK button
         okButton.addEventListener('click', function() {
+            closeWindow()
             args.okCallback()
         })
         
@@ -743,7 +750,7 @@ export class SceneController implements
 
         this.addCssPlaneObject(
             {
-                name: `alertWindow-${Utils.generateUUID()}`,
+                name: alertName,
                 div: wikiButtonDiv,
                 planeSize: {
                     width: 2,
@@ -769,6 +776,97 @@ export class SceneController implements
 
         debugPrint(args.text)
         debugPrint(args.okCallback)
+    }
+
+    public removeCssObjectWithName(name: string) {
+        const object = this.cssObjects3D[name]
+        this.scene.remove(object)
+        var cssObjectsForDeletion: any[] = []
+        object.traverse((child: any) => {
+            if (child.isCSS3DObject) {
+                cssObjectsForDeletion.push(child)
+            }
+        })
+        cssObjectsForDeletion.forEach((victim) => {
+            object.remove(victim)
+        })            
+        delete this.cssObjects3D[name]        
+    }
+
+    public confirm(args: { text: string, okCallback: () => void, cancelCallback: () => void }) {
+
+        Utils.moveCssLayerFront()
+    
+        const confirmWindowName = `confirmWindow-${Utils.generateUUID()}`
+
+        const closeWindow = () => {
+            this.removeCssObjectWithName(confirmWindowName)
+        }
+
+        const wikiButtonDiv = document.createElement('div')
+        wikiButtonDiv.style.color = "white"
+        wikiButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
+        wikiButtonDiv.style.fontSize = "30px"
+        wikiButtonDiv.style.padding = "22px"
+        wikiButtonDiv.style.textAlign = "center"
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = args.text
+        textSpan.style.display = "block"
+        
+        const okButton = document.createElement('button')
+        okButton.textContent = 'OK'
+        okButton.style.color = "white"
+        okButton.style.backgroundColor = 'green'
+        okButton.style.fontSize = "20px"
+        okButton.style.padding = "12px"
+        okButton.style.marginTop = "10px"
+        okButton.style.border = "none"
+        okButton.style.cursor = "pointer"
+        
+        okButton.addEventListener('click', function() {
+            closeWindow()
+            args.okCallback();
+        });
+    
+        const cancelButton = document.createElement('button')
+        cancelButton.textContent = '❌❌❌'
+        cancelButton.style.color = "white"
+        cancelButton.style.backgroundColor = 'red'
+        cancelButton.style.fontSize = "20px"
+        cancelButton.style.padding = "16px"
+        cancelButton.style.marginTop = "10px"
+        cancelButton.style.border = "none"
+        cancelButton.style.cursor = "pointer"
+    
+        cancelButton.addEventListener('click', function() {
+            closeWindow()
+            args.cancelCallback();
+        });
+        
+        wikiButtonDiv.appendChild(textSpan)
+        wikiButtonDiv.appendChild(okButton)
+        wikiButtonDiv.appendChild(cancelButton)
+
+        this.addCssPlaneObject({
+            name: confirmWindowName,
+            div: wikiButtonDiv,
+            planeSize: {
+                width: 2,
+                height: 2
+            },
+            position: new GameVector3(0, 0, -5),
+            rotation: GameVector3.zero(),
+            scale: new GameVector3(0.01, 0.01, 0.01),
+            shadows: {
+                receiveShadow: false,
+                castShadow: false
+            }
+        });
+    
+        debugPrint(args.text);
+        debugPrint(args.okCallback);
+        debugPrint(args.cancelCallback);
     }
 
     public serializedSceneObjects(): any {
@@ -849,18 +947,7 @@ export class SceneController implements
             delete this.commands[k]
         })
         Object.keys(this.cssObjects3D).map(k => {
-            const object = this.cssObjects3D[k]
-            var cssObjectsForDeletion: any[] = []
-            object.traverse((child: any) => {
-                if (child.isCSS3DObject) {
-                    cssObjectsForDeletion.push(child)
-                }
-            })
-            cssObjectsForDeletion.forEach((victim) => {
-                object.remove(victim)
-            })
-            this.scene.remove(object)
-            delete this.cssObjects3D[k]
+            this.removeCssObjectWithName(k)
             delete this.commands[k]
         })
 

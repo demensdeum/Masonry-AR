@@ -20,6 +20,7 @@ import { DataFetchType } from "./dataFetchType.js"
 import { GameVector3 } from "./gameVector3.js"
 import { GameUtils } from "./gameUtils.js"
 declare function _t(key: string): string;
+declare function _alert(args: {text: string, okCallback: ()=>void}): void;
 
 export class InitializationScreenState implements State,
                                          ServerInfoControllerDelegate,
@@ -36,6 +37,7 @@ export class InitializationScreenState implements State,
     private trackCheckStarted = false
     private outputPositon?: GameGeolocationPosition
     private outputHeroUUID = "NONE"
+    private confirmationWindowShowed = false
 
     constructor(
         name: string,
@@ -91,18 +93,24 @@ export class InitializationScreenState implements State,
             "kokeshi",
             "Плоскость.004|Scene"
         )
+    }
 
-        const wikiButtonDiv = document.createElement('div')
-        wikiButtonDiv.textContent = _t("GET_GEOLOCATION")
-        wikiButtonDiv.style.color = "white"
-        wikiButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'  
-        wikiButtonDiv.style.fontSize = "30px"
-        wikiButtonDiv.style.padding = "22px"    
+    private hideGeolocationPreloader() {
+        this.context.sceneController.removeCssObjectWithName("geolocationLoadingDiv")
+    }
+
+    private showGeolocationPreloader() {
+        const geolocationLoadingDiv = document.createElement('div')
+        geolocationLoadingDiv.textContent = _t("GET_GEOLOCATION")
+        geolocationLoadingDiv.style.color = "white"
+        geolocationLoadingDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'  
+        geolocationLoadingDiv.style.fontSize = "30px"
+        geolocationLoadingDiv.style.padding = "22px"    
 
         this.context.sceneController.addCssPlaneObject(
             {
-                name: "wikiButton",
-                div: wikiButtonDiv,
+                name: "geolocationLoadingDiv",
+                div: geolocationLoadingDiv,
                 planeSize: {
                     width: 2,
                     height: 2
@@ -127,18 +135,25 @@ export class InitializationScreenState implements State,
     }
 
     step(): void {
-        if (window.localStorage.getItem("showedStartInfo") != "YES") {
-            window.localStorage.setItem("showedStartInfo", "YES")
-            if (confirm(_t("WELCOME"))) {
-                this.serverInfoController.fetch()
-                return
-            }
-            else {
-                GameUtils.gotoWiki({locale: this.context.translator.locale})
-                return
-            }
+        if (
+            window.localStorage.getItem("gameRulesAccepted") != "YES" &&
+            this.confirmationWindowShowed != true
+        ) {
+            this.confirmationWindowShowed = true
+            this.context.sceneController.confirm({
+                text: _t("WELCOME"),
+                okCallback: () => {
+                    window.localStorage.setItem("gameRulesAccepted", "YES")
+                },
+                cancelCallback: () => {
+                    GameUtils.gotoWiki({locale: this.context.translator.locale})
+                }
+            })
         }
-        else if (this.trackCheckStarted != true) {
+        else if (
+            window.localStorage.getItem("gameRulesAccepted") == "YES" &&
+            this.trackCheckStarted != true
+        ) {
             this.trackCheckStarted = true
             this.serverInfoController.fetch()
             return
@@ -158,7 +173,8 @@ export class InitializationScreenState implements State,
     }
 
     geolocationControllerGeolocationPermissionDenied(_: GeolocationControllerInterface): void {
-        this.context.sceneController.alert({
+        this.hideGeolocationPreloader()
+        _alert({
                 text:_t("GEOLOCATION_ACCESS_DENIED"),
                 okCallback: ()=>{
                     GameUtils.gotoWiki({locale: this.context.translator.locale})
@@ -183,6 +199,7 @@ export class InitializationScreenState implements State,
             return
         }
 
+        this.showGeolocationPreloader()        
         this.geolocationController.trackPosition()
     }
 
@@ -215,6 +232,7 @@ export class InitializationScreenState implements State,
                 }
                 if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
                     window.localStorage.setItem("gameplayStartInfo", "YES")
+                    this.hideGeolocationPreloader()
                     this.context.sceneController.alert({
                         text: _t("LOCATION_GOT_WELCOME_MESSAGE"),
                         okCallback: gotoInGameState
