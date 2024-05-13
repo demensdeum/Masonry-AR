@@ -19,8 +19,8 @@ import { debugPrint, raiseCriticalError } from "./runtime.js"
 import { DataFetchType } from "./dataFetchType.js"
 import { GameVector3 } from "./gameVector3.js"
 import { GameUtils } from "./gameUtils.js"
-declare function _t(key: string): string;
-declare function _alert(args: {text: string, okCallback: ()=>void}): void;
+declare function _t(key: string): string
+declare function _alert(args: {text: string, okCallback: ()=>void}): void
 
 export class InitializationScreenState implements State,
                                          ServerInfoControllerDelegate,

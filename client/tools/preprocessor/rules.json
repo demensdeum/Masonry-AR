@@ -2,6 +2,8 @@
     ".half()": " * 0.5",
     "_t": "this.context.translator.translatedStringForKey",
     "_alert": "this.context.sceneController.alert",
+    "_confirm": "this.context.sceneController.confirm",
     "declare function this.context.translator.translatedStringForKey": "declare function _t",
-    "declare function this.context.sceneController.alert": "declare function _alert"
+    "declare function this.context.sceneController.alert": "declare function _alert",
+    "declare function this.context.sceneController.confirm": "declare function _confirm"
 }

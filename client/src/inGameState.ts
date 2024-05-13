@@ -30,7 +30,9 @@ import { Constants } from "./constants.js"
 import { MockEntitiesController } from "./mockEntitiesController.js"
 import { DataFetchType } from "./dataFetchType.js"
 import { GameUtils } from "./gameUtils.js"
-declare function _t(key: string): string;
+declare function _t(key: string): string
+declare function _alert(args: {text: string, okCallback: ()=>void}): void
+declare function _confirm(args: {text: string, okCallback: ()=>void, cancelCallback: ()=>void}): void
 
 export class InGameState extends State implements GeolocationControllerDelegate,
                                                     EntitiesControllerDelegate,
@@ -230,15 +232,24 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     private build() {
         if (this.gameData.isLocationResolvedOnce() == false) {
-            alert(_t("CANT_BUILD_NO_CLIENT_COORDINATES"))
+            _alert({
+                text:_t("CANT_BUILD_NO_CLIENT_COORDINATES"),
+                okCallback: ()=>{}
+            })
             return
         }
         if (this.gameData.geolocationPositionIsInSync() == false) {
-            alert("Для постройки зданий сначала нужно остановиться и подождать (координаты на сервере и на клиенте разные)")
+            _alert({
+                text: "Для постройки зданий сначала нужно остановиться и подождать (координаты на сервере и на клиенте разные)",
+                okCallback: ()=>{}
+            })
             return
         }
         if (this.gameData.order == "NONE") {
-            alert("Для постройки здания задайте название своему ордену!")
+            _alert({
+                text: "Для постройки здания задайте название своему ордену!",
+                okCallback: ()=>{}
+            })
             return
         }
         this.showBuildingAnimation()
@@ -253,7 +264,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                 this.heroStatusController.set(order)
             }
             else {
-                alert("Название ордена должно быть не менее 4 символов")
+                _alert({
+                    text: "Название ордена должно быть не менее 4 символов",
+                    okCallback: ()=>{}
+                })
             }
         }
     }
@@ -326,15 +340,20 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     }
 
     geolocationControllerGeolocationPermissionDenied(_: GeolocationControllerInterface) {
-        alert(_t("GEOLOCATION_ACCESS_DENIED"))
-        GameUtils.gotoWiki({locale: this.context.translator.locale})
+        _alert({
+            text: _t("GEOLOCATION_ACCESS_DENIED"),
+            okCallback:()=>{GameUtils.gotoWiki({locale: this.context.translator.locale})}
+        })
     }
 
     geolocationControllerGeolocationDidReceiveError(
         _: GeolocationController, 
         error: string
     ) {
-        alert(error)
+        _alert({
+            text: error,
+            okCallback: ()=>{}
+        })
     }
 
     inGameStateControllerDidReceiveName(
@@ -430,13 +449,22 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     askIfWantToRemoveBuilding(entity: Entity) {
         const ownerName = this.ownerNameEnabled ? ` - построено ${entity.ownerName}` : ""
         if (this.gameData.order == entity.order) {
-            if (confirm(_t("OWN_BUILDING_MESSAGE").replace("BUILDING_NAME", entity.name).replace("ORDER_NAME", entity.order))) {
-                this.renameBuilding(entity)
-            }
+            _confirm({
+                text: _t("OWN_BUILDING_MESSAGE").replace("BUILDING_NAME", entity.name).replace("ORDER_NAME", entity.order),
+                okCallback: ()=>{
+                    this.renameBuilding(entity)                 
+                },
+                cancelCallback: ()=>{}
+            })
             return
         }
-        else if (confirm(_t("WANT_TO_DESTROY_BUILDING").replace("ORDER_NAME", entity.order).replace("OWNER_NAME", ownerName))) {
-            this.entitiesController.destroy(entity)
+        else {
+            _confirm({
+                text: _t("WANT_TO_DESTROY_BUILDING").replace("ORDER_NAME", entity.order).replace("OWNER_NAME", ownerName),
+                okCallback: ()=>{this.entitiesController.destroy(entity)},
+                cancelCallback: ()=>{}
+            })
+            
             return
         }
     }
@@ -452,12 +480,19 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         message: string
     ): void {
         if (message == "TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR") {
-            alert(_t("TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR"))
-            const url = this.context.translator.locale == "ru" ? "https://demensdeum.com/masonry-ar-wiki-ru/" : "https://demensdeum.com/masonry-ar-wiki-en/"
-            window.location.assign(url)
+            _alert({
+                text: _t("TOO_EARLY_FOR_ENTITIES_TIMEOUT_REQUEST_ERROR"),
+                okCallback: ()=>{
+                    const url = this.context.translator.locale == "ru" ? "https://demensdeum.com/masonry-ar-wiki-ru/" : "https://demensdeum.com/masonry-ar-wiki-en/"
+                    window.location.assign(url)        
+                }
+            })
         }
         else {
-            alert(_t(message))
+            _alert({
+                text: _t(message),
+                okCallback: ()=>{}
+            })
         }
     }
 
@@ -473,7 +508,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         __: Entity, 
         message: string
     ): void {
-        alert(_t(message));
+        _alert({
+            text:_t(message),
+            okCallback: ()=>{}
+        })
     }
 
     sceneControllerDidPickSceneObjectWithName(
@@ -497,25 +535,34 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             this.entitiesController.catch(entity)            
             const geolocationPosition = this.gameData.playerClientGeolocationPosition
             if (geolocationPosition == null) {
-                alert("NO GEOLOCATION IN WALK CHALLENGE HUH?? CRITICAL ERROOR!!!!")
+                _alert({
+                    text: "NO GEOLOCATION IN WALK CHALLENGE HUH?? CRITICAL ERROOR!!!!",
+                    okCallback: ()=>{}
+                })
                 return
             }
             if (this.walkChallengeController.isNotStarted()) {
-                if (confirm(_t("WALK_CHALLENGE_MESSAGE"))) {
-                    this.walkChallengeController.start(geolocationPosition)
-                }
+                _confirm({
+                    text: _t("WALK_CHALLENGE_MESSAGE"),
+                    okCallback: ()=>{this.walkChallengeController.start(geolocationPosition)},
+                    cancelCallback: ()=>{}
+                })
             }
             else {
                 const distance = this.walkChallengeController.distance()
                 if (distance < 5000) {
                     const distanceValues = `${distance} / 5000`
-                    if (confirm(_t("WALK_CHALLENGE_COUNTER").replace("DISTANCE_VALUES", distanceValues))) {
-                        this.walkChallengeController.clear()
-                    }
+                    _confirm({
+                        text: _t("WALK_CHALLENGE_COUNTER").replace("DISTANCE_VALUES", distanceValues),
+                        okCallback: ()=>{this.walkChallengeController.clear()},
+                        cancelCallback: ()=>{}
+                    })
                 }
                 else {
-                    alert(_t("WALK_CHALLENGE_FINISHED"))
-                    this.walkChallengeController.clear()
+                    _alert({
+                        text: _t("WALK_CHALLENGE_FINISHED"),
+                        okCallback: ()=>{this.walkChallengeController.clear()}
+                    })
                 }
             }
         }
@@ -554,8 +601,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: EntitiesController,
         message: string
     ): void {
-        
-        alert(message.replace("BUILD_ERROR_NOT_ENOUGH_MONEY", _t("BUILD_ERROR_NOT_ENOUGH_MONEY")))
+        _alert({
+            text: message.replace("BUILD_ERROR_NOT_ENOUGH_MONEY", _t("BUILD_ERROR_NOT_ENOUGH_MONEY")),
+            okCallback: ()=>{}
+        })
     }
 
     heroStatusControllerDidChange(
@@ -569,7 +618,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: HeroStatusController,
         error: string
     ): void {
-        alert(error)
+        _alert({
+            text: error,
+            okCallback: ()=>{}
+        })
     }
 
     buildingStatusControllerDidRename(
@@ -584,6 +636,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         _: BuildingStatusController, 
         string: string
     ) {
-        alert(_t(string))
+        _alert({
+            text: _t(string),
+            okCallback: ()=>{}
+        })
     }
 }
