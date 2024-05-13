@@ -706,6 +706,71 @@ export class SceneController implements
         this.objectsPickerController.addSceneObject(sceneObject)
     }
 
+    public alert(args: {text: string, okCallback: ()=>void}) {
+
+        Utils.moveCssLayerFront()
+
+        const wikiButtonDiv = document.createElement('div')
+        wikiButtonDiv.style.color = "white"
+        wikiButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
+        wikiButtonDiv.style.fontSize = "30px"
+        wikiButtonDiv.style.padding = "22px"
+        wikiButtonDiv.style.textAlign = "center"
+        
+        const textSpan = document.createElement('span')
+        textSpan.textContent = args.text
+        textSpan.style.display = "block"
+        
+        const okButton = document.createElement('button')
+        okButton.textContent = 'OK'
+        okButton.style.color = "white"
+        okButton.style.backgroundColor = 'green'
+        okButton.style.fontSize = "20px"
+        okButton.style.padding = "12px"
+        okButton.style.marginTop = "10px"
+        okButton.style.border = "none"
+        okButton.style.cursor = "pointer"
+        
+        // Add event listener to the OK button
+        okButton.addEventListener('click', function() {
+            args.okCallback()
+        })
+        
+        wikiButtonDiv.appendChild(textSpan)
+        wikiButtonDiv.appendChild(okButton)
+        
+        wikiButtonDiv.appendChild(okButton)
+
+        this.addCssPlaneObject(
+            {
+                name: `alertWindow-${Utils.generateUUID()}`,
+                div: wikiButtonDiv,
+                planeSize: {
+                    width: 2,
+                    height: 2
+                },
+                position: new GameVector3(
+                        0,
+                        0,
+                        -5
+                ),
+                rotation: GameVector3.zero(),
+                scale: new GameVector3(
+                    0.01,
+                    0.01,
+                    0.01
+                ),
+                shadows: {
+                    receiveShadow: false,
+                    castShadow: false
+                }
+            }
+        )   
+
+        debugPrint(args.text)
+        debugPrint(args.okCallback)
+    }
+
     public serializedSceneObjects(): any {
         const keys = Object.keys(this.objects);
         const output = keys.map(key => ({ [key]: this.objects[key].serialize() }));

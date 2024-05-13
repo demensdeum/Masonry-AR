@@ -15,7 +15,7 @@ import { ServerInfoEntry } from "./serverInfoEntry.js"
 import { Constants } from "./constants.js"
 import { Utils } from "./utils.js"
 import { MockGeolocationController } from "./mockGeolocationController.js"
-import { debugPrint } from "./runtime.js"
+import { debugPrint, raiseCriticalError } from "./runtime.js"
 import { DataFetchType } from "./dataFetchType.js"
 import { GameVector3 } from "./gameVector3.js"
 import { GameUtils } from "./gameUtils.js"
@@ -158,8 +158,12 @@ export class InitializationScreenState implements State,
     }
 
     geolocationControllerGeolocationPermissionDenied(_: GeolocationControllerInterface): void {
-        alert(_t("GEOLOCATION_ACCESS_DENIED"))
-        GameUtils.gotoWiki({locale: this.context.translator.locale})
+        this.context.sceneController.alert({
+                text:_t("GEOLOCATION_ACCESS_DENIED"),
+                okCallback: ()=>{
+                    GameUtils.gotoWiki({locale: this.context.translator.locale})
+                }
+            })
     }
 
     serverInfoControllerDidFetchInfo(
@@ -189,27 +193,40 @@ export class InitializationScreenState implements State,
         if (heroUUID) {
             this.outputHeroUUID = heroUUID
             debugPrint(this.outputHeroUUID)
-
-            this.context.sceneController.removeAllSceneObjectsExceptCamera()
-    
             if (this.outputPositon) {
-                const inGameState = new InGameState(
+                const position = this.outputPositon
+                const gotoInGameState = () => {
+                    this.context.sceneController.removeAllSceneObjectsExceptCamera()                    
+                    const inGameState = new InGameState(
                     {
                         name: "InGameState",
                         context: this.context,
                         dataFetchType: this.dataFetchType,
                         heroUUIDEntity: heroUUID,
                         geolocationController: this.geolocationController,
-                        geolocationPosition: this.outputPositon
+                        geolocationPosition: position
                     }
                 )
         
                 // @ts-ignore
                 document.global_gameplay_inGameState = inGameState
                 this.context.transitionTo(inGameState)
-                return          
+                return                        
+                }
+                if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
+                    window.localStorage.setItem("gameplayStartInfo", "YES")
+                    this.context.sceneController.alert({
+                        text: _t("LOCATION_GOT_WELCOME_MESSAGE"),
+                        okCallback: gotoInGameState
+                    })
+                } 
+                else {
+                    gotoInGameState()
+                }                 
             }
             else {
+                raiseCriticalError("No output position!")
+                debugger
                 return
             }
         }

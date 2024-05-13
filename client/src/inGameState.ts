@@ -313,11 +313,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         }
         this.gameData.playerClientGeolocationPosition = position.clone()
 
-        if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
-            window.localStorage.setItem("gameplayStartInfo", "YES")
-            alert(_t("LOCATION_GOT_WELCOME_MESSAGE"))
-        }
-
         debugPrint(`gps!: ${position.latitude} - ${position.longitude}`)
         this.mapController.setPlayerLocationAndCenter(position)
         this.inGameStateSceneController.setCurrentPlayerGameGeolocation(position)
