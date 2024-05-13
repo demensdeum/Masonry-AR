@@ -712,12 +712,13 @@ export class SceneController implements
 
         const alertName = `alertWindow-${Utils.generateUUID()}`
 
-        const wikiButtonDiv = document.createElement('div')
-        wikiButtonDiv.style.color = "white"
-        wikiButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
-        wikiButtonDiv.style.fontSize = "30px"
-        wikiButtonDiv.style.padding = "22px"
-        wikiButtonDiv.style.textAlign = "center"
+        const alertWindowDiv = document.createElement('div')
+        alertWindowDiv.style.color = "white"
+        alertWindowDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
+        alertWindowDiv.style.fontSize = "30px"
+        alertWindowDiv.style.padding = "22px"
+        alertWindowDiv.style.textAlign = "center"
+        alertWindowDiv.style.width = "640px"
         
         const textSpan = document.createElement('span')
         textSpan.textContent = args.text
@@ -737,21 +738,20 @@ export class SceneController implements
             this.removeCssObjectWithName(alertName)
         }
 
-        // Add event listener to the OK button
         okButton.addEventListener('click', function() {
             closeWindow()
             args.okCallback()
         })
         
-        wikiButtonDiv.appendChild(textSpan)
-        wikiButtonDiv.appendChild(okButton)
+        alertWindowDiv.appendChild(textSpan)
+        alertWindowDiv.appendChild(okButton)
         
-        wikiButtonDiv.appendChild(okButton)
+        alertWindowDiv.appendChild(okButton)
 
         this.addCssPlaneObject(
             {
                 name: alertName,
-                div: wikiButtonDiv,
+                div: alertWindowDiv,
                 planeSize: {
                     width: 2,
                     height: 2
@@ -759,7 +759,7 @@ export class SceneController implements
                 position: new GameVector3(
                         0,
                         0,
-                        -5
+                        -8
                 ),
                 rotation: GameVector3.zero(),
                 scale: new GameVector3(
@@ -803,12 +803,13 @@ export class SceneController implements
             this.removeCssObjectWithName(confirmWindowName)
         }
 
-        const wikiButtonDiv = document.createElement('div')
-        wikiButtonDiv.style.color = "white"
-        wikiButtonDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
-        wikiButtonDiv.style.fontSize = "30px"
-        wikiButtonDiv.style.padding = "22px"
-        wikiButtonDiv.style.textAlign = "center"
+        const confirmWindowDiv = document.createElement('div')
+        confirmWindowDiv.style.color = "white"
+        confirmWindowDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
+        confirmWindowDiv.style.fontSize = "30px"
+        confirmWindowDiv.style.padding = "22px"
+        confirmWindowDiv.style.textAlign = "center"
+        confirmWindowDiv.style.width = "640px"
         
         const textSpan = document.createElement('span');
         textSpan.textContent = args.text
@@ -844,18 +845,18 @@ export class SceneController implements
             args.cancelCallback();
         });
         
-        wikiButtonDiv.appendChild(textSpan)
-        wikiButtonDiv.appendChild(okButton)
-        wikiButtonDiv.appendChild(cancelButton)
+        confirmWindowDiv.appendChild(textSpan)
+        confirmWindowDiv.appendChild(okButton)
+        confirmWindowDiv.appendChild(cancelButton)
 
         this.addCssPlaneObject({
             name: confirmWindowName,
-            div: wikiButtonDiv,
+            div: confirmWindowDiv,
             planeSize: {
                 width: 2,
                 height: 2
             },
-            position: new GameVector3(0, 0, -5),
+            position: new GameVector3(0, 0, -8),
             rotation: GameVector3.zero(),
             scale: new GameVector3(0.01, 0.01, 0.01),
             shadows: {

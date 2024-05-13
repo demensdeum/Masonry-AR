@@ -166,7 +166,7 @@ export class InitializationScreenState implements State,
     }
 
     geolocationControllerGeolocationDidReceiveError(_: GeolocationControllerInterface, error: string): void {
-        alert(error)
+        _alert({text: error, okCallback: ()=>{}})
     }
 
     geolocationControllerGeolocationDidReceiveGeolocationOnce(_: GeolocationControllerInterface, __: GameGeolocationPosition): void {
@@ -189,13 +189,19 @@ export class InitializationScreenState implements State,
         const minimalClientVersion = entries.filter((a) => { return a.key == "minimal_client_version" })[0]?.value
 
         if (!minimalClientVersion) {
-            alert("Server info get error, minimal_client_version is null")
-            GameUtils.gotoWiki({locale: this.context.translator.locale})
+            _alert(
+                {
+                    text: "Server info get error, minimal_client_version is null",
+                    okCallback: () => { GameUtils.gotoWiki({locale: this.context.translator.locale}) }
+                }
+            )
             return
         }
         if (parseInt(minimalClientVersion) > Constants.currentClientVersion) {
-            alert(_t(`CLIENT_IS_TOO_OLD: ${Constants.currentClientVersion} / ${minimalClientVersion}`))
-            GameUtils.gotoWiki({locale: this.context.translator.locale})
+            _alert({
+                    text: _t(`CLIENT_IS_TOO_OLD: ${Constants.currentClientVersion} / ${minimalClientVersion}`),
+                    okCallback: () => { GameUtils.gotoWiki({locale: this.context.translator.locale})}
+            })
             return
         }
 
@@ -233,7 +239,7 @@ export class InitializationScreenState implements State,
                 if (window.localStorage.getItem("gameplayStartInfo") != "YES") {
                     window.localStorage.setItem("gameplayStartInfo", "YES")
                     this.hideGeolocationPreloader()
-                    this.context.sceneController.alert({
+                    _alert({
                         text: _t("LOCATION_GOT_WELCOME_MESSAGE"),
                         okCallback: gotoInGameState
                     })
@@ -249,8 +255,10 @@ export class InitializationScreenState implements State,
             }
         }
         else {
-            alert("No heroUUID in cookie!")
-            GameUtils.gotoWiki({locale:this.context.translator.locale})
+            _alert({
+                text: "No heroUUID in cookie!",
+                okCallback: ()=>{GameUtils.gotoWiki({locale:this.context.translator.locale})}
+            })
             return
         }
     }
@@ -259,7 +267,9 @@ export class InitializationScreenState implements State,
         _: AuthorizeController,
         message: string
     ) {
-        alert(`AuthorizeController error: ${message}`)
-        GameUtils.gotoWiki({locale:this.context.translator.locale})
+        _alert({
+            text:`AuthorizeController error: ${message}`,
+            okCallback: ()=>{GameUtils.gotoWiki({locale:this.context.translator.locale})}
+        })        
     }
 }
