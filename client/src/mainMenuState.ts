@@ -1,5 +1,4 @@
 import { State } from "./state.js"
-import { Utils } from "./utils.js"
 import { Context } from "./context.js"
 import { InitializationScreenState } from "./initializationScreenState.js"
 import { GameVector3 } from "./gameVector3.js"
@@ -27,8 +26,6 @@ export class MainMenuState implements State {
                 environmentOnly: false
             }
         )
-
-        Utils.moveCssLayerFront()
 
         const self = this
 
@@ -70,6 +67,10 @@ export class MainMenuState implements State {
                 shadows: {
                     receiveShadow: false,
                     castShadow: false
+                },
+                display: {
+                    isTop: true,
+                    stickToCamera: true
                 }
             }
         )
@@ -113,12 +114,17 @@ export class MainMenuState implements State {
                 shadows: {
                     receiveShadow: false,
                     castShadow: false
+                },
+                display: {
+                    isTop: true,
+                    stickToCamera: true
                 }
             }
         )              
     }
 
     step() {
+        return
         const diffMilliseconds = Math.abs((new Date().getTime() - this.startDate.getTime()))
         
         if (diffMilliseconds > this.switchMillisecondsTimeout) {

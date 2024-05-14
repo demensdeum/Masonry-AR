@@ -10,24 +10,36 @@ body {
     overflow: hidden;
 }
 
-#css-canvas {
+#css-canvas-bottom {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
-    z-index: 0;
     position: absolute;
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0; left: 0;
+    z-index: 0;
 }
 
 canvas {
     -webkit-touch-callout: none;
-    z-index: 1;
     position: absolute;
     background-color: transparent;
     display: block;
+    z-index: 1;
+}
+
+#css-canvas-top {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 2;
 }
 
 .moveGUI { 
@@ -37,7 +49,7 @@ canvas {
     right: 8em;
     transform: scale(2.2);
     display: none;
-    z-index: 2;
+    z-index: 3;
 }
 
 .gameplayGUI {
@@ -58,31 +70,12 @@ canvas {
     color: white;
     text-shadow: 1px 1px 1px black;
     width: 15%;
-    z-index: 3;
+    z-index: 4;
 }
 
 .guiButton {
     width: 80%;
     -webkit-touch-callout: none;
-}
-
-.localeSelectorState {
-    -webkit-touch-callout: none;
-    user-select: none;
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 20%;
-    bottom: 0;
-    z-index: 6;
-    text-align: center;
-    color: white;
-    text-shadow: 1px 1px 1px black;  
-    font-family: "Arial", sans-serif;
-    font-weight: bold;      
-    font-size: 32px;
-    display: none;
-    justify-content: center;
 }
 
 .companyLogoContainer {
@@ -92,7 +85,7 @@ canvas {
     width: 100%;
     height: 100%;
     background-color: #222222;
-    z-index: 4;
+    z-index: 5;
 }
 
 .companyLogo {
@@ -116,7 +109,7 @@ canvas {
     opacity: 0.85;
     color: white;
     text-shadow: 1px 1px 1px black;
-    z-index: 5;
+    z-index: 6;
 }
 
 .yandexCopyrightGUI {
@@ -125,5 +118,5 @@ canvas {
     bottom: 0;
     right: 0;
     position: absolute;
-    z-index: 6;
+    z-index: 7;
 }

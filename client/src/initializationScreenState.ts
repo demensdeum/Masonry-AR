@@ -129,8 +129,12 @@ export class InitializationScreenState implements State,
                 shadows: {
                     receiveShadow: false,
                     castShadow: false
+                },
+                display: {
+                    isTop: true,
+                    stickToCamera: true
                 }
-            }
+            },
         )              
     }
 

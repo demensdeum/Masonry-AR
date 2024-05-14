@@ -38,6 +38,7 @@ import { AnimationContainer } from "./animationContainer.js"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js"
 import { GameVector3 } from "./gameVector3.js"
+import { GameCssObject3D } from "./gameCssObject3D.js"
 
 const gui = new dat.GUI({ autoPlace: false });
 var moveGUIElement = document.querySelector('.moveGUI');
@@ -65,8 +66,9 @@ export class SceneController implements
     
     private scene: THREE.Scene
     private camera: THREE.PerspectiveCamera
+    private css3DRendererBottom: CSS3DRenderer
     private renderer: THREE.WebGLRenderer
-    private css3DRenderer: CSS3DRenderer
+    private css3DRendererTop: CSS3DRenderer
     private texturesToLoad: THREE.MeshStandardMaterial[] = [];
 
     private textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
@@ -103,7 +105,7 @@ export class SceneController implements
     private highQuality: boolean = false
     private shadowsEnabled: boolean = true
 
-    private cssObjects3D: { [key: string]: THREE.Object3D } = {};
+    private cssObjects3D: { [key: string]: GameCssObject3D } = {};
 
     private debugControls: OrbitControls
 
@@ -161,6 +163,10 @@ export class SceneController implements
 
     this.objects[Names.Camera] = cameraSceneObject;    
 
+    this.css3DRendererBottom = new CSS3DRenderer()
+    this.css3DRendererBottom.domElement.style.position = "absolute"
+    document.querySelector("#css-canvas-bottom")?.appendChild(this.css3DRendererBottom.domElement)
+
     this.renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         antialias: true,
@@ -170,12 +176,13 @@ export class SceneController implements
     this.renderer.domElement.style.position = 'absolute'
     this.renderer.domElement.style.top = '0'
 
-    this.css3DRenderer = new CSS3DRenderer()
-    this.css3DRenderer.domElement.style.position = "absolute"
-    document.querySelector("#css-canvas")?.appendChild(this.css3DRenderer.domElement)
-    
+    this.css3DRendererTop = new CSS3DRenderer()
+    this.css3DRendererTop.domElement.style.position = "absolute"
+    document.querySelector("#css-canvas-top")?.appendChild(this.css3DRendererTop.domElement)
+
+    this.renderers.push(this.css3DRendererBottom)
     this.renderers.push(this.renderer)
-    this.renderers.push(this.css3DRenderer)
+    this.renderers.push(this.css3DRendererTop)
 
     this.renderers.forEach((renderer)=>{
         renderer.setSize(this.windowWidth(), this.windowHeight())
@@ -619,6 +626,10 @@ export class SceneController implements
             shadows: {
                 receiveShadow: boolean, 
                 castShadow: boolean
+            },
+            display:{
+                isTop: boolean,
+                stickToCamera: boolean
             }
         }
     )
@@ -633,7 +644,11 @@ export class SceneController implements
         cssObject.scale.y = args.scale.y
         cssObject.scale.z = args.scale.z
 
-        const root = new THREE.Object3D
+        const root = new GameCssObject3D()
+        root.isTop = args.display.isTop
+        root.stickToCamera = args.display.stickToCamera
+        root.originalPosition = args.position
+        root.originalRotation = args.rotation
         root.add(cssObject)
 
         root.rotation.x = args.rotation.x
@@ -682,8 +697,44 @@ export class SceneController implements
         })
     }    
 
+    private stickCssObjectToCamera(object: GameCssObject3D) {
+        const direction = new THREE.Vector3();
+        this.camera.getWorldDirection(direction);
+
+        const distance = -object.originalPosition.z / 4;
+
+        const newPosition = new THREE.Vector3()
+        .copy(this.camera.position)
+        .addScaledVector(this.camera.getWorldDirection(new THREE.Vector3()), distance)
+
+        object.position.copy(newPosition);
+        object.rotation.copy(this.camera.rotation);
+    }
+
     private render() {
         this.renderers.forEach((renderer) => {
+            if (renderer == this.css3DRendererBottom || renderer == this.css3DRendererTop) {
+                Object.keys(this.cssObjects3D).map(k => {
+                    const object = this.cssObjects3D[k]
+                    this.scene.remove(object)
+                    if (renderer == this.css3DRendererBottom) {
+                        if (!object.isTop) {
+                            this.scene.add(object)
+                            if (object.stickToCamera) {
+                                this.stickCssObjectToCamera(object)
+                            }
+                        }
+                    }
+                    else if (renderer == this.css3DRendererTop) {
+                        if (object.isTop) {
+                            this.scene.add(object)
+                            if (object.stickToCamera) {
+                                this.stickCssObjectToCamera(object)
+                            }
+                        }
+                    }
+                })
+            }
             renderer.render(this.scene, this.camera)
         })
         this.debugControls.update()
@@ -707,14 +758,11 @@ export class SceneController implements
     }
 
     public alert(args: {text: string, okCallback: ()=>void}) {
-
-        Utils.moveCssLayerFront()
-
         const alertName = `alertWindow-${Utils.generateUUID()}`
 
         const alertWindowDiv = document.createElement('div')
         alertWindowDiv.style.color = "white"
-        alertWindowDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
+        alertWindowDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.8)'
         alertWindowDiv.style.fontSize = "30px"
         alertWindowDiv.style.padding = "22px"
         alertWindowDiv.style.textAlign = "center"
@@ -731,6 +779,7 @@ export class SceneController implements
         okButton.style.fontSize = "20px"
         okButton.style.padding = "12px"
         okButton.style.marginTop = "10px"
+        okButton.style.width = "180px"
         okButton.style.border = "none"
         okButton.style.cursor = "pointer"
         
@@ -770,8 +819,12 @@ export class SceneController implements
                 shadows: {
                     receiveShadow: false,
                     castShadow: false
+                },
+                display: {
+                    isTop: true,
+                    stickToCamera: true
                 }
-            }
+            },
         )   
 
         debugPrint(args.text)
@@ -794,9 +847,6 @@ export class SceneController implements
     }
 
     public confirm(args: { text: string, okCallback: () => void, cancelCallback: () => void }) {
-
-        Utils.moveCssLayerFront()
-    
         const confirmWindowName = `confirmWindow-${Utils.generateUUID()}`
 
         const closeWindow = () => {
@@ -805,7 +855,7 @@ export class SceneController implements
 
         const confirmWindowDiv = document.createElement('div')
         confirmWindowDiv.style.color = "white"
-        confirmWindowDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
+        confirmWindowDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.8)'
         confirmWindowDiv.style.fontSize = "30px"
         confirmWindowDiv.style.padding = "22px"
         confirmWindowDiv.style.textAlign = "center"
@@ -823,6 +873,7 @@ export class SceneController implements
         okButton.style.padding = "12px"
         okButton.style.marginTop = "10px"
         okButton.style.border = "none"
+        okButton.style.width = "180px"
         okButton.style.cursor = "pointer"
         
         okButton.addEventListener('click', function() {
@@ -833,11 +884,12 @@ export class SceneController implements
         const cancelButton = document.createElement('button')
         cancelButton.textContent = '❌❌❌'
         cancelButton.style.color = "white"
-        cancelButton.style.backgroundColor = 'red'
+        cancelButton.style.backgroundColor = 'white'
         cancelButton.style.fontSize = "20px"
         cancelButton.style.padding = "16px"
         cancelButton.style.marginTop = "10px"
         cancelButton.style.border = "none"
+        cancelButton.style.width = "180px"
         cancelButton.style.cursor = "pointer"
     
         cancelButton.addEventListener('click', function() {
@@ -862,8 +914,12 @@ export class SceneController implements
             shadows: {
                 receiveShadow: false,
                 castShadow: false
+            },
+            display: {
+                isTop: true,
+                stickToCamera: true
             }
-        });
+        })
     
         debugPrint(args.text);
         debugPrint(args.okCallback);

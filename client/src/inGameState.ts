@@ -215,7 +215,6 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         this.mapController.initialize()
         this.entitiesTrackingStep()
         this.geolocationControllerDidGetPosition(this.geolocationController, this.startingGeolocationPosition)
-        Utils.moveCssLayerBack()
     }
 
     inGameStateControllerDidMoveCamera(
@@ -532,11 +531,10 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             return
         }
         else if (entity?.type == "walkChallenge") {
-            this.entitiesController.catch(entity)            
             const geolocationPosition = this.gameData.playerClientGeolocationPosition
             if (geolocationPosition == null) {
                 _alert({
-                    text: "NO GEOLOCATION IN WALK CHALLENGE HUH?? CRITICAL ERROOR!!!!",
+                    text: "NO GEOLOCATION IN WALK CHALLENGE HUH?? CRITICAL ERROOR!!!! OINK!",
                     okCallback: ()=>{}
                 })
                 return
@@ -544,8 +542,13 @@ export class InGameState extends State implements GeolocationControllerDelegate,
             if (this.walkChallengeController.isNotStarted()) {
                 _confirm({
                     text: _t("WALK_CHALLENGE_MESSAGE"),
-                    okCallback: ()=>{this.walkChallengeController.start(geolocationPosition)},
-                    cancelCallback: ()=>{}
+                    okCallback: ()=>{
+                        this.entitiesController.catch(entity)
+                        this.walkChallengeController.start(geolocationPosition)
+                    },
+                    cancelCallback: ()=>{
+                        this.entitiesController.catch(entity)
+                    }
                 })
             }
             else {
@@ -554,14 +557,22 @@ export class InGameState extends State implements GeolocationControllerDelegate,
                     const distanceValues = `${distance} / 5000`
                     _confirm({
                         text: _t("WALK_CHALLENGE_COUNTER").replace("DISTANCE_VALUES", distanceValues),
-                        okCallback: ()=>{this.walkChallengeController.clear()},
-                        cancelCallback: ()=>{}
+                        okCallback: ()=>{
+                            this.walkChallengeController.clear()
+                            this.entitiesController.catch(entity)
+                        },
+                        cancelCallback: ()=>{
+                            this.entitiesController.catch(entity)
+                        }
                     })
                 }
                 else {
                     _alert({
                         text: _t("WALK_CHALLENGE_FINISHED"),
-                        okCallback: ()=>{this.walkChallengeController.clear()}
+                        okCallback: ()=>{
+                            this.walkChallengeController.clear()
+                            this.entitiesController.catch(entity)
+                        }
                     })
                 }
             }

@@ -24,12 +24,12 @@
       </td>
       <td style="width: 5%;"></td>
     </tr>
-    
     </table>
   </div>
   <div class = "moveGUI"></div>
-  <div id="css-canvas" onmousedown="if (event.preventDefault) event.preventDefault()" style="pointer-events: none;"></div>
+  <div id="css-canvas-top" onmousedown="if (event.preventDefault) event.preventDefault()" style="pointer-events: none;"></div>
   <canvas class = "webgl"></canvas>
+  <div id="css-canvas-bottom" onmousedown="if (event.preventDefault) event.preventDefault()" style="pointer-events: none;"></div>
   <div class = "gameplayGUI">
     <p><img class="guiButton" src="./assets/com.demensdeum.gui.order.button.texture.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_inGameState.switchOrder()"/></p>
     <p><img class="guiButton" src="./assets/com.demensdeum.gui.build.button.texture.svg" onmousedown="if (event.preventDefault) event.preventDefault()" onclick="document.global_gameplay_inGameState.build()"/></p>    

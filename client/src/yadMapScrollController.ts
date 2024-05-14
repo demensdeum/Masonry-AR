@@ -24,7 +24,7 @@ export class YadMapScrollController implements MapScrollController {
         div.style.background = 'radial-gradient(circle at center, transparent, white)';
         div.style.userSelect = "none";
 
-        (document.querySelector("#css-canvas") as HTMLElement).style.backgroundColor = 'white';
+        (document.querySelector("#css-canvas-bottom") as HTMLElement).style.backgroundColor = 'white';
 
         this.sceneController.addCssPlaneObject(
             {
@@ -48,6 +48,10 @@ export class YadMapScrollController implements MapScrollController {
                 shadows: {
                     receiveShadow: true,
                     castShadow: false
+                },
+                display: {
+                    isTop: false,
+                    stickToCamera: false
                 }
             }
         )

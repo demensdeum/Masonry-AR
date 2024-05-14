@@ -101,6 +101,10 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
                 shadows: {
                     receiveShadow: false,
                     castShadow: false
+                },
+                display: {
+                    isTop: true,
+                    stickToCamera: true
                 }
             }
         )  
@@ -135,11 +139,13 @@ export class LocaleSelectorState extends State implements SceneControllerDelegat
                 shadows: {
                     receiveShadow: false,
                     castShadow: false
+                },
+                display: {
+                    isTop: true,
+                    stickToCamera: true
                 }
             }
         )
-
-        Utils.moveCssLayerFront()
     }
 
     public didSelectRussian() {

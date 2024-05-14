@@ -1,5 +1,4 @@
 import { GameGeolocationPosition } from "./gameGeolocationPosition.js"
-import { debugPrint } from "./runtime.js"
 import { float } from "./types.js"
 
 export class Utils {
@@ -30,36 +29,6 @@ export class Utils {
     ) {
         if ((document.getElementsByClassName(args.name)[0] as HTMLElement).style.display != "flex") {
             (document.getElementsByClassName(args.name)[0] as HTMLElement).style.display = "flex"
-        }
-    }
-
-    public static moveCssLayerFront() {
-        const cssCanvas = document.querySelector("#css-canvas")
-        if (cssCanvas instanceof HTMLElement) {
-            cssCanvas.style.zIndex = "1"
-        }
-        else {
-            debugPrint("moveCssLayerFront => Error! No cssCanvas")
-            debugger
-        }
-        const canvas = document.getElementsByClassName("webgl")[0]
-        if (canvas instanceof HTMLElement) {
-            canvas.style.zIndex = "0"
-        }
-        else {
-            debugPrint("moveCssLayerFront => Error! No canvas")
-            debugger
-        }
-    }
-
-    public static moveCssLayerBack() {
-        const cssCanvas = document.querySelector("#css-canvas")
-        if (cssCanvas instanceof HTMLElement) {
-            cssCanvas.style.zIndex = "0"
-        }
-        const canvas = document.getElementsByClassName("canvas")
-        if (canvas instanceof HTMLElement) {
-            canvas.style.zIndex = "1"
         }
     }
 
