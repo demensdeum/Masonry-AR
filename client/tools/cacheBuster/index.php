@@ -32,6 +32,12 @@ if (count($dirs) > 0) {
         </style>
     </head>
     <body>
+        <script>
+        if (window.location.protocol === 'http:') {
+            var newUrl = window.location.href.replace('http:', 'https:')
+            window.location.assign(newUrl)
+        }      
+        </script>        
         <iframe src="<?php echo $current_url; ?>" frameborder="0"></iframe>
     </body>
     </html>

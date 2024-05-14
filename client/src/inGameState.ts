@@ -257,18 +257,22 @@ export class InGameState extends State implements GeolocationControllerDelegate,
 
     switchOrder() {
         const orderValue = this.gameData.order == "NONE" ? "" : this.gameData.order
-        const order = prompt("Название масонского ордена", orderValue)
-        if (order) {
-            if (order.length >= 4) {
-                this.heroStatusController.set(order)
-            }
-            else {
-                _alert({
-                    text: "Название ордена должно быть не менее 4 символов",
-                    okCallback: ()=>{}
-                })
-            }
-        }
+        this.context.sceneController.prompt({
+            text: "Название масонского ордена", 
+            value: orderValue,
+            okCallback: (order)=>{
+                if (order.length >= 4) {
+                    this.heroStatusController.set(order)
+                }
+                else {
+                    _alert({
+                        text: "Название ордена должно быть не менее 4 символов",
+                        okCallback: ()=>{}
+                    })
+                }                
+            },
+            cancelCallback: ()=>{}
+        })
     }
 
     mockEntitiesControllerDidRequestGeolocationPosition(

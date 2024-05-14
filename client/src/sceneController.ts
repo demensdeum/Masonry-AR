@@ -701,7 +701,7 @@ export class SceneController implements
         const direction = new THREE.Vector3();
         this.camera.getWorldDirection(direction);
 
-        const distance = -object.originalPosition.z / 4;
+        const distance = -object.originalPosition.z / 8;
 
         const newPosition = new THREE.Vector3()
         .copy(this.camera.position)
@@ -925,6 +925,106 @@ export class SceneController implements
         debugPrint(args.okCallback);
         debugPrint(args.cancelCallback);
     }
+
+    public prompt(args: { 
+        text: string, 
+        value: string,
+        okCallback: (inputValue: string) => void, 
+        cancelCallback: () => void 
+    }) {
+        const confirmWindowName = `confirmWindow-${Utils.generateUUID()}`
+    
+        const closeWindow = () => {
+            this.removeCssObjectWithName(confirmWindowName)
+        }
+    
+        const confirmWindowDiv = document.createElement('div')
+        confirmWindowDiv.style.color = "white"
+        confirmWindowDiv.style.backgroundColor = 'rgba(128, 128, 128, 0.8)'
+        confirmWindowDiv.style.fontSize = "30px"
+        confirmWindowDiv.style.padding = "22px"
+        confirmWindowDiv.style.textAlign = "center"
+        confirmWindowDiv.style.width = "640px"
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = args.text
+        textSpan.style.display = "block"
+        
+        const inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.value = args.value
+        inputField.style.marginTop = "10px";
+        inputField.style.width = "80%";
+        inputField.style.fontSize = "20px";
+        inputField.style.padding = "10px";
+        inputField.onclick = ()=>{inputField.focus()};
+    
+        const okButton = document.createElement('button')
+        okButton.textContent = 'OK'
+        okButton.style.color = "white"
+        okButton.style.backgroundColor = 'green'
+        okButton.style.fontSize = "20px"
+        okButton.style.padding = "12px"
+        okButton.style.marginTop = "10px"
+        okButton.style.border = "none"
+        okButton.style.width = "180px"
+        okButton.style.cursor = "pointer"
+        
+        okButton.addEventListener('click', function() {
+            closeWindow()
+            args.okCallback(inputField.value);
+        });
+    
+        const cancelButton = document.createElement('button')
+        cancelButton.textContent = '❌❌❌'
+        cancelButton.style.color = "white"
+        cancelButton.style.backgroundColor = 'white'
+        cancelButton.style.fontSize = "20px"
+        cancelButton.style.padding = "16px"
+        cancelButton.style.marginTop = "10px"
+        cancelButton.style.border = "none"
+        cancelButton.style.width = "180px"
+        cancelButton.style.cursor = "pointer"
+    
+        cancelButton.addEventListener('click', function() {
+            closeWindow()
+            args.cancelCallback();
+        });
+        
+        confirmWindowDiv.appendChild(textSpan)
+        confirmWindowDiv.appendChild(inputField);
+        confirmWindowDiv.appendChild(okButton)
+        confirmWindowDiv.appendChild(cancelButton)
+    
+        this.addCssPlaneObject({
+            name: confirmWindowName,
+            div: confirmWindowDiv,
+            planeSize: {
+                width: 2,
+                height: 2
+            },
+            position: new GameVector3(0, 0, -8),
+            rotation: GameVector3.zero(),
+            scale: new GameVector3(0.01, 0.01, 0.01),
+            shadows: {
+                receiveShadow: false,
+                castShadow: false
+            },
+            display: {
+                isTop: true,
+                stickToCamera: true
+            }
+        })
+    
+        debugPrint(args.text);
+        debugPrint(args.okCallback);
+        debugPrint(args.cancelCallback);
+
+        // BROWSERS BUG: https://github.com/demensdeum/Masonry-AR/issues/64
+        setTimeout(() => {
+            inputField.focus();
+        }, 500);        
+    }    
 
     public serializedSceneObjects(): any {
         const keys = Object.keys(this.objects);
