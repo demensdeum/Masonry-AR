@@ -15,7 +15,8 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "CLIENT_IS_TOO_OLD" : "Client is too old! Clear cache and reload!",
         "PLAY_BUTTON" : "PLAY",
         "WIKI_BUTTON" : "WIKI",
-        "GET_GEOLOCATION" : "Getting Geolocation..."
+        "GET_GEOLOCATION" : "Getting Geolocation...",
+        "ENTER_MASONRY_ORDER_NAME" : "Enter your masonry order name"
     },
     "ru" : {
         "WELCOME" : "Масоны-ДР - игра в дополненной реальности, потребуется доступ к вашей геолокации.\nИгра использует куки, и всячески следит за вами во славу Великого ложа.\nРазработчик не несет ответственность за последствия игры.\nНажимая ОК вы соглашаетесь с этим.",        
@@ -33,6 +34,7 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "CLIENT_IS_TOO_OLD" : "Клиент слишком старый! Почистите кэш и перезагрузите страницу!",
         "PLAY_BUTTON" : "ИГРАТЬ",
         "WIKI_BUTTON" : "ВИКИ",
-        "GET_GEOLOCATION" : "Получение геолокации..."      
+        "GET_GEOLOCATION" : "Получение геолокации...",
+        "ENTER_MASONRY_ORDER_NAME" : "Название масонского ордена"
     }
 };

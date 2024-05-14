@@ -258,7 +258,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
     switchOrder() {
         const orderValue = this.gameData.order == "NONE" ? "" : this.gameData.order
         this.context.sceneController.prompt({
-            text: "Название масонского ордена", 
+            text: _t("ENTER_MASONRY_ORDER_NAME"), 
             value: orderValue,
             okCallback: (order)=>{
                 if (order.length >= 4) {
@@ -617,7 +617,9 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         message: string
     ): void {
         _alert({
-            text: message.replace("BUILD_ERROR_NOT_ENOUGH_MONEY", _t("BUILD_ERROR_NOT_ENOUGH_MONEY")),
+            text: message
+                .replace("BUILD_ERROR_NOT_ENOUGH_MONEY", _t("BUILD_ERROR_NOT_ENOUGH_MONEY"))
+                .replace("CANT_BUILD_THERE_IS_BUILDING_NEARBY", _t("CANT_BUILD_THERE_IS_BUILDING_NEARBY")),
             okCallback: ()=>{}
         })
     }
