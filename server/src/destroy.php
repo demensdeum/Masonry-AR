@@ -62,7 +62,7 @@ if (isset($_GET['uuid'])) {
             if ($heroBalance < $destroyPrice) {
                 $response = array(
                     'code' => 6,
-                    'message' => "Balance is not enough to destroy - $heroBalance/$destroyPrice",
+                    'message' => "BALANCE_IS_NOT_ENOUGH_TO_DESTROY - $heroBalance/$destroyPrice",
                     'entities' => []
                 );    
                 echo json_encode($response, JSON_UNESCAPED_UNICODE);

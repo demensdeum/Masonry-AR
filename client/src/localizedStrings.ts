@@ -16,7 +16,8 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "PLAY_BUTTON" : "PLAY",
         "WIKI_BUTTON" : "WIKI",
         "GET_GEOLOCATION" : "Getting Geolocation...",
-        "ENTER_MASONRY_ORDER_NAME" : "Enter your masonry order name"
+        "ENTER_MASONRY_ORDER_NAME" : "Enter your masonry order name",
+        "BALANCE_IS_NOT_ENOUGH_TO_DESTROY" : "Balance is not enough to destroy"
     },
     "ru" : {
         "WELCOME" : "Масоны-ДР - игра в дополненной реальности, потребуется доступ к вашей геолокации.\nИгра использует куки, и всячески следит за вами во славу Великого ложа.\nРазработчик не несет ответственность за последствия игры.\nНажимая ОК вы соглашаетесь с этим.",        
@@ -35,6 +36,7 @@ export const localizedStrings: { [key: string]: { [key: string]: string } } = {
         "PLAY_BUTTON" : "ИГРАТЬ",
         "WIKI_BUTTON" : "ВИКИ",
         "GET_GEOLOCATION" : "Получение геолокации...",
-        "ENTER_MASONRY_ORDER_NAME" : "Название масонского ордена"
+        "ENTER_MASONRY_ORDER_NAME" : "Название масонского ордена",
+        "BALANCE_IS_NOT_ENOUGH_TO_DESTROY" : "Нет средств на уничтожение здания"
     }
 };

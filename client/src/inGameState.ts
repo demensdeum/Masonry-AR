@@ -512,7 +512,7 @@ export class InGameState extends State implements GeolocationControllerDelegate,
         message: string
     ): void {
         _alert({
-            text:_t(message),
+            text: message.replace("BALANCE_IS_NOT_ENOUGH_TO_DESTROY", _t("BALANCE_IS_NOT_ENOUGH_TO_DESTROY")),
             okCallback: ()=>{}
         })
     }
