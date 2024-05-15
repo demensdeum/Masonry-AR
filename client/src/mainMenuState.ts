@@ -124,7 +124,6 @@ export class MainMenuState implements State {
     }
 
     step() {
-        return
         const diffMilliseconds = Math.abs((new Date().getTime() - this.startDate.getTime()))
         
         if (diffMilliseconds > this.switchMillisecondsTimeout) {
