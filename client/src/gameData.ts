@@ -5,7 +5,6 @@ import { int } from "./types.js"
 export class GameData {
     public delegate?: GameDataDelegate
 
-    public heroUUID: string = ""
     public _order: string = ""
     public _name: string = ""
     public playerServerGeolocationPosition: GameGeolocationPosition | null = null

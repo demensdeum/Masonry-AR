@@ -3,7 +3,7 @@ include("config.php");
 include("utils.php");
 ini_set('display_errors', 1); 
 
-$heroUUID = "";
+$privateHeroUUID = "";
 
 $insertEnabled = true;
 $minEntitesPerSector = 3;
@@ -21,11 +21,11 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit(0);    
 } else {
-    $heroUUID = $_COOKIE["privateHeroUUID"];
-    if (!validateUUID($heroUUID)) {
+    $privateHeroUUID = $_COOKIE["privateHeroUUID"];
+    if (!validateUUID($privateHeroUUID)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUUID",
+            'message' => "Invalid UUID format for $privateHeroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -33,7 +33,7 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     }
 }
 
-$heroUUID = $_COOKIE["privateHeroUUID"];
+$privateHeroUUID = $_COOKIE["privateHeroUUID"];
 $latitude = 0.0;
 $longitude = 0.0;
 
@@ -87,7 +87,7 @@ if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
-$sql = "SELECT * FROM entities WHERE type = 'hero' AND private_uuid = '$heroUUID'";
+$sql = "SELECT * FROM entities WHERE type = 'hero' AND private_uuid = '$privateHeroUUID'";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -124,7 +124,7 @@ if ($result->num_rows > 0) {
 else {
     $response = array(
         'code' => 6,
-        'message' => "Entities fetch error: heroUUID $heroUUID not found}",
+        'message' => "Entities fetch error: heroUUID $privateHeroUUID not found}",
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE); 
@@ -132,7 +132,7 @@ else {
     exit(0);       
 }
 
-$sqlUpdate = "UPDATE entities SET update_date = utc_timestamp(), latitude = $latitude, longitude = $longitude WHERE private_uuid = '$heroUUID'";
+$sqlUpdate = "UPDATE entities SET update_date = utc_timestamp(), latitude = $latitude, longitude = $longitude WHERE private_uuid = '$privateHeroUUID'";
 $conn->query($sqlUpdate);
 
 $borderDistance = 40;

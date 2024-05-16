@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 
 $namelLenLimit = 32;
 $conn = dbConnect();
-$heroUUID = "";
+$privateHeroUUID = "";
 
 if (!isset($_COOKIE["privateHeroUUID"])) {
     $response = array(
@@ -17,11 +17,11 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit(0);    
 } else {
-    $heroUUID = $_COOKIE["privateHeroUUID"];
-    if (!validateUUID($heroUUID)) {
+    $privateHeroUUID = $_COOKIE["privateHeroUUID"];
+    if (!validateUUID($privateHeroUUID)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUUID",
+            'message' => "Invalid UUID format for $privateHeroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -29,7 +29,7 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     }
 }
 
-$heroUUID = $_COOKIE["privateHeroUUID"];
+$privateHeroUUID = $_COOKIE["privateHeroUUID"];
 
 if (isset($_GET['name'])) {
     $name = $conn->real_escape_string($_GET['name']);
@@ -44,7 +44,7 @@ if (isset($_GET['name'])) {
         $conn->close();
         exit(0);        
     }
-    $updateSql = "UPDATE entities SET name = '$name' WHERE private_uuid = '$heroUUID'";
+    $updateSql = "UPDATE entities SET name = '$name' WHERE private_uuid = '$privateHeroUUID'";
     $conn->query($updateSql);
 
     $response = array(

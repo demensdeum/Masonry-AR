@@ -4,7 +4,7 @@ include("utils.php");
 ini_set('display_errors', 1); 
 
 $conn = dbConnect();
-$heroUUID = "";
+$privateHeroUUID = "";
 
 $destroyPrice = 1000;
 
@@ -22,11 +22,11 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     $conn->close();
     exit(0);    
 } else {
-    $heroUUID = $_COOKIE["privateHeroUUID"];
-    if (!validateUUID($heroUUID)) {
+    $privateHeroUUID = $_COOKIE["privateHeroUUID"];
+    if (!validateUUID($privateHeroUUID)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUUID",
+            'message' => "Invalid UUID format for $privateHeroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -38,9 +38,9 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
 if (isset($_GET['uuid'])) {
     $uuid = $_GET['uuid'];
 
-    if (validateUUID($heroUUID)) {
+    if (validateUUID($privateHeroUUID)) {
 
-        $sql = "SELECT * FROM entities WHERE private_uuid = '$heroUUID' AND type = 'hero'";
+        $sql = "SELECT * FROM entities WHERE private_uuid = '$privateHeroUUID' AND type = 'hero'";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -70,7 +70,7 @@ if (isset($_GET['uuid'])) {
                 exit(0);
             }
 
-            $balanceUpdateSql = "UPDATE entities SET balance = balance - $destroyPrice WHERE private_uuid = '$heroUUID'";
+            $balanceUpdateSql = "UPDATE entities SET balance = balance - $destroyPrice WHERE private_uuid = '$privateHeroUUID'";
             $conn->query($balanceUpdateSql);
 
             $deleteSql = "DELETE FROM entities WHERE uuid = '$uuid'";
@@ -91,7 +91,7 @@ if (isset($_GET['uuid'])) {
             };
 
             checkInsertOrUpdateRecord(
-                $heroUUID,
+                $privateHeroUUID,
                 "destroyer_uuid",
                 $conn,
                 "destroyed_buildings_counter",

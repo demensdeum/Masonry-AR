@@ -4,7 +4,7 @@ include("utils.php");
 ini_set('display_errors', 1); 
 
 $conn = dbConnect();
-$heroUUID = "";
+$privateHeroUUID = "";
 
 if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
@@ -20,11 +20,11 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     $conn->close();
     exit(0);    
 } else {
-    $heroUUID = $_COOKIE["privateHeroUUID"];
-    if (!validateUUID($heroUUID)) {
+    $privateHeroUUID = $_COOKIE["privateHeroUUID"];
+    if (!validateUUID($privateHeroUUID)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUUID",
+            'message' => "Invalid UUID format for $privateHeroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -36,7 +36,7 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
 if (isset($_GET['uuid'])) {
     $uuid = $_GET['uuid'];
 
-    if (validateUUID($heroUUID)) {
+    if (validateUUID($privateHeroUUID)) {
 
         $sql = "SELECT * FROM entities WHERE uuid = '$uuid' AND type IN ('eye', 'walkChallenge')";
         $result = $conn->query($sql);
@@ -57,7 +57,7 @@ if (isset($_GET['uuid'])) {
                         
             $entityBalance = $row['balance'];          
 
-            $balanceUpdateSql = "UPDATE entities SET balance = balance + $entityBalance WHERE private_uuid = '$heroUUID'";
+            $balanceUpdateSql = "UPDATE entities SET balance = balance + $entityBalance WHERE private_uuid = '$privateHeroUUID'";
             $conn->query($balanceUpdateSql);
 
             $deleteSql = "DELETE FROM entities WHERE uuid = '$uuid'";

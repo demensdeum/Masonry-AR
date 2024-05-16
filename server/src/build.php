@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 $build_enabled = true;
 
 $conn = dbConnect();
-$heroUUID = "";
+$privateHeroUUID = "";
 
 $buildPrice = 5000;
 
@@ -35,11 +35,11 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     $conn->close();    
     exit(0);    
 } else {
-    $heroUUID = $_COOKIE["privateHeroUUID"];
-    if (!validateUUID($heroUUID)) {
+    $privateHeroUUID = $_COOKIE["privateHeroUUID"];
+    if (!validateUUID($privateHeroUUID)) {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUUID",
+            'message' => "Invalid UUID format for $privateHeroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -48,7 +48,7 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     }
 }
 
-$sql = "SELECT * FROM entities WHERE private_uuid = '$heroUUID'";
+$sql = "SELECT * FROM entities WHERE private_uuid = '$privateHeroUUID'";
 $result = $conn->query($sql);  
 
 if ($result->num_rows > 0) {
@@ -152,7 +152,7 @@ if ($result->num_rows > 0) {
         );
     }
 
-    $balanceUpdateSql = "UPDATE entities SET balance = balance - $buildPrice WHERE private_uuid = '$heroUUID'";
+    $balanceUpdateSql = "UPDATE entities SET balance = balance - $buildPrice WHERE private_uuid = '$privateHeroUUID'";
     $conn->query($balanceUpdateSql);
 
     $response = array(
@@ -167,7 +167,7 @@ if ($result->num_rows > 0) {
 else {
     $response = array(
         'code' => 4,
-        'message' => "Build error: heroUUID $heroUUID not found}",
+        'message' => "Build error: heroUUID $privateHeroUUID not found}",
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE); 

@@ -1,4 +1,4 @@
-import { EntitiesRequestResult } from "./entitiesRequestResult.js";
+import { AuthorizeRequestResult } from "./authorizeRequestResult.js";
 import { RequestResultCodes } from "./requestResultCodes.js";
 import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js";
 import { debugPrint } from "./runtime.js";
@@ -32,12 +32,13 @@ export class AuthorizeController {
 
             const jsonData: any = await response.json()
 
-            const result = EntitiesRequestResult.fromJson(jsonData)
+            const result = AuthorizeRequestResult.fromJson(jsonData)
 
             if (result.code == RequestResultCodes.Success) {
                 this.state = AuthorizeControllerState.Authorized
                 this.delegate.authorizeControllerDidAuthorize(
-                    this
+                    this,
+                    result.heroUUID
                 )
             }
             else {

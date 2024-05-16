@@ -23,12 +23,11 @@ function createHero() {
         if ($row !== null) {
             $heroUUID = $row["uuid"];    
             $privateHeroUuid = $row["private_uuid"];
-            setcookie("heroUUID", $heroUUID, time() + 10 * 365 * 24 * 60 * 60, "/");
             setcookie("privateHeroUUID", $privateHeroUuid, time() + 10 * 365 * 24 * 60 * 60, "/");
             $response = array(
                 'code' => 0,
                 'message' => "Authorization success: new data created",
-                'entities' => []
+                'heroUUID' => $heroUUID
             );    
             echo json_encode($response, JSON_UNESCAPED_UNICODE);   
             $conn->close();            
@@ -60,15 +59,17 @@ function createHero() {
 if (!isset($_COOKIE["privateHeroUUID"])) {
     createHero();
 } else {
-    $heroUUID = $_COOKIE["privateHeroUUID"];
-    if (validateUUID($heroUUID)) {
-        $sqlCheck = "SELECT * FROM entities WHERE type = 'hero' AND private_uuid = '$heroUUID'";
+    $privateHeroUUID = $_COOKIE["privateHeroUUID"];
+    if (validateUUID($privateHeroUUID)) {
+        $sqlCheck = "SELECT * FROM entities WHERE type = 'hero' AND private_uuid = '$privateHeroUUID'";
         $result = $conn->query($sqlCheck);
 
-        if ($result->num_rows == 0) {
+        $row = $result->fetch_assoc();
+
+        if ($result->num_rows == 0 || $row == null) {
             $response = array(
                 'code' => 4,
-                'message' => "Authorization error: $heroUUID not found in database!",
+                'message' => "Authorization error: $privateHeroUUID not found in database!",
                 'entities' => []
             );
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -76,10 +77,11 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
             exit(0);
         }
         else {
+            $privateHeroUUID = $row["uuid"];
             $response = array(
                 'code' => 0,
                 'message' => "Authorization success: using saved data",
-                'entities' => []
+                'heroUUID' => $privateHeroUUID
             );
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             $conn->close();            
@@ -89,7 +91,7 @@ if (!isset($_COOKIE["privateHeroUUID"])) {
     else {
         $response = array(
             'code' => 2,
-            'message' => "Invalid UUID format for $heroUUID",
+            'message' => "Invalid UUID format for $privateHeroUUID",
             'entities' => []
         );
         echo json_encode($response, JSON_UNESCAPED_UNICODE);

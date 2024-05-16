@@ -13,7 +13,6 @@ import { GeolocationControllerInterface } from "./geolocationControllerInterface
 import { InGameState } from "./inGameState.js"
 import { ServerInfoEntry } from "./serverInfoEntry.js"
 import { Constants } from "./constants.js"
-import { Utils } from "./utils.js"
 import { MockGeolocationController } from "./mockGeolocationController.js"
 import { debugPrint, raiseCriticalError } from "./runtime.js"
 import { DataFetchType } from "./dataFetchType.js"
@@ -203,7 +202,7 @@ export class InitializationScreenState implements State,
         }
         if (parseInt(minimalClientVersion) > Constants.currentClientVersion) {
             _alert({
-                    text: _t(`CLIENT_IS_TOO_OLD: ${Constants.currentClientVersion} / ${minimalClientVersion}`),
+                    text: `${_t("CLIENT_IS_TOO_OLD")}: ${Constants.currentClientVersion} / ${minimalClientVersion}`,
                     okCallback: () => { GameUtils.gotoWiki({locale: this.context.translator.locale})}
             })
             return
@@ -214,9 +213,9 @@ export class InitializationScreenState implements State,
     }
 
     authorizeControllerDidAuthorize(
-        _: AuthorizeController
+        _: AuthorizeController,
+        heroUUID: string
     ) {
-        const heroUUID = Utils.getCookieValue("heroUUID")
         if (heroUUID) {
             this.outputHeroUUID = heroUUID
             debugPrint(this.outputHeroUUID)
