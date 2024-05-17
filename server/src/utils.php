@@ -10,24 +10,32 @@ function validateUUID($uuid) {
     return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid);
 }
 
-function entitiesOfType($type) {
+function userID() {
     $session_uuid = $_COOKIE["session_uuid"];
 
     if (!validateSession($session_uuid)) {
-        return [];
+        return null;
     }
     
     $conn = dbConnect();
-    $type = $conn->real_escape_string($type);
 
-    $stmt = $conn->prepare("CALL OwnedEntitiesOfType(?,?)");
-    $stmt->bind_param("ss", $session_uuid, $type);
+    $stmt = $conn->prepare("CALL UserIdForSession(?)");
+    $stmt->bind_param("s", $session_uuid);
     $stmt->execute();
     
     $result = $stmt->get_result();
-    $entities = $result->fetch_all(MYSQLI_ASSOC);
     
-    return $entities;
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        if (isset($row['user_id'])) {
+            return intval($row['user_id']);
+        }
+        else {
+            return null;
+        }
+    } else {
+        return null;
+    }
 }
 
 function validateSession($uuid) {

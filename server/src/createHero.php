@@ -12,9 +12,18 @@ if (!validateSession($session_uuid)) {
 
 $conn = dbConnect();
 
-$heroEntities = entitiesOfType("hero");
-
-if (count($heroEntities) > 0) {
-    echo json_encode(array('code' => 2, 'message' => "One hero already exists for user"), JSON_UNESCAPED_UNICODE);
+$userID = userID();
+if ($userID == null) {
+    echo json_encode(array('code' => 2, 'message' => "No userID found!"), JSON_UNESCAPED_UNICODE);
     exit(0);
 }
+
+$balance = 0;
+$sql = "INSERT INTO entities (type, balance) VALUES ('hero', $balance)";
+$conn->query($sql);
+
+$sql = "INSERT INTO user_to_hero (user_id, entity_id) VALUES ($userID, LAST_INSERT_ID())";
+$conn->query($sql);
+
+echo json_encode(array('code' => 0, 'message' => "Hero created!"), JSON_UNESCAPED_UNICODE);
+exit(0);
