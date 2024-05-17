@@ -19,11 +19,20 @@ if ($userID == null) {
 }
 
 $balance = 0;
-$sql = "INSERT INTO entities (type, balance) VALUES ('hero', $balance)";
-$conn->query($sql);
+try {    
+    $conn->begin_transaction();
+    $sql = "INSERT INTO entities (type, balance) VALUES ('hero', $balance)";
+    $conn->execute_query($sql);
 
-$sql = "INSERT INTO user_to_hero (user_id, entity_id) VALUES ($userID, LAST_INSERT_ID())";
-$conn->query($sql);
+    $sql = "INSERT INTO user_to_hero (user_id, entity_id) VALUES ($userID, LAST_INSERT_ID())";
+    $conn->execute_query($sql);
 
-echo json_encode(array('code' => 0, 'message' => "Hero created!"), JSON_UNESCAPED_UNICODE);
-exit(0);
+    $conn->commit();
+
+    echo json_encode(array('code' => 0, 'message' => "Hero created!"), JSON_UNESCAPED_UNICODE);
+    exit(0);
+} catch(\Throwable $e) {
+    $conn->rollback();
+    echo json_encode(array('code' => 3, 'message' => $e->getMessage()), JSON_UNESCAPED_UNICODE);
+    exit(0);
+}
