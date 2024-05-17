@@ -21,17 +21,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             $updateOrInsert = function($action, $userID, $conn) {
                 $session_uuid = generateUUID();
-                if ($action == "insert") {
-                    $sql = "UPDATE sessions SET private_uuid = '$session_uuid' WHERE user_id = $userID";
+                if ($action == "update") {
+                    $sql = "UPDATE sessions SET private_uuid = '$session_uuid', creation_date = UTC_TIMESTAMP() WHERE user_id = $userID";
                 }
-                elseif ($action == "update") {
+                elseif ($action == "insert") {
                     $sql = "INSERT INTO sessions (private_uuid, user_id) VALUES ('$session_uuid', $userID)";
                 }
                 if ($conn->query($sql) === TRUE) {
+                    setcookie("session_uuid", $session_uuid);
                     $response = array(
                         'code' => 0,
                         'message' => "Login success",
-                        'session_uuid' => $session_uuid
                     );
                     echo json_encode($response, JSON_UNESCAPED_UNICODE);
                 } else {
