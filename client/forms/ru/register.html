@@ -4,17 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Form</title>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script>
+        function onSubmit(token) {
+          document.getElementById("regsiter-form").submit();
+        }
+      </script>     
 </head>
 <body>
     <h2>Registration Form</h2>
-    <form method="post" action="../../../../server/register.php">
+    <form id="regsiter-form" method="post" action="../../../../server/register.php">
         <label for="login">Login:</label><br>
         <input type="text" id="login" name="login"><br>
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password"><br>
         <label for="email">Email:</label><br>
         <input type="email" id="email" name="email"><br><br>
-        <input type="submit" value="Register">
+        <button class="g-recaptcha" 
+            data-sitekey="6LcNG-ApAAAAABHMUNh8mtqV7p-c8pFi_JsbSFo7" 
+            data-callback='onSubmit' 
+            data-action='submit'>Submit</button>
     </form>
 </body>
 </html>
