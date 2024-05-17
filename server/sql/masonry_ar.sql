@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 17, 2024 at 08:13 PM
+-- Generation Time: May 17, 2024 at 10:21 PM
 -- Server version: 11.3.2-MariaDB
 -- PHP Version: 8.3.7
 
@@ -43,8 +43,8 @@ CREATE TABLE `entities` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `type` varchar(256) NOT NULL,
   `balance` int(11) NOT NULL DEFAULT 0,
-  `latitude` float NOT NULL,
-  `longitude` float NOT NULL,
+  `latitude` float DEFAULT NULL,
+  `longitude` float DEFAULT NULL,
   `creation_date` datetime NOT NULL DEFAULT utc_timestamp(),
   `update_date` datetime NOT NULL DEFAULT utc_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -109,7 +109,7 @@ CREATE TABLE `user_state` (
 CREATE TABLE `user_to_building` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `hero_id` bigint(20) UNSIGNED NOT NULL
+  `entity_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -121,7 +121,7 @@ CREATE TABLE `user_to_building` (
 CREATE TABLE `user_to_hero` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `hero_id` bigint(20) UNSIGNED NOT NULL
+  `entity_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -176,7 +176,7 @@ ALTER TABLE `user_state`
 --
 ALTER TABLE `user_to_building`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `entity_id` (`hero_id`),
+  ADD UNIQUE KEY `entity_id` (`entity_id`),
   ADD UNIQUE KEY `user_id` (`user_id`);
 
 --
@@ -184,7 +184,7 @@ ALTER TABLE `user_to_building`
 --
 ALTER TABLE `user_to_hero`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `entity_id` (`hero_id`),
+  ADD UNIQUE KEY `entity_id` (`entity_id`),
   ADD UNIQUE KEY `user_id` (`user_id`);
 
 --
