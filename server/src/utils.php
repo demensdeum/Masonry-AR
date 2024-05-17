@@ -10,6 +10,10 @@ function validateUUID($uuid) {
     return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid);
 }
 
+function userID() {
+    return "69";
+}
+
 function checkInsertOrUpdateRecord(
     $uuid,
     $columnName,
@@ -29,13 +33,8 @@ function checkInsertOrUpdateRecord(
     
     $count = null;
 
-    // Bind result variable
     $stmt_select->bind_result($count);
-    
-    // Fetch the result
-    $stmt_select->fetch();
-    
-    // Close the statement
+    $stmt_select->fetch();    
     $stmt_select->close();
 
     if ($count !== null) {

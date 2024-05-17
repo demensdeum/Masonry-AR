@@ -1,4 +1,4 @@
 export class Constants {
-    static readonly currentClientVersion = 6
+    static readonly currentClientVersion = 7
     static readonly apiPath = "../.."
 }
