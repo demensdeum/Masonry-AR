@@ -1,9 +1,7 @@
 <?php
 include("config.php");
 include("utils.php");
-ini_set('display_errors', 1); 
-
-$privateHeroUUID = "";
+ini_set('display_errors', 1);
 
 $insertEnabled = true;
 $minEntitesPerSector = 3;
@@ -12,28 +10,18 @@ $polling_timeout_seconds = 3;
 $walkChallengeChance = 4;
 $treasureChestChance = 4;
 
-if (!isset($_COOKIE["privateHeroUUID"])) {
+$sessionUUID = SessionController::sessionUUID();
+
+if (!$sessionUUID) {
     $response = array(
-        'code' => 3,
-        'message' => "Not authorized: no heroUUID",
+        'code' => 2,
+        'message' => "Session UUID is incorrect",
         'entities' => []
-    );    
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);
-    exit(0);    
-} else {
-    $privateHeroUUID = $_COOKIE["privateHeroUUID"];
-    if (!validateUUID($privateHeroUUID)) {
-        $response = array(
-            'code' => 2,
-            'message' => "Invalid UUID format for $privateHeroUUID",
-            'entities' => []
-        );
-        echo json_encode($response, JSON_UNESCAPED_UNICODE);
-        exit(0);
-    }
+    );
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);   
+    exit(0);
 }
 
-$privateHeroUUID = $_COOKIE["privateHeroUUID"];
 $latitude = 0.0;
 $longitude = 0.0;
 
@@ -87,23 +75,10 @@ if ($conn->connect_error) {
     die("Database Connection Error: " . $conn->connect_error);
 }
 
-$sql = "SELECT * FROM entities WHERE type = 'hero' AND private_uuid = '$privateHeroUUID'";
-$result = $conn->query($sql);
+$hero = heroForSessionUUID($sessionUUID);
 
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    if ($row == null) {
-        $response = array(
-            'code' => 7,
-            'message' => "Build error: heroUUID search error 2",
-            'entities' => []
-        );    
-        echo json_encode($response, JSON_UNESCAPED_UNICODE); 
-        $conn->close();          
-        exit(0);  
-    }
-
-    $update_date = strtotime($row["update_date"]);
+if ($hero) {
+    $update_date = strtotime($hero["update_date"]);
     $three_seconds_ago = time() - $polling_timeout_seconds;
 
     if ($update_date > $three_seconds_ago) {
@@ -124,7 +99,7 @@ if ($result->num_rows > 0) {
 else {
     $response = array(
         'code' => 6,
-        'message' => "Entities fetch error: heroUUID $privateHeroUUID not found}",
+        'message' => "Entities fetch error: hero not found. huh?",
         'entities' => []
     );    
     echo json_encode($response, JSON_UNESCAPED_UNICODE); 
@@ -132,7 +107,19 @@ else {
     exit(0);       
 }
 
-$sqlUpdate = "UPDATE entities SET update_date = utc_timestamp(), latitude = $latitude, longitude = $longitude WHERE private_uuid = '$privateHeroUUID'";
+$heroID = $hero["id"];
+if (!$heroID) {
+    $response = array(
+        'code' => 69,
+        'message' => "Entities fetch error: no hero id. huh?",
+        'entities' => []
+    );    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE); 
+    $conn->close();      
+    exit(0);       
+}
+
+$sqlUpdate = "UPDATE entities SET update_date = utc_timestamp(), latitude = $latitude, longitude = $longitude WHERE id = '$heroID'";
 $conn->query($sqlUpdate);
 
 $borderDistance = 40;
@@ -176,7 +163,6 @@ if ($insertEnabled) {
         if (mt_rand(0, $entitiesChance) == 0) {     
             $randomRecords = mt_rand(1, $minEntitesPerSector);
             for ($i = 0; $i < $randomRecords; $i++) {
-                $uuid = generateUUID();
                 $balance = mt_rand(1, 3) * 100;
                 $entityLatitude = $eyesMinimalEntityLatitude + mt_rand(0, $eyesDistance * 2) / 10000;
                 $entityLongitude = $eyesMinimalEntityLongitude + mt_rand(0, $eyesDistance * 2) / 10000;
@@ -189,8 +175,8 @@ if ($insertEnabled) {
                     $model = "com.demensdeum.treasure.chest";
                 }
                 $sqlInsert = "INSERT INTO entities 
-                (uuid, type, balance, latitude, longitude, model) 
-                VALUES ('$uuid', '". $entity_type . "', $balance, $entityLatitude, $entityLongitude, '". $model ."')";
+                (type, balance, latitude, longitude, model) 
+                VALUES ('". $entity_type . "', $balance, $entityLatitude, $entityLongitude, '". $model ."')";
                 $conn->query($sqlInsert);
             }
         }
@@ -198,9 +184,8 @@ if ($insertEnabled) {
 }
 
 $sqlSelect = "
-SELECT e.*, o.name AS owner_name
+SELECT *
 FROM entities e
-LEFT JOIN entities o ON e.owner_uuid = o.uuid
 WHERE e.latitude >= $minimalEntityLatitude 
   AND e.latitude <= $maximalEntityLatitude 
   AND e.longitude >= $minimalEntityLongitude 
@@ -216,12 +201,8 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $data[] = array(
             'id' => $row["id"],
-            'uuid' => $row["uuid"],
-            'name' => $row['name'],
-            'ownerName' => $row['owner_name'],
-            'order' => $row["masonic_order"],
             'type' => $row["type"],
-            'model' => $row["model"],
+            'model' => "DEFAULT",
             'balance' => $row["balance"],
             'latitude' => $row["latitude"],            
             'longitude' => $row["longitude"]

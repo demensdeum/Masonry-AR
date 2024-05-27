@@ -3,22 +3,22 @@ include("config.php");
 include("utils.php");
 ini_set('display_errors', 1);
 
-$session_uuid = $_COOKIE["session_uuid"];
+$sessionUUID = SessionController::sessionUUID();
 
-if (!validateSession($session_uuid)) {
+if (!$sessionUUID) {
     echo json_encode(array('code' => 1, 'message' => "Wrong session"), JSON_UNESCAPED_UNICODE);
     exit(0);
 }
 
-$conn = dbConnect();
-
-$userID = userID();
+$userID = SessionController::userID();
 if ($userID == null) {
     echo json_encode(array('code' => 2, 'message' => "No userID found!"), JSON_UNESCAPED_UNICODE);
     exit(0);
 }
 
+$conn = dbConnect();
 $balance = 0;
+
 try {    
     $conn->begin_transaction();
     $sql = "INSERT INTO entities (type, balance) VALUES ('hero', $balance)";

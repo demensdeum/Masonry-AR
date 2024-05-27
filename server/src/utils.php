@@ -10,61 +10,84 @@ function validateUUID($uuid) {
     return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid);
 }
 
-function userID() {
-    $session_uuid = $_COOKIE["session_uuid"];
-
-    if (!validateSession($session_uuid)) {
-        return null;
-    }
-    
+function heroForSessionUUID($sessionUUID) {
     $conn = dbConnect();
-
-    $stmt = $conn->prepare("CALL UserIdForSession(?)");
-    $stmt->bind_param("s", $session_uuid);
+    $stmt = $conn->prepare("CALL OwnedHero(?)");
+    $stmt->bind_param("s", $sessionUUID);
     $stmt->execute();
     
     $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        if (isset($row['user_id'])) {
-            return intval($row['user_id']);
-        }
-        else {
-            return null;
-        }
-    } else {
-        return null;
-    }
+    $hero = $result->fetch_assoc();    
+    return $hero;
 }
 
-function validateSession($uuid) {
-    $conn = dbConnect();
-    if (validateUUID($uuid) != true) {
-        echo "1";
+class SessionController {
+    static private function validateSession($uuid) {
+        $conn = dbConnect();
+        if (validateUUID($uuid) != true) {
+            echo "1";
+            return false;
+        }
+
+        $sql_select = "SELECT COUNT(*) as count FROM sessions WHERE private_uuid = ? LIMIT 1";
+        $stmt_select = $conn->prepare($sql_select);
+        if (!$stmt_select) {
+            die("Error preparing statement: " . $conn->error);
+        }
+
+        $stmt_select->bind_param("s", $uuid);
+        $stmt_select->execute();
+
+        $count = null;
+
+        $stmt_select->bind_result($count);
+        $stmt_select->fetch();    
+        $stmt_select->close();
+
+        if ($count !== null && $count == 1) {
+            return true;
+        }
+
         return false;
     }
 
-    $sql_select = "SELECT COUNT(*) as count FROM sessions WHERE private_uuid = ? LIMIT 1";
-    $stmt_select = $conn->prepare($sql_select);
-    if (!$stmt_select) {
-        die("Error preparing statement: " . $conn->error);
+    static public function sessionUUID() {
+        $session_uuid = $_COOKIE["session_uuid"];
+
+        if (!self::validateSession($session_uuid)) {
+            return null;
+        }
+
+        return $session_uuid;
     }
 
-    $stmt_select->bind_param("s", $uuid);
-    $stmt_select->execute();
-
-    $count = null;
-
-    $stmt_select->bind_result($count);
-    $stmt_select->fetch();    
-    $stmt_select->close();
-
-    if ($count !== null && $count == 1) {
-        return true;
-    }
-
-    return false;
+    static public function userID() {
+        $session_uuid = $_COOKIE["session_uuid"];
+    
+        if (!self::validateSession($session_uuid)) {
+            return null;
+        }
+        
+        $conn = dbConnect();
+    
+        $stmt = $conn->prepare("CALL UserIdForSession(?)");
+        $stmt->bind_param("s", $session_uuid);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if (isset($row['user_id'])) {
+                return intval($row['user_id']);
+            }
+            else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }    
 }
 
 function checkInsertOrUpdateRecord(
