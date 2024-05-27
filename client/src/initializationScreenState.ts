@@ -1,6 +1,6 @@
 import { Context } from "./context.js"
-import { AuthorizeController } from "./authorizeController.js"
-import { AuthorizeControllerDelegate } from "./authorizeControllerDelegte.js"
+import { GameInitializationController } from "./gameInitializationController.js"
+import { GameInitializationControllerDelegate } from "./gameInitializationControllerDelegate.js"
 import { ServerInfoController } from "./serverInfoController.js"
 import { ServerInfoControllerDelegate } from "./serverInfoControllerDelegate.js"
 import { DecorControls } from "./decorControls.js"
@@ -23,12 +23,12 @@ declare function _alert(args: {text: string, okCallback: ()=>void}): void
 
 export class InitializationScreenState implements State,
                                          ServerInfoControllerDelegate,
-                                         AuthorizeControllerDelegate,
+                                         GameInitializationControllerDelegate,
                                          GeolocationControllerDelegate {
     public name: string
     context: Context
 
-    private readonly authorizeController = new AuthorizeController(this)
+    private readonly gameInitializationController = new GameInitializationController(this)
     private readonly serverInfoController = new ServerInfoController(this)  
     private readonly geolocationController: GeolocationControllerInterface
     private readonly dataFetchType: DataFetchType = DataFetchType.DEFAULT
@@ -165,7 +165,7 @@ export class InitializationScreenState implements State,
 
     geolocationControllerDidGetPosition(_: GeolocationControllerInterface, position: GameGeolocationPosition): void {
         this.outputPositon = position
-        this.authorizeController.authorizeIfNeeded()       
+        this.gameInitializationController.initialize()
     }
 
     geolocationControllerGeolocationDidReceiveError(_: GeolocationControllerInterface, error: string): void {
@@ -212,8 +212,8 @@ export class InitializationScreenState implements State,
         this.geolocationController.trackPosition()
     }
 
-    authorizeControllerDidAuthorize(
-        _: AuthorizeController,
+    gameInitializationControllerDidAuthorize(
+        _: GameInitializationController,
         heroUUID: string
     ) {
         if (heroUUID) {
@@ -266,8 +266,8 @@ export class InitializationScreenState implements State,
         }
     }
 
-    authorizeControllerDidReceiveError(
-        _: AuthorizeController,
+    gameInitializationControllerDidReceiveError(
+        _: GameInitializationController,
         message: string
     ) {
         _alert({
