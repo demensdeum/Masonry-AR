@@ -14,7 +14,7 @@ import tempfile
 import subprocess
 import shutil
 import sys
-from gltflib import GLTF
+#from gltflib import GLTF
 
 def png_to_jpg(source_file, output_file):
     print(source_file)

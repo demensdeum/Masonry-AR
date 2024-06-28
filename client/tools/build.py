@@ -53,10 +53,10 @@ def run_commands():
             print(f"An error occurred! Exit code: {e.returncode}")
             exit(e.returncode)    
 
-        docker_image_flag_file = Path('/DockerImage')
+#        docker_image_flag_file = Path('/DockerImage')
 
-        if docker_image_flag_file.exists() == False:
-            subprocess.run(['zip', "-r", "assets-docker/assetsCompressed.zip", "assets-src"], check=True)
+#        if docker_image_flag_file.exists() == False:
+#            subprocess.run(['zip', "-r", "assets-docker/assetsCompressed.zip", "assets-src"], check=True)
         
 
 if __name__ == "__main__":
