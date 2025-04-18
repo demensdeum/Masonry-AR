@@ -49,7 +49,7 @@ export class MainMenuState implements State {
                 },
                 position: GameVector3.zeroBut(
                     {   
-                        x: -0.4,
+                        x: 0,
                         y: 3,
                         z: -5
                     }
@@ -96,7 +96,7 @@ export class MainMenuState implements State {
                 },
                 position: GameVector3.zeroBut(
                     {   
-                        x: -0.4,
+                        x: 0,
                         y: 2,
                         z: -5
                     }

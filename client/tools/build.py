@@ -3,7 +3,7 @@
 import os
 import shutil
 import subprocess
-import cleanterminus
+#import cleanterminus
 import glob
 import os
 import sys
@@ -21,7 +21,7 @@ def run_commands():
     print("Clean...")
     cleanDirectory("src-preprocessed")
     cleanDirectory("build")
-    cleanterminus.clear()
+    #cleanterminus.clear()
     os.environ["PATH"] += os.pathsep + os.path.join('.', 'node_modules', '.bin')
     print("Preprocessor...")
     preprocessor_path = os.path.join('.', 'tools', 'preprocessor', 'preprocessor.py')
@@ -30,7 +30,7 @@ def run_commands():
     rules_path = os.path.join('.', 'tools', 'preprocessor', 'rules.json')
 
     try:
-        subprocess.run(['python', preprocessor_path, src_path, src_preprocessed_path, rules_path], check=True)
+        subprocess.run(['python3', preprocessor_path, src_path, src_preprocessed_path, rules_path], check=True)
     except subprocess.CalledProcessError as e:
         print(f"An error occurred! Exit code: {e.returncode}")
         exit(e.returncode)
@@ -48,7 +48,7 @@ def run_commands():
         assets_output_path = os.path.join('.', 'assets')
 
         try:
-            subprocess.run(['python', assets_master_path, assets_src_path, assets_output_path], check=True)
+            subprocess.run(['python3', assets_master_path, assets_src_path, assets_output_path], check=True)
         except subprocess.CalledProcessError as e:
             print(f"An error occurred! Exit code: {e.returncode}")
             exit(e.returncode)    
